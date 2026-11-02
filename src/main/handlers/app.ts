@@ -12,6 +12,7 @@ import {
   updateRepository,
 } from '../store/repositories'
 import { getSettings, onSettingsChanged, updateSettings } from '../store/settings'
+import { watchRepository } from '../watch'
 
 /** Rejects names Windows cannot use as a folder name. */
 function isValidRepositoryName(name: string): boolean {
@@ -52,7 +53,11 @@ export function registerAppHandlers(): void {
   handle('repos:add', (_event, path) => addRepository(path))
   handle('repos:remove', (_event, id) => removeRepository(id))
   handle('repos:update', (_event, id, patch) => updateRepository(id, patch))
-  handle('repos:open', (_event, id) => updateRepository(id, { lastOpenedAt: Date.now() }))
+  handle('repos:open', async (_event, id) => {
+    const repo = await updateRepository(id, { lastOpenedAt: Date.now() })
+    await watchRepository(id)
+    return repo
+  })
   handle('repos:create', async (_event, input) => {
     const name = input.name.trim()
     if (!isValidRepositoryName(name)) {

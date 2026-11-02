@@ -7,6 +7,7 @@ import { log } from './log'
 import { buildMenu } from './menu'
 import { loadRepositories } from './store/repositories'
 import { loadSettings, onSettingsChanged } from './store/settings'
+import { stopWatchingRepository } from './watch'
 
 // Keep the user data folder separate from the official GitHub Desktop and from
 // development runs of GitHub+.
@@ -72,6 +73,8 @@ app.on('second-instance', () => {
     mainWindow.focus()
   }
 })
+
+app.on('will-quit', () => stopWatchingRepository())
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
