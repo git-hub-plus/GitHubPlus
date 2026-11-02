@@ -1,4 +1,5 @@
 .sidebar {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -7,12 +8,17 @@
 }
 
 .header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
   padding: var(--space-2);
   height: var(--toolbar-height);
   border-bottom: 1px solid var(--color-border);
 }
 
 .filter {
+  min-width: 0;
   width: 100%;
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--color-border);
@@ -81,4 +87,25 @@
 .badge {
   font-size: var(--font-size-xs);
   color: var(--color-warning);
+}
+
+.header button {
+  white-space: nowrap;
+  padding: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+.sidebar > [role='dialog'] {
+  top: var(--toolbar-height);
+  width: var(--sidebar-width);
+}
+.dot {
+  display: inline-block;
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--color-warning);
+  margin-right: var(--space-1);
 }

@@ -1,0 +1,82 @@
+.anchor {
+  position: relative;
+}
+.popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  width: 340px;
+  max-height: 65vh;
+  overflow: auto;
+  padding: var(--space-2);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.popover input {
+  width: 100%;
+  padding: var(--space-1);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.popover button {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 0;
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+}
+.popover button:hover {
+  background: var(--color-bg-hover);
+}
+.popover h3 {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin: var(--space-2) 0;
+}
+.row {
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+}
+.row button:first-child {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toasts {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 100;
+  width: min(360px, 90vw);
+  display: grid;
+  gap: var(--space-2);
+  max-height: 50vh;
+  overflow: auto;
+}
+.toast {
+  padding: var(--space-3);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.toast p {
+  margin: 0 0 var(--space-2);
+}
+.toast pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: var(--font-size-sm) var(--font-mono);
+}
+.toast button {
+  color: var(--color-text);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}

@@ -1,0 +1,60 @@
+.dialog {
+  width: min(480px, calc(100vw - var(--space-6) * 2));
+  padding: var(--space-4);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--color-text) 35%, transparent);
+}
+.dialog h2 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-4);
+}
+.body {
+  display: grid;
+  gap: var(--space-3);
+}
+.body label {
+  display: grid;
+  gap: var(--space-1);
+}
+.body input:not([type='checkbox']) {
+  width: 100%;
+}
+.dialog input,
+.dialog button {
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+}
+.dialog button:not(:disabled):hover {
+  background: var(--color-bg-hover);
+}
+.dialog button:disabled {
+  opacity: 0.5;
+}
+.dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.dialog footer button[type='submit'] {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+.dialog progress {
+  width: 100%;
+  accent-color: var(--color-accent);
+}
+.dialog p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
