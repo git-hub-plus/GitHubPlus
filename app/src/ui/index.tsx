@@ -1,5 +1,7 @@
 import '../lib/logging/renderer/install'
 
+import { getLanguage, setLanguage } from '../lib/i18n'
+import { getAppLanguage } from './main-process-proxy'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Path from 'path'
@@ -422,16 +424,36 @@ ipcRenderer.on('cli-action', (_, action) =>
   })
 })(Grid.defaultProps, Grid.propTypes)
 
-ReactDOM.render(
-  <App
-    dispatcher={dispatcher}
-    appStore={appStore}
-    repositoryStateManager={repositoryStateManager}
-    issuesStore={issuesStore}
-    gitHubUserStore={gitHubUserStore}
-    aheadBehindStore={aheadBehindStore}
-    notificationsDebugStore={notificationsDebugStore}
-    startTime={startTime}
-  />,
-  document.getElementById('desktop-app-container')!
-)
+let receivedLanguageChange = false
+ipcRenderer.on('app-language-changed', (_, language) => {
+  receivedLanguageChange = true
+  setLanguage(language)
+  document.documentElement.lang = language
+})
+
+async function renderApp() {
+  try {
+    const language = await getAppLanguage()
+    if (!receivedLanguageChange) {
+      setLanguage(language)
+    }
+  } catch (error) {
+    log.error('Unable to initialize app language', error)
+  }
+  document.documentElement.lang = getLanguage()
+  ReactDOM.render(
+    <App
+      dispatcher={dispatcher}
+      appStore={appStore}
+      repositoryStateManager={repositoryStateManager}
+      issuesStore={issuesStore}
+      gitHubUserStore={gitHubUserStore}
+      aheadBehindStore={aheadBehindStore}
+      notificationsDebugStore={notificationsDebugStore}
+      startTime={startTime}
+    />,
+    document.getElementById('desktop-app-container')!
+  )
+}
+
+renderApp()

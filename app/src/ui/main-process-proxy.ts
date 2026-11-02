@@ -5,6 +5,12 @@ import { stat } from 'fs/promises'
 import { isApplicationBundle } from '../lib/is-application-bundle'
 import { pathExists } from '../lib/path-exists'
 
+/** Read the persisted language owned by the main process. */
+export const getAppLanguage = invokeProxy('get-app-language', 0)
+
+/** Persist a language and update all app windows and the native menu. */
+export const setAppLanguage = invokeProxy('set-app-language', 1)
+
 /**
  * Creates a strongly typed proxy method for sending a duplex IPC message to the
  * main process. The parameter types and return type are infered from the

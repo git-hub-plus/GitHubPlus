@@ -1,3 +1,4 @@
+import { getLocale } from './i18n'
 import mem from 'mem'
 import QuickLRU from 'quick-lru'
 
@@ -15,7 +16,7 @@ const getRelativeFormatter = mem(
 )
 
 export function formatRelative(ms: number) {
-  const formatter = getRelativeFormatter('en-US', { numeric: 'auto' })
+  const formatter = getRelativeFormatter(getLocale(), { numeric: 'auto' })
 
   const sign = ms < 0 ? -1 : 1
 

@@ -6,6 +6,7 @@ import {
 } from '../../../src/main-process/menu'
 import type { MenuLabelsEvent } from '../../../src/models/menu-labels'
 import { enableCopilotAppHandoff } from '../../../src/lib/feature-flag'
+import { getLanguage, setLanguage } from '../../../src/lib/i18n'
 
 /** Extract the Windows-style access key from a menu item label, if any. */
 function getAccessKey(label: string): string | null {
@@ -159,6 +160,33 @@ describe('main-process menu', () => {
   })
 
   describe('buildDefaultMenuTemplate', () => {
+    it('translates menu labels and omits the updater in both languages', t => {
+      const originalLanguage = getLanguage()
+      t.after(() => setLanguage(originalLanguage))
+      for (const language of ['ko', 'en'] as const) {
+        setLanguage(language)
+        const template = buildDefaultMenuTemplate(baseParams)
+        const file = template.find(item =>
+          Array.isArray(item.submenu)
+            ? item.submenu.some(child => child.id === 'new-repository')
+            : false
+        )
+        assert.equal(
+          file?.label,
+          language === 'ko'
+            ? __DARWIN__
+              ? '파일'
+              : '파일(&F)'
+            : __DARWIN__
+            ? 'File'
+            : '&File'
+        )
+        const serialized = JSON.stringify(template)
+        assert.ok(!serialized.includes('check-for-updates'))
+        assert.ok(!serialized.includes('Check for Updates'))
+        assert.ok(!serialized.includes('GitHub Desktop'))
+      }
+    })
     it('gates Copilot handoff to supported platforms and preview channels', t => {
       const preview = process.env.GITHUB_DESKTOP_PREVIEW_FEATURES
       const hasCopilotMenuItem = () => {
@@ -234,29 +262,34 @@ describe('main-process menu', () => {
       )
     })
 
-    it('has no duplicate access keys for any combination of label-affecting parameters', () => {
+    it('has no duplicate access keys for any combination of label-affecting parameters in either language', t => {
+      const originalLanguage = getLanguage()
+      t.after(() => setLanguage(originalLanguage))
       const combinationCount = 1 << variantKeys.length
 
-      for (let bits = 0; bits < combinationCount; bits++) {
-        const variantEntries = variantKeys.map(
-          (key, i) => [key, !!(bits & (1 << i))] as [VariantKey, boolean]
-        )
+      for (const language of ['ko', 'en'] as const) {
+        setLanguage(language)
+        for (let bits = 0; bits < combinationCount; bits++) {
+          const variantEntries = variantKeys.map(
+            (key, i) => [key, !!(bits & (1 << i))] as [VariantKey, boolean]
+          )
 
-        const params: MenuLabelsEvent = {
-          ...baseParams,
-          ...Object.fromEntries(variantEntries),
+          const params: MenuLabelsEvent = {
+            ...baseParams,
+            ...Object.fromEntries(variantEntries),
+          }
+
+          const template = buildDefaultMenuTemplate(params)
+          const duplicates = findDuplicateAccessKeys(template)
+
+          assert.deepStrictEqual(
+            duplicates,
+            [],
+            `Duplicate access keys found with params ${JSON.stringify(
+              params
+            )}: ${JSON.stringify(duplicates)}`
+          )
         }
-
-        const template = buildDefaultMenuTemplate(params)
-        const duplicates = findDuplicateAccessKeys(template)
-
-        assert.deepStrictEqual(
-          duplicates,
-          [],
-          `Duplicate access keys found with params ${JSON.stringify(
-            params
-          )}: ${JSON.stringify(duplicates)}`
-        )
       }
     })
   })

@@ -1,3 +1,4 @@
+import { t as translate, TranslationKey } from '../../lib/i18n'
 import { Menu, shell, app, BrowserWindow } from 'electron'
 import { ensureItemIds } from './ensure-item-ids'
 import { MenuEvent } from './menu-event'
@@ -12,22 +13,24 @@ import { MenuLabelsEvent } from '../../models/menu-labels'
 import * as ipcWebContents from '../ipc-webcontents'
 import { mkdir } from 'fs/promises'
 import { buildTestMenu } from './build-test-menu'
+import { initializeMenuLanguageSync } from './language-settings'
+import { getAllMenuItems } from './get-all-menu-items'
 
-const createPullRequestLabel = __DARWIN__
-  ? 'Create Pull Request'
-  : 'Create &pull request'
-const showPullRequestLabel = __DARWIN__
-  ? 'View Pull Request on GitHub'
-  : 'View &pull request on GitHub'
-const defaultBranchNameValue = __DARWIN__ ? 'Default Branch' : 'default branch'
-const confirmRepositoryRemovalLabel = __DARWIN__ ? 'Remove…' : '&Remove…'
-const repositoryRemovalLabel = __DARWIN__ ? 'Remove' : '&Remove'
-const confirmStashAllChangesLabel = __DARWIN__
-  ? 'Stash All Changes…'
-  : '&Stash all changes…'
-const stashAllChangesLabel = __DARWIN__
-  ? 'Stash All Changes'
-  : '&Stash all changes'
+let latestLabels: MenuLabelsEvent | undefined
+
+function t(
+  key: TranslationKey,
+  params?: Readonly<Record<string, string | number>>
+) {
+  const label = translate(key)
+  const platformLabel = __DARWIN__
+    ? label.replace(/\(&.\)/g, '').replace(/&(.)/g, '$1')
+    : label
+  return platformLabel.replace(
+    /\{(\w+)\}/g,
+    (placeholder, name: string) => params?.[name]?.toString() ?? placeholder
+  )
+}
 
 enum ZoomDirection {
   Reset,
@@ -40,7 +43,35 @@ export const separator: Electron.MenuItemConstructorOptions = {
 }
 
 export function buildDefaultMenu(params: MenuLabelsEvent): Electron.Menu {
+  initializeMenuLanguageSync()
+  latestLabels = params
   return Menu.buildFromTemplate(buildDefaultMenuTemplate(params))
+}
+
+/** Rebuild translated labels while preserving current menu item state. */
+export function rebuildLocalizedMenu(): void {
+  if (latestLabels === undefined) {
+    return
+  }
+  const currentMenu = Menu.getApplicationMenu()
+  const states = new Map(
+    currentMenu === null
+      ? []
+      : Array.from(
+          getAllMenuItems(currentMenu),
+          item => [item.id, item] as const
+        )
+  )
+  const menu = buildDefaultMenu(latestLabels)
+  for (const item of getAllMenuItems(menu)) {
+    const previous = states.get(item.id)
+    if (previous !== undefined) {
+      item.enabled = previous.enabled
+      item.visible = previous.visible
+      item.checked = previous.checked
+    }
+  }
+  Menu.setApplicationMenu(menu)
 }
 
 export function buildDefaultMenuTemplate({
@@ -49,12 +80,31 @@ export function buildDefaultMenuTemplate({
   askForConfirmationOnForcePush,
   askForConfirmationOnRepositoryRemoval,
   hasCurrentPullRequest = false,
-  contributionTargetDefaultBranch = defaultBranchNameValue,
+  contributionTargetDefaultBranch = t('menu.defaultBranch'),
   isForcePushForCurrentRepository = false,
   isStashedChangesVisible = false,
   askForConfirmationWhenStashingAllChanges = true,
   isChangesFilterVisible = true,
 }: MenuLabelsEvent): Electron.MenuItemConstructorOptions[] {
+  const createPullRequestLabel = __DARWIN__
+    ? t('menu.labels.createPullRequest')
+    : t('menu.labels.createPullRequestAccessKey')
+  const showPullRequestLabel = __DARWIN__
+    ? t('menu.labels.viewPullRequestOnGithub')
+    : t('menu.labels.viewPullRequestOnGithubAccessKey')
+  const confirmRepositoryRemovalLabel = __DARWIN__
+    ? t('menu.labels.remove')
+    : t('menu.labels.removeAccessKey')
+  const repositoryRemovalLabel = __DARWIN__
+    ? t('menu.labels.remove2')
+    : t('menu.labels.removeAccessKey2')
+  const confirmStashAllChangesLabel = __DARWIN__
+    ? t('menu.labels.stashAllChanges')
+    : t('menu.labels.stashAllChangesAccessKey')
+  const stashAllChangesLabel = __DARWIN__
+    ? t('menu.labels.stashAllChanges2')
+    : t('menu.labels.stashAllChangesAccessKey2')
+
   contributionTargetDefaultBranch = truncateWithEllipsis(
     contributionTargetDefaultBranch,
     25
@@ -72,59 +122,66 @@ export function buildDefaultMenuTemplate({
 
   if (__DARWIN__) {
     template.push({
-      label: 'GitHub Desktop',
+      label: t('menu.labels.githubplus'),
       submenu: [
         {
-          label: 'About GitHub Desktop',
+          label: t('menu.labels.aboutGithubplus'),
           click: emit('show-about'),
           id: 'about',
         },
         separator,
         {
-          label: 'Settings…',
+          label: t('menu.labels.settings'),
           id: 'preferences',
           accelerator: 'CmdOrCtrl+,',
           click: emit('show-preferences'),
         },
         separator,
         {
-          label: 'Install Command Line Tool…',
+          label: t('menu.labels.installCommandLineTool'),
           id: 'install-cli',
           click: emit('install-darwin-cli'),
         },
         separator,
         {
           role: 'services',
+          label: t('menu.roles.services'),
           submenu: [],
         },
         separator,
-        { role: 'hide' },
-        { role: 'hideOthers' },
-        { role: 'unhide' },
+        { role: 'hide', label: t('menu.roles.hide') },
+        { role: 'hideOthers', label: t('menu.roles.hideOthers') },
+        { role: 'unhide', label: t('menu.roles.unhide') },
         separator,
-        { role: 'quit' },
+        { role: 'quit', label: t('menu.roles.quit') },
       ],
     })
   }
 
   const fileMenu: Electron.MenuItemConstructorOptions = {
-    label: __DARWIN__ ? 'File' : '&File',
+    label: __DARWIN__ ? t('menu.labels.file') : t('menu.labels.fileAccessKey'),
     submenu: [
       {
-        label: __DARWIN__ ? 'New Repository…' : 'New &repository…',
+        label: __DARWIN__
+          ? t('menu.labels.newRepository')
+          : t('menu.labels.newRepositoryAccessKey'),
         id: 'new-repository',
         click: emit('create-repository'),
         accelerator: 'CmdOrCtrl+N',
       },
       separator,
       {
-        label: __DARWIN__ ? 'Add Local Repository…' : 'Add &local repository…',
+        label: __DARWIN__
+          ? t('menu.labels.addLocalRepository')
+          : t('menu.labels.addLocalRepositoryAccessKey'),
         id: 'add-local-repository',
         accelerator: 'CmdOrCtrl+O',
         click: emit('add-local-repository'),
       },
       {
-        label: __DARWIN__ ? 'Clone Repository…' : 'Clo&ne repository…',
+        label: __DARWIN__
+          ? t('menu.labels.cloneRepository')
+          : t('menu.labels.cloneRepositoryAccessKey'),
         id: 'clone-repository',
         accelerator: 'CmdOrCtrl+Shift+O',
         click: emit('clone-repository'),
@@ -139,7 +196,7 @@ export function buildDefaultMenuTemplate({
     fileItems.push(
       separator,
       {
-        label: '&Options…',
+        label: t('menu.labels.optionsAccessKey'),
         id: 'preferences',
         accelerator: 'CmdOrCtrl+,',
         click: emit('show-preferences'),
@@ -147,7 +204,7 @@ export function buildDefaultMenuTemplate({
       separator,
       {
         role: 'quit',
-        label: 'E&xit',
+        label: t('menu.labels.exitAccessKey'),
         accelerator: exitAccelerator,
       }
     )
@@ -156,23 +213,52 @@ export function buildDefaultMenuTemplate({
   template.push(fileMenu)
 
   template.push({
-    label: __DARWIN__ ? 'Edit' : '&Edit',
+    label: __DARWIN__ ? t('menu.labels.edit') : t('menu.labels.editAccessKey'),
     submenu: [
-      { role: 'undo', label: __DARWIN__ ? 'Undo' : '&Undo' },
-      { role: 'redo', label: __DARWIN__ ? 'Redo' : '&Redo' },
-      separator,
-      { role: 'cut', label: __DARWIN__ ? 'Cut' : 'Cu&t' },
-      { role: 'copy', label: __DARWIN__ ? 'Copy' : '&Copy' },
-      { role: 'paste', label: __DARWIN__ ? 'Paste' : '&Paste' },
       {
-        label: __DARWIN__ ? 'Select All' : 'Select &all',
+        role: 'undo',
+        label: __DARWIN__
+          ? t('menu.labels.undo')
+          : t('menu.labels.undoAccessKey'),
+      },
+      {
+        role: 'redo',
+        label: __DARWIN__
+          ? t('menu.labels.redo')
+          : t('menu.labels.redoAccessKey'),
+      },
+      separator,
+      {
+        role: 'cut',
+        label: __DARWIN__
+          ? t('menu.labels.cut')
+          : t('menu.labels.cutAccessKey'),
+      },
+      {
+        role: 'copy',
+        label: __DARWIN__
+          ? t('menu.labels.copy')
+          : t('menu.labels.copyAccessKey'),
+      },
+      {
+        role: 'paste',
+        label: __DARWIN__
+          ? t('menu.labels.paste')
+          : t('menu.labels.pasteAccessKey'),
+      },
+      {
+        label: __DARWIN__
+          ? t('menu.labels.selectAll')
+          : t('menu.labels.selectAllAccessKey'),
         accelerator: 'CmdOrCtrl+A',
         click: emit('select-all'),
       },
       separator,
       {
         id: 'find',
-        label: __DARWIN__ ? 'Find' : '&Find',
+        label: __DARWIN__
+          ? t('menu.labels.find')
+          : t('menu.labels.findAccessKey'),
         accelerator: 'CmdOrCtrl+F',
         click: emit('find-text'),
       },
@@ -180,34 +266,44 @@ export function buildDefaultMenuTemplate({
   })
 
   template.push({
-    label: __DARWIN__ ? 'View' : '&View',
+    label: __DARWIN__ ? t('menu.labels.view') : t('menu.labels.viewAccessKey'),
     submenu: [
       {
-        label: __DARWIN__ ? 'Show Changes' : '&Changes',
+        label: __DARWIN__
+          ? t('menu.labels.showChanges')
+          : t('menu.labels.changesAccessKey'),
         id: 'show-changes',
         accelerator: 'CmdOrCtrl+1',
         click: emit('show-changes'),
       },
       {
-        label: __DARWIN__ ? 'Show History' : '&History',
+        label: __DARWIN__
+          ? t('menu.labels.showHistory')
+          : t('menu.labels.historyAccessKey'),
         id: 'show-history',
         accelerator: 'CmdOrCtrl+2',
         click: emit('show-history'),
       },
       {
-        label: __DARWIN__ ? 'Show Repository List' : 'Repository &list',
+        label: __DARWIN__
+          ? t('menu.labels.showRepositoryList')
+          : t('menu.labels.repositoryListAccessKey'),
         id: 'show-repository-list',
         accelerator: 'CmdOrCtrl+T',
         click: emit('choose-repository'),
       },
       {
-        label: __DARWIN__ ? 'Show Branches List' : '&Branches list',
+        label: __DARWIN__
+          ? t('menu.labels.showBranchesList')
+          : t('menu.labels.branchesListAccessKey'),
         id: 'show-branches-list',
         accelerator: 'CmdOrCtrl+B',
         click: emit('show-branches'),
       },
       {
-        label: __DARWIN__ ? 'Show Worktrees List' : 'Wor&ktrees list',
+        label: __DARWIN__
+          ? t('menu.labels.showWorktreesList')
+          : t('menu.labels.worktreesListAccessKey'),
         id: 'show-worktrees-list',
         accelerator: 'CmdOrCtrl+Alt+W',
         click: emit('show-worktrees'),
@@ -215,7 +311,9 @@ export function buildDefaultMenuTemplate({
       },
       separator,
       {
-        label: __DARWIN__ ? 'Go to Summary' : 'Go to &Summary',
+        label: __DARWIN__
+          ? t('menu.labels.goToSummary')
+          : t('menu.labels.goToSummaryAccessKey'),
         id: 'go-to-commit-message',
         accelerator: 'CmdOrCtrl+G',
         click: emit('go-to-commit-message'),
@@ -229,54 +327,60 @@ export function buildDefaultMenuTemplate({
           : emit('show-stashed-changes'),
       },
       {
-        label: __DARWIN__
-          ? `${isChangesFilterVisible ? 'Hide' : 'Show'} Changes Filter`
-          : `${
-              isChangesFilterVisible ? 'Hide' : 'Show'
-            } Toggle Chan&ges Filter`,
+        label: t(
+          isChangesFilterVisible
+            ? 'menu.hideChangesFilter'
+            : 'menu.showChangesFilter'
+        ),
         id: 'toggle-changes-filter',
         accelerator: 'CmdOrCtrl+L',
         click: emit('toggle-changes-filter'),
       },
       {
-        label: __DARWIN__ ? 'Toggle Full Screen' : 'Toggle &full screen',
+        label: __DARWIN__
+          ? t('menu.labels.toggleFullScreen')
+          : t('menu.labels.toggleFullScreenAccessKey'),
         role: 'togglefullscreen',
       },
       separator,
       {
-        label: __DARWIN__ ? 'Reset Zoom' : 'Reset zoom',
+        label: __DARWIN__
+          ? t('menu.labels.resetZoom')
+          : t('menu.labels.resetZoom2'),
         accelerator: 'CmdOrCtrl+0',
         click: zoom(ZoomDirection.Reset),
       },
       {
-        label: __DARWIN__ ? 'Zoom In' : 'Zoom in',
+        label: __DARWIN__ ? t('menu.labels.zoomIn') : t('menu.labels.zoomIn2'),
         accelerator: 'CmdOrCtrl+=',
         click: zoom(ZoomDirection.In),
       },
       {
-        label: __DARWIN__ ? 'Zoom Out' : 'Zoom out',
+        label: __DARWIN__
+          ? t('menu.labels.zoomOut')
+          : t('menu.labels.zoomOut2'),
         accelerator: 'CmdOrCtrl+-',
         click: zoom(ZoomDirection.Out),
       },
       {
         label: __DARWIN__
-          ? 'Expand Active Resizable'
-          : 'Expand active resizable',
+          ? t('menu.labels.expandActiveResizable')
+          : t('menu.labels.expandActiveResizable2'),
         id: 'increase-active-resizable-width',
         accelerator: 'CmdOrCtrl+9',
         click: emit('increase-active-resizable-width'),
       },
       {
         label: __DARWIN__
-          ? 'Contract Active Resizable'
-          : 'Contract active resizable',
+          ? t('menu.labels.contractActiveResizable')
+          : t('menu.labels.contractActiveResizable2'),
         id: 'decrease-active-resizable-width',
         accelerator: 'CmdOrCtrl+8',
         click: emit('decrease-active-resizable-width'),
       },
       separator,
       {
-        label: '&Reload',
+        label: t('menu.labels.reloadAccessKey'),
         id: 'reload-window',
         // Ctrl+Alt is interpreted as AltGr on international keyboards and this
         // can clash with other shortcuts. We should always use Ctrl+Shift for
@@ -293,8 +397,8 @@ export function buildDefaultMenuTemplate({
       {
         id: 'show-devtools',
         label: __DARWIN__
-          ? 'Toggle Developer Tools'
-          : '&Toggle developer tools',
+          ? t('menu.labels.toggleDeveloperTools')
+          : t('menu.labels.toggleDeveloperToolsAccessKey'),
         accelerator: (() => {
           return __DARWIN__ ? 'Alt+Command+I' : 'Ctrl+Shift+I'
         })(),
@@ -315,7 +419,9 @@ export function buildDefaultMenuTemplate({
   const pushEventType = isForcePushForCurrentRepository ? 'force-push' : 'push'
 
   template.push({
-    label: __DARWIN__ ? 'Repository' : '&Repository',
+    label: __DARWIN__
+      ? t('menu.labels.repository')
+      : t('menu.labels.repositoryAccessKey'),
     id: 'repository',
     submenu: [
       {
@@ -326,13 +432,17 @@ export function buildDefaultMenuTemplate({
       },
       {
         id: 'pull',
-        label: __DARWIN__ ? 'Pull' : 'Pu&ll',
+        label: __DARWIN__
+          ? t('menu.labels.pull')
+          : t('menu.labels.pullAccessKey'),
         accelerator: 'CmdOrCtrl+Shift+P',
         click: emit('pull'),
       },
       {
         id: 'fetch',
-        label: __DARWIN__ ? 'Fetch' : '&Fetch',
+        label: __DARWIN__
+          ? t('menu.labels.fetch')
+          : t('menu.labels.fetchAccessKey'),
         accelerator: 'CmdOrCtrl+Shift+T',
         click: emit('fetch'),
       },
@@ -345,32 +455,34 @@ export function buildDefaultMenuTemplate({
       separator,
       {
         id: 'view-repository-on-github',
-        label: __DARWIN__ ? 'View on GitHub' : '&View on GitHub',
+        label: __DARWIN__
+          ? t('menu.labels.viewOnGithub')
+          : t('menu.labels.viewOnGithubAccessKey'),
         accelerator: 'CmdOrCtrl+Shift+G',
         click: emit('view-repository-on-github'),
       },
       {
-        label: __DARWIN__
-          ? `Open in ${selectedShell ?? 'Shell'}`
-          : `O&pen in ${selectedShell ?? 'shell'}`,
+        label: t('menu.openInShell', {
+          name: selectedShell ?? t('menu.shell'),
+        }),
         id: 'open-in-shell',
         accelerator: 'Ctrl+`',
         click: emit('open-in-shell'),
       },
       {
         label: __DARWIN__
-          ? 'Show in Finder'
+          ? t('menu.labels.showInFinder')
           : __WIN32__
-          ? 'Show in E&xplorer'
-          : 'Show in your File Manager',
+          ? t('menu.labels.showInExplorerAccessKey')
+          : t('menu.labels.showInYourFileManager'),
         id: 'open-working-directory',
         accelerator: 'CmdOrCtrl+Shift+F',
         click: emit('open-working-directory'),
       },
       {
-        label: __DARWIN__
-          ? `Open in ${selectedExternalEditor ?? 'External Editor'}`
-          : `&Open in ${selectedExternalEditor ?? 'external editor'}`,
+        label: t('menu.openInEditor', {
+          name: selectedExternalEditor ?? t('menu.externalEditor'),
+        }),
         id: 'open-external-editor',
         accelerator: 'CmdOrCtrl+Shift+A',
         click: emit('open-external-editor'),
@@ -379,8 +491,8 @@ export function buildDefaultMenuTemplate({
         ? [
             {
               label: __DARWIN__
-                ? 'Open in GitHub Copilot'
-                : 'Open in GitHub &Copilot',
+                ? t('menu.labels.openInGithubCopilot')
+                : t('menu.labels.openInGithubCopilotAccessKey'),
               id: 'open-in-copilot-app',
               accelerator: 'CmdOrCtrl+Shift+J',
               click: emit('open-in-copilot-app'),
@@ -388,7 +500,9 @@ export function buildDefaultMenuTemplate({
           ]
         : []),
       {
-        label: __DARWIN__ ? 'Open With…' : 'Open &with…',
+        label: __DARWIN__
+          ? t('menu.labels.openWith')
+          : t('menu.labels.openWithAccessKey'),
         id: 'open-with-external-editor',
         accelerator: 'CmdOrCtrl+Shift+Alt+A',
         click: emit('open-with-external-editor'),
@@ -397,22 +511,26 @@ export function buildDefaultMenuTemplate({
       {
         id: 'create-issue-in-repository-on-github',
         label: __DARWIN__
-          ? 'Create Issue on GitHub'
-          : 'Create &issue on GitHub',
+          ? t('menu.labels.createIssueOnGithub')
+          : t('menu.labels.createIssueOnGithubAccessKey'),
         accelerator: 'CmdOrCtrl+I',
         click: emit('create-issue-in-repository-on-github'),
       },
       separator,
       {
         id: 'create-worktree',
-        label: __DARWIN__ ? 'New Worktree…' : 'New work&tree…',
+        label: __DARWIN__
+          ? t('menu.labels.newWorktree')
+          : t('menu.labels.newWorktreeAccessKey'),
         click: emit('create-worktree'),
         accelerator: 'CmdOrCtrl+Shift+W',
         visible: enableWorktreeSupport(),
       },
       ...(enableWorktreeSupport() ? [separator] : []),
       {
-        label: __DARWIN__ ? 'Repository Settings…' : 'Repository &settings…',
+        label: __DARWIN__
+          ? t('menu.labels.repositorySettings')
+          : t('menu.labels.repositorySettingsAccessKey'),
         id: 'show-repository-settings',
         click: emit('show-repository-settings'),
       },
@@ -421,26 +539,34 @@ export function buildDefaultMenuTemplate({
 
   const branchSubmenu = [
     {
-      label: __DARWIN__ ? 'New Branch…' : 'New &branch…',
+      label: __DARWIN__
+        ? t('menu.labels.newBranch')
+        : t('menu.labels.newBranchAccessKey'),
       id: 'create-branch',
       accelerator: 'CmdOrCtrl+Shift+N',
       click: emit('create-branch'),
     },
     {
-      label: __DARWIN__ ? 'Rename…' : '&Rename…',
+      label: __DARWIN__
+        ? t('menu.labels.rename')
+        : t('menu.labels.renameAccessKey'),
       id: 'rename-branch',
       accelerator: 'CmdOrCtrl+Shift+R',
       click: emit('rename-branch'),
     },
     {
-      label: __DARWIN__ ? 'Delete…' : '&Delete…',
+      label: __DARWIN__
+        ? t('menu.labels.delete')
+        : t('menu.labels.deleteAccessKey'),
       id: 'delete-branch',
       accelerator: 'CmdOrCtrl+Shift+D',
       click: emit('delete-branch'),
     },
     separator,
     {
-      label: __DARWIN__ ? 'Discard All Changes…' : 'Discard all changes…',
+      label: __DARWIN__
+        ? t('menu.labels.discardAllChanges')
+        : t('menu.labels.discardAllChanges2'),
       id: 'discard-all-changes',
       accelerator: 'CmdOrCtrl+Shift+Backspace',
       click: emit('discard-all-changes'),
@@ -455,50 +581,58 @@ export function buildDefaultMenuTemplate({
     },
     separator,
     {
-      label: __DARWIN__
-        ? `Update from ${contributionTargetDefaultBranch}`
-        : `&Update from ${contributionTargetDefaultBranch}`,
+      label: t('menu.updateFromBranch', {
+        name: contributionTargetDefaultBranch,
+      }),
       id: 'update-branch-with-contribution-target-branch',
       accelerator: 'CmdOrCtrl+Shift+U',
       click: emit('update-branch-with-contribution-target-branch'),
     },
     {
-      label: __DARWIN__ ? 'Compare to Branch' : '&Compare to branch',
+      label: __DARWIN__
+        ? t('menu.labels.compareToBranch')
+        : t('menu.labels.compareToBranchAccessKey'),
       id: 'compare-to-branch',
       accelerator: 'CmdOrCtrl+Shift+B',
       click: emit('compare-to-branch'),
     },
     {
       label: __DARWIN__
-        ? 'Merge into Current Branch…'
-        : '&Merge into current branch…',
+        ? t('menu.labels.mergeIntoCurrentBranch')
+        : t('menu.labels.mergeIntoCurrentBranchAccessKey'),
       id: 'merge-branch',
       accelerator: 'CmdOrCtrl+Shift+M',
       click: emit('merge-branch'),
     },
     {
       label: __DARWIN__
-        ? 'Squash and Merge into Current Branch…'
-        : 'Squas&h and merge into current branch…',
+        ? t('menu.labels.squashAndMergeIntoCurrentBranch')
+        : t('menu.labels.squashAndMergeIntoCurrentBranchAccessKey'),
       id: 'squash-and-merge-branch',
       accelerator: 'CmdOrCtrl+Shift+H',
       click: emit('squash-and-merge-branch'),
     },
     {
-      label: __DARWIN__ ? 'Rebase Current Branch…' : 'R&ebase current branch…',
+      label: __DARWIN__
+        ? t('menu.labels.rebaseCurrentBranch')
+        : t('menu.labels.rebaseCurrentBranchAccessKey'),
       id: 'rebase-branch',
       accelerator: 'CmdOrCtrl+Shift+E',
       click: emit('rebase-branch'),
     },
     separator,
     {
-      label: __DARWIN__ ? 'Compare on GitHub' : 'Compare on &GitHub',
+      label: __DARWIN__
+        ? t('menu.labels.compareOnGithub')
+        : t('menu.labels.compareOnGithubAccessKey'),
       id: 'compare-on-github',
       accelerator: 'CmdOrCtrl+Shift+C',
       click: emit('compare-on-github'),
     },
     {
-      label: __DARWIN__ ? 'View Branch on GitHub' : 'View branch on GitHub',
+      label: __DARWIN__
+        ? t('menu.labels.viewBranchOnGithub')
+        : t('menu.labels.viewBranchOnGithub2'),
       id: 'branch-on-github',
       accelerator: 'CmdOrCtrl+Alt+B',
       click: emit('branch-on-github'),
@@ -506,7 +640,9 @@ export function buildDefaultMenuTemplate({
   ]
 
   branchSubmenu.push({
-    label: __DARWIN__ ? 'Preview Pull Request' : 'Preview pull request',
+    label: __DARWIN__
+      ? t('menu.labels.previewPullRequest')
+      : t('menu.labels.previewPullRequest2'),
     id: 'preview-pull-request',
     accelerator: 'CmdOrCtrl+Alt+P',
     click: emit('preview-pull-request'),
@@ -520,7 +656,9 @@ export function buildDefaultMenuTemplate({
   })
 
   template.push({
-    label: __DARWIN__ ? 'Branch' : '&Branch',
+    label: __DARWIN__
+      ? t('menu.labels.branch')
+      : t('menu.labels.branchAccessKey'),
     id: 'branch',
     submenu: branchSubmenu,
   })
@@ -528,27 +666,32 @@ export function buildDefaultMenuTemplate({
   if (__DARWIN__) {
     template.push({
       role: 'window',
+      label: t('menu.roles.window'),
       submenu: [
-        { role: 'minimize' },
-        { role: 'zoom' },
-        { role: 'close' },
+        { role: 'minimize', label: t('menu.roles.minimize') },
+        { role: 'zoom', label: t('menu.roles.zoom') },
+        { role: 'close', label: t('menu.roles.close') },
         separator,
-        { role: 'front' },
+        { role: 'front', label: t('menu.roles.front') },
       ],
     })
   }
 
   const submitIssueItem: Electron.MenuItemConstructorOptions = {
-    label: __DARWIN__ ? 'Report Issue…' : 'Report issue…',
+    label: __DARWIN__
+      ? t('menu.labels.reportIssue')
+      : t('menu.labels.reportIssue2'),
     click() {
       shell
-        .openExternal('https://github.com/desktop/desktop/issues/new/choose')
+        .openExternal('https://github.com/Dev-Snow-flake/GitHubPlus/issues')
         .catch(err => log.error('Failed opening issue creation page', err))
     },
   }
 
   const contactSupportItem: Electron.MenuItemConstructorOptions = {
-    label: __DARWIN__ ? 'Contact GitHub Support…' : '&Contact GitHub support…',
+    label: __DARWIN__
+      ? t('menu.labels.contactGithubSupport')
+      : t('menu.labels.contactGithubSupportAccessKey'),
     click() {
       shell
         .openExternal(
@@ -559,7 +702,7 @@ export function buildDefaultMenuTemplate({
   }
 
   const showUserGuides: Electron.MenuItemConstructorOptions = {
-    label: 'Show User Guides',
+    label: t('menu.labels.showUserGuides'),
     click() {
       shell
         .openExternal('https://docs.github.com/en/desktop')
@@ -568,7 +711,9 @@ export function buildDefaultMenuTemplate({
   }
 
   const showKeyboardShortcuts: Electron.MenuItemConstructorOptions = {
-    label: __DARWIN__ ? 'Show Keyboard Shortcuts' : 'Show keyboard shortcuts',
+    label: __DARWIN__
+      ? t('menu.labels.showKeyboardShortcuts')
+      : t('menu.labels.showKeyboardShortcuts2'),
     click() {
       shell
         .openExternal(
@@ -579,10 +724,10 @@ export function buildDefaultMenuTemplate({
   }
 
   const showLogsLabel = __DARWIN__
-    ? 'Show Logs in Finder'
+    ? t('menu.labels.showLogsInFinder')
     : __WIN32__
-    ? 'S&how logs in Explorer'
-    : 'S&how logs in your File Manager'
+    ? t('menu.labels.showLogsInExplorerAccessKey')
+    : t('menu.labels.showLogsInYourFileManagerAccessKey')
 
   const showLogsItem: Electron.MenuItemConstructorOptions = {
     label: showLogsLabel,
@@ -607,16 +752,17 @@ export function buildDefaultMenuTemplate({
   if (__DARWIN__) {
     template.push({
       role: 'help',
+      label: t('menu.roles.help'),
       submenu: helpItems,
     })
   } else {
     template.push({
-      label: '&Help',
+      label: t('menu.labels.helpAccessKey'),
       submenu: [
         ...helpItems,
         separator,
         {
-          label: '&About GitHub Desktop',
+          label: t('menu.labels.aboutGithubplusAccessKey'),
           click: emit('show-about'),
           id: 'about',
         },
@@ -634,22 +780,30 @@ function getPushLabel(
   askForConfirmationOnForcePush: boolean
 ): string {
   if (!isForcePushForCurrentRepository) {
-    return __DARWIN__ ? 'Push' : 'P&ush'
+    return __DARWIN__ ? t('menu.labels.push') : t('menu.labels.pushAccessKey')
   }
 
   if (askForConfirmationOnForcePush) {
-    return __DARWIN__ ? 'Force Push…' : 'Force P&ush…'
+    return __DARWIN__
+      ? t('menu.labels.forcePush')
+      : t('menu.labels.forcePushAccessKey')
   }
 
-  return __DARWIN__ ? 'Force Push' : 'Force P&ush'
+  return __DARWIN__
+    ? t('menu.labels.forcePush2')
+    : t('menu.labels.forcePushAccessKey2')
 }
 
 function getStashedChangesLabel(isStashedChangesVisible: boolean): string {
   if (isStashedChangesVisible) {
-    return __DARWIN__ ? 'Hide Stashed Changes' : 'H&ide stashed changes'
+    return __DARWIN__
+      ? t('menu.labels.hideStashedChanges')
+      : t('menu.labels.hideStashedChangesAccessKey')
   }
 
-  return __DARWIN__ ? 'Show Stashed Changes' : 'Sho&w stashed changes'
+  return __DARWIN__
+    ? t('menu.labels.showStashedChanges')
+    : t('menu.labels.showStashedChangesAccessKey')
 }
 
 type ClickHandler = (

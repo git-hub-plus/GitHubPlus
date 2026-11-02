@@ -20,6 +20,7 @@ describe('IPC channel contract', () => {
     : never
 
   const expectedRequestChannels = [
+    'app-language-changed',
     'select-all-window-contents',
     'dialog-did-open',
     'update-menu-state',
@@ -74,6 +75,8 @@ describe('IPC channel contract', () => {
   ] as const
 
   const expectedResponseChannels = [
+    'get-app-language',
+    'set-app-language',
     'get-path',
     'get-app-architecture',
     'get-app-path',

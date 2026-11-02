@@ -15,6 +15,7 @@ import * as Fs from 'fs'
 
 import { AppWindow } from './app-window'
 import { buildDefaultMenu, getAllMenuItems } from './menu'
+import { registerI18nIPC } from './i18n-ipc'
 import { shellNeedsPatching, updateEnvironmentForProcess } from '../lib/shell'
 import { parseAppURL } from '../lib/parse-app-url'
 import {
@@ -773,6 +774,7 @@ app.on('ready', () => {
   ipcMain.handle('request-notifications-permission', async () =>
     requestNotificationsPermission()
   )
+  registerI18nIPC(() => mainWindow?.sendAppMenu())
 })
 
 app.on('activate', () => {
