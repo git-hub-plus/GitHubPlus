@@ -30,7 +30,7 @@ export function showUncaughtException(isLaunchError: boolean, error: Error) {
       message:
         `GitHub+ has encountered an unrecoverable error and will need to restart.\n\n` +
         `If you encounter this repeatedly please report ` +
-        `this issue to the GitHub+ issue tracker: https://github.com/Dev-Snow-flake/GitHubPlus/issues.\n\n${
+        `this issue to the GitHub+ issue tracker: https://github.com/git-hub-plus/GitHubPlus/issues.\n\n${
           error.stack || error.message
         }`,
     })

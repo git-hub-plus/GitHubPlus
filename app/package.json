@@ -7,7 +7,7 @@
   "main": "./main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dev-Snow-flake/GitHubPlus.git"
+    "url": "https://github.com/git-hub-plus/GitHubPlus.git"
   },
   "description": "Git desktop client with LAN hub support",
   "author": {

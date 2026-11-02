@@ -114,7 +114,7 @@
   | 앱 ID | `app/package.json` `bundleID` | com.github.GitHubClient | com.devsnowflake.githubplus |
   | 제작자 | `companyName`, `author` | GitHub, Inc. | Dev-Snow-flake |
   | 실행 파일 | `script/dist-info.ts` | GitHubDesktop.exe | GitHubPlus.exe |
-  | 데이터 폴더 | userData | %APPDATA%\GitHub Desktop | %APPDATA%\GitHubPlus |
+  | 데이터 폴더 | userData | %APPDATA%\GitHub Desktop | %APPDATA%\GitHub+ (개발 빌드 %APPDATA%\GitHub+-dev) |
   | 프로토콜 | `main.ts`, `script/build.ts` | x-github-client, x-github-desktop-auth | x-github-plus, x-github-plus-auth |
   | 설명 | `description` | Simple collaboration from your desktop | 내부망 허브를 지원하는 Git 데스크톱 클라이언트 (안) |
 
@@ -125,7 +125,7 @@
 - **사용 통계 전송 끄기**: `lib/stats/stats-store.ts` (central.github.com).
 - GitHub+ 전용 아이콘 제작. MIT `LICENSE`와 원저작권 표시는 유지한다(정보 화면의 오픈소스 고지 포함).
 - 상표: "GitHub"와 Octocat 로고는 GitHub, Inc.의 상표다. 저장소를 public으로 두므로 **설치 파일을 공개 배포하는 시점에는 이름을 다시 검토**한다. 아이콘에는 Octocat을 쓰지 않는다.
-- **원격 저장소: 새 public 저장소(확정)**. `Dev-Snow-flake/github-plus`(안, GitHub 저장소 이름에는 `+`를 쓸 수 없음)를 `origin`으로, 원본 `desktop/desktop`은 `upstream` 리모트로 둔다.
+- **원격 저장소: public `git-hub-plus/GitHubPlus`(확정)**. https://github.com/git-hub-plus/GitHubPlus 를 `origin`(main)으로, 원본 `desktop/desktop`은 `upstream` 리모트로 둔다. (처음에는 Dev-Snow-flake/GitHubPlus로 만들었다가 조직으로 이전함)
   - public이므로 **비밀값은 절대 커밋하지 않는다**: OAuth App의 client secret은 빌드 시 환경 변수(`DESKTOP_OAUTH_CLIENT_ID` / `DESKTOP_OAUTH_CLIENT_SECRET` 계열)로만 주입하고, `.env` 파일은 `.gitignore`에 넣는다.
   - README를 GitHub+ 소개로 교체하고, "GitHub Desktop(MIT) 기반 비공식 파생 앱이며 GitHub, Inc.와 무관"하다는 고지를 넣는다.
 

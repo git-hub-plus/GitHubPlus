@@ -683,7 +683,7 @@ export function buildDefaultMenuTemplate({
       : t('menu.labels.reportIssue2'),
     click() {
       shell
-        .openExternal('https://github.com/Dev-Snow-flake/GitHubPlus/issues')
+        .openExternal('https://github.com/git-hub-plus/GitHubPlus/issues')
         .catch(err => log.error('Failed opening issue creation page', err))
     },
   }

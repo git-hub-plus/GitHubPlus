@@ -63,7 +63,7 @@ export class About extends React.Component<IAboutProps> {
     const name = this.props.applicationName
     const version = this.props.applicationVersion
     const releaseNotesLink = (
-      <LinkButton uri="https://github.com/Dev-Snow-flake/GitHubPlus/releases">
+      <LinkButton uri="https://github.com/git-hub-plus/GitHubPlus/releases">
         release notes
       </LinkButton>
     )

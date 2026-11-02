@@ -40,7 +40,7 @@ const BottomImageUri = encodePathAsUrl(
   'static/welcome-illustration-left-bottom.svg'
 )
 
-const issuesUri = 'https://github.com/Dev-Snow-flake/GitHubPlus/issues'
+const issuesUri = 'https://github.com/git-hub-plus/GitHubPlus/issues'
 
 /**
  * Formats an error by attempting to strip out user-identifiable information
