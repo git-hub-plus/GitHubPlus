@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Branch } from '@shared/models/git'
 import { invoke } from '../../ipc'
 import { useT } from '../../i18n'
@@ -68,6 +68,7 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
   }
   // Temporary fixed-row window; U1 owns the shared VirtualList implementation.
   const [scrollTop, setScrollTop] = useState(0)
+  const list = useRef<HTMLDivElement>(null)
   const visible = branches.filter((branch) =>
     branch.name.toLowerCase().includes(query.toLowerCase())
   )
@@ -103,13 +104,36 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
         {!loaded && <p>{t('common.loading')}</p>}
         {loaded && !visible.length && <p>{t('repoActions.noBranches')}</p>}
         <div
+          ref={list}
           style={{ height: Math.min(rows.length * 28, 280), overflowY: 'auto' }}
           onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
+          onKeyDown={(event) => {
+            if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
+            const row = (event.target as HTMLElement).closest<HTMLElement>('[data-branch-index]')
+            if (!row) return
+            event.preventDefault()
+            event.stopPropagation()
+            const direction = event.key === 'ArrowDown' ? 1 : -1
+            let next = Number(row.dataset.branchIndex) + direction
+            while (next >= 0 && next < rows.length && !rows[next].branch) next += direction
+            if (next < 0 || next >= rows.length) return
+            if (next * 28 < scrollTop || next * 28 + 28 > scrollTop + 280) {
+              list.current!.scrollTop = next * 28
+              setScrollTop(next * 28)
+            }
+            const focus = () =>
+              list.current
+                ?.querySelector<HTMLElement>(`[data-branch-index="${next}"] button:not(:disabled)`)
+                ?.focus()
+            if (list.current?.querySelector(`[data-branch-index="${next}"]`)) focus()
+            else requestAnimationFrame(focus)
+          }}
         >
           <div style={{ height: rows.length * 28, position: 'relative' }}>
             {rows.slice(start, start + 17).map(({ key, type, branch }, index) => (
               <div
                 key={key}
+                data-branch-index={start + index}
                 style={{
                   position: 'absolute',
                   top: (start + index) * 28,
