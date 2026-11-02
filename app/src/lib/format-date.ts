@@ -1,3 +1,5 @@
+import { ko, enUS } from 'date-fns/locale'
+import { getLocale } from './i18n'
 import { format } from 'date-fns'
 import {
   getDateFormatPreference,
@@ -56,7 +58,7 @@ export function formatDate(
   }
 
   if (!enableFormattingPreferences()) {
-    return getDateFormatter('en-US', { dateStyle, timeStyle }).format(value)
+    return getDateFormatter(getLocale(), { dateStyle, timeStyle }).format(value)
   }
 
   let formatString: string
@@ -75,7 +77,9 @@ export function formatDate(
   }
 
   try {
-    return format(value, formatString)
+    return format(value, formatString, {
+      locale: getLocale() === 'ko-KR' ? ko : enUS,
+    })
   } catch (e) {
     // In case the user has configured an invalid format pattern, we don't want
     // the app to crash, let's fall back to a default format and log the error

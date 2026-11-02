@@ -1,5 +1,6 @@
+import { getLanguage, setLanguage, Language } from '../../../src/lib/i18n'
 import assert from 'node:assert'
-import { describe, it } from 'node:test'
+import { beforeEach, afterEach, describe, it } from 'node:test'
 import * as React from 'react'
 import { render, screen, fireEvent } from '../../helpers/ui/render'
 import { Appearance } from '../../../src/ui/preferences/appearance'
@@ -13,6 +14,7 @@ import {
 function renderAppearance(alwaysShowWorktreeList = false) {
   const changes: boolean[] = []
   const props = {
+    onLanguageChanged: (language: Language) => setLanguage(language),
     selectedTheme: ApplicationTheme.Light,
     onSelectedThemeChanged: () => {},
     selectedTabSize: 4,
@@ -33,6 +35,20 @@ function renderAppearance(alwaysShowWorktreeList = false) {
 }
 
 describe('Appearance preferences', () => {
+  beforeEach(() => setLanguage('en'))
+  afterEach(() => setLanguage('ko'))
+
+  it('selects a language immediately and renders translated labels', () => {
+    const { rerender, props } = renderAppearance()
+    fireEvent.change(
+      screen.getByRole('combobox', { name: '언어 / Language' }),
+      { target: { value: 'ko' } }
+    )
+    assert.equal(getLanguage(), 'ko')
+    rerender(<Appearance {...props} />)
+    assert.ok(screen.getByRole('heading', { name: '테마' }))
+    assert.ok(screen.getByRole('checkbox', { name: '항상 워크트리 목록 표시' }))
+  })
   it('shows the worktree preference below Diff Tab Size in Miscellaneous', () => {
     renderAppearance()
 

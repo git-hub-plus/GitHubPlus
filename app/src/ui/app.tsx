@@ -1,3 +1,4 @@
+import { onLanguageChanged } from '../lib/i18n'
 import * as React from 'react'
 import * as Path from 'path'
 
@@ -279,6 +280,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   private lastKeyPressed: string | null = null
 
   private updateIntervalHandle?: number
+  private unsubscribeLanguage: (() => void) | undefined
 
   private repositoryViewRef = React.createRef<RepositoryView>()
 
@@ -378,6 +380,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   public componentWillUnmount() {
+    this.unsubscribeLanguage?.()
     window.clearInterval(this.updateIntervalHandle)
 
     if (__DARWIN__) {
@@ -1063,6 +1066,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   public componentDidMount() {
+    this.unsubscribeLanguage = onLanguageChanged(() => this.forceUpdate())
     document.ondragover = e => {
       if (e.dataTransfer != null) {
         if (this.isShowingModal) {
