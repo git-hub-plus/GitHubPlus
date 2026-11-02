@@ -117,6 +117,28 @@ it('shows a detached HEAD short SHA', () => {
   expect(screen.getByRole('button', { name: '브랜치 0123456' })).toBeTruthy()
 })
 
+it('moves keyboard focus beyond the initial virtual branch window', async () => {
+  bridge.invoke.mockResolvedValueOnce({
+    ok: true,
+    value: Array.from({ length: 60 }, (_, index) => ({
+      name: `topic-${index}`,
+      type: 'local',
+      tipSha: 'a',
+      isCurrent: false,
+    })),
+  })
+  render(<Toolbar />)
+  fireEvent.click(screen.getByRole('button', { name: '브랜치 main' }))
+  const edge = await screen.findByRole('button', { name: 'topic-15' })
+  expect(screen.queryByRole('button', { name: 'topic-16' })).toBeNull()
+  edge.focus()
+  fireEvent.keyDown(edge, { key: 'ArrowDown' })
+  await waitFor(() =>
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'topic-16' }))
+  )
+  expect(screen.queryByRole('button', { name: 'topic-59' })).toBeNull()
+})
+
 it.each(['rename', 'delete'] as const)('confirms branch %s and refreshes', async (action) => {
   bridge.invoke.mockResolvedValueOnce({
     ok: true,
