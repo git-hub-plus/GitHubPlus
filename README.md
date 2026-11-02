@@ -1,110 +1,53 @@
-# [GitHub Desktop](https://desktop.github.com)
+# GitHub+
 
-[GitHub Desktop](https://desktop.github.com/) is an open-source [Electron](https://www.electronjs.org/)-based
-GitHub app. It is written in [TypeScript](https://www.typescriptlang.org) and
-uses [React](https://reactjs.org/).
+GitHub+는 [GitHub Desktop](https://github.com/desktop/desktop)(MIT)을 출발점으로 만드는
+독립 Git 데스크톱 클라이언트입니다. Electron, TypeScript, React로 작성합니다.
 
-<picture>
-  <source
-    srcset="https://user-images.githubusercontent.com/634063/202742848-63fa1488-6254-49b5-af7c-96a6b50ea8af.png"
-    media="(prefers-color-scheme: dark)"
-  />
-  <img
-    width="1072"
-    src="https://user-images.githubusercontent.com/634063/202742985-bb3b3b94-8aca-404a-8d8a-fd6a6f030672.png"
-    alt="A screenshot of the GitHub Desktop application showing changes being viewed and committed with two attributed co-authors"
-  />
-</picture>
+> GitHub+는 **비공식 파생 앱**이며 GitHub, Inc.와 아무 관련이 없습니다.
+> 공식 GitHub Desktop과 같은 PC에 함께 설치해도 설정과 데이터가 섞이지 않습니다.
 
-## Where can I get it?
+## 주요 목표
 
-Download the official installer for your operating system:
+- **로컬 허브**: 내부망의 PC 한 대를 호스트로 두고, 여러 PC가 GitHub 없이 그 호스트에
+  push·pull·clone합니다. 별도 서버 프로그램 없이 같은 앱이 호스트와 클라이언트를 모두 맡습니다.
+  누구나 접속할 수 있지만 force push와 브랜치 삭제는 서버가 막아서 버전 히스토리가 보존됩니다.
+- **한국어 우선 UI**: 기본 언어는 한국어이고 영어로 전환할 수 있습니다.
+- **UI/UX 개량**: 저장소 사이드바, 보기 쉬운 히스토리, 툴바 재배치, 테마 리뉴얼,
+  파일을 끌어다 놓아 바로 커밋·푸시하는 편의 기능.
 
- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin)
- - [macOS (Apple silicon)](https://central.github.com/deployments/desktop/desktop/latest/darwin-arm64)
- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32)
- - [Windows machine-wide install](https://central.github.com/deployments/desktop/desktop/latest/win32?format=msi)
+자세한 기획과 진행 단계는 [PLAN.md](PLAN.md)를 보세요.
 
-Linux is not officially supported; however, you can find installers created for Linux from a fork of GitHub Desktop in the [Community Releases](https://github.com/desktop/desktop#community-releases) section.
+## 개발 환경
 
-### Beta Channel
+Windows 기준으로 다음이 필요합니다.
 
-Want to test out new features and get fixes before everyone else? Install the
-beta channel to get access to early builds of Desktop:
+- Node.js (`.nvmrc` 버전 권장)
+- Yarn 1.x (`npm i -g yarn`)
+- Python 3
+- Visual Studio Build Tools 2022, "C++를 사용한 데스크톱 개발" 워크로드
 
- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin?env=beta)
- - [macOS (Apple silicon)](https://central.github.com/deployments/desktop/desktop/latest/darwin-arm64?env=beta)
- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32?env=beta)
- - [Windows (ARM64)](https://central.github.com/deployments/desktop/desktop/latest/win32-arm64?env=beta)
+```shell
+yarn            # 의존성 설치 (네이티브 모듈 빌드 포함)
+yarn build:dev  # 개발 빌드
+yarn start      # 실행 (변경 사항은 Ctrl+Alt+R로 다시 불러오기)
+```
 
-The release notes for the latest beta versions are available [here](https://desktop.github.com/release-notes/?env=beta).
+원본의 개발 문서는 [docs/](docs/)에 있습니다.
 
-### Past Releases
-You can find past releases at https://desktop.githubusercontent.com. After installation of a past version, the auto update functionality will attempt to download the latest version. 
+### GitHub.com 로그인 (프로덕션 빌드)
 
-### Community Releases
+개발 빌드는 원본 저장소가 공개해 둔 개발용 OAuth App으로 로그인합니다.
+프로덕션 빌드는 직접 등록한 GitHub OAuth App이 필요합니다. 콜백 URL은 `x-github-plus-auth://oauth`입니다.
+자격 증명은 빌드할 때 환경 변수로만 넣고 **절대 커밋하지 마세요**.
 
-There are several community-supported package managers that can be used to
-install GitHub Desktop:
- - Windows users can install using [winget](https://docs.microsoft.com/en-us/windows/package-manager/winget/) `c:\> winget install github-desktop` or [Chocolatey](https://chocolatey.org/) `c:\> choco install github-desktop`
- - macOS users can install using [Homebrew](https://brew.sh/) package manager:
-      `$ brew install --cask github`
+```shell
+DESKTOP_OAUTH_CLIENT_ID=... DESKTOP_OAUTH_CLIENT_SECRET=... yarn build:prod
+```
 
-Installers for various Linux distributions can be found on the
-[`shiftkey/desktop`](https://github.com/shiftkey/desktop) fork.
+## 라이선스
 
-## Is GitHub Desktop right for me? What are the primary areas of focus?
+**[MIT](LICENSE)**. 원본 GitHub Desktop의 저작권 고지를 유지합니다.
 
-[This document](https://github.com/desktop/desktop/blob/development/docs/process/what-is-desktop.md) describes the focus of GitHub Desktop and who the product is most useful for.
-
-## I have a problem with GitHub Desktop
-
-Note: The [GitHub Desktop Code of Conduct](https://github.com/desktop/desktop/blob/development/CODE_OF_CONDUCT.md) applies in all interactions relating to the GitHub Desktop project.
-
-First, please search the [open issues](https://github.com/desktop/desktop/issues?q=is%3Aopen)
-and [closed issues](https://github.com/desktop/desktop/issues?q=is%3Aclosed)
-to see if your issue hasn't already been reported (it may also be fixed).
-
-There is also a list of [known issues](https://github.com/desktop/desktop/blob/development/docs/known-issues.md)
-that are being tracked against Desktop, and some of these issues have workarounds.
-
-If you can't find an issue that matches what you're seeing, open a [new issue](https://github.com/desktop/desktop/issues/new/choose),
-choose the right template and provide us with enough information to investigate
-further.
-
-## The issue I reported isn't fixed yet. What can I do?
-
-If nobody has responded to your issue in a few days, you're welcome to respond to it with a friendly ping in the issue. Please do not respond more than a second time if nobody has responded. The GitHub Desktop maintainers are constrained in time and resources, and diagnosing individual configurations can be difficult and time consuming. While we'll try to at least get you pointed in the right direction, we can't guarantee we'll be able to dig too deeply into any one person's issue.
-
-## How can I contribute to GitHub Desktop?
-
-The [CONTRIBUTING.md](./.github/CONTRIBUTING.md) document will help you get setup and
-familiar with the source. The [documentation](docs/) folder also contains more
-resources relevant to the project.
-
-If you're looking for something to work on, check out the [help wanted](https://github.com/desktop/desktop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help%20wanted%22) label.
-
-## Building Desktop
-
-To setup your development environment for building Desktop, check out: [`setup.md`](./docs/contributing/setup.md).
-
-## More Resources
-
-See [desktop.github.com](https://desktop.github.com) for more product-oriented
-information about GitHub Desktop.
-
-See our [getting started documentation](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop) for more information on how to set up, authenticate, and configure GitHub Desktop.
-
-## License
-
-**[MIT](LICENSE)**
-
-The MIT license grant is not for GitHub's trademarks, which include the logo
-designs. GitHub reserves all trademark and copyright rights in and to all
-GitHub trademarks. GitHub's logos include, for instance, the stylized
-Invertocat designs that include "logo" in the file title in the following
-folder: [logos](app/static/logos).
-
-GitHub® and its stylized versions and the Invertocat mark are GitHub's
-Trademarks or registered Trademarks. When using GitHub's logos, be sure to
-follow the GitHub [logo guidelines](https://github.com/logos).
+MIT 라이선스는 GitHub의 상표(로고 디자인 포함)에 대한 권리를 부여하지 않습니다.
+GitHub®, 그 양식화된 표기, Invertocat 마크는 GitHub, Inc.의 상표 또는 등록 상표입니다.
+GitHub+는 GitHub 로고를 앱 아이콘으로 사용하지 않습니다.
