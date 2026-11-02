@@ -1,19 +1,18 @@
 {
-  "name": "desktop",
-  "productName": "GitHub Desktop",
-  "bundleID": "com.github.GitHubClient",
-  "companyName": "GitHub, Inc.",
+  "name": "github-plus",
+  "productName": "GitHub+",
+  "bundleID": "com.devsnowflake.githubplus",
+  "companyName": "Dev-Snow-flake",
   "version": "3.6.10",
   "main": "./main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/desktop/desktop.git"
+    "url": "https://github.com/Dev-Snow-flake/GitHubPlus.git"
   },
-  "description": "Simple collaboration from your desktop",
+  "description": "Git desktop client with LAN hub support",
   "author": {
-    "name": "GitHub, Inc.",
-    "email": "opensource+desktop@github.com",
-    "url": "https://desktop.github.com/"
+    "name": "Dev-Snow-flake",
+    "url": "https://github.com/Dev-Snow-flake"
   },
   "license": "MIT",
   "dependencies": {

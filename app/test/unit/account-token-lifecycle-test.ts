@@ -12,7 +12,7 @@ import {
   deserializeAccountCredential,
   serializeAccountCredential,
 } from '../../src/lib/account-credential'
-import { getKeyForAccount } from '../../src/lib/auth'
+import { getKeyForAccount, getKeyForEndpoint } from '../../src/lib/auth'
 import { API } from '../../src/lib/api'
 import { createMockAPIIdentity } from '../helpers/mock-api'
 import { InMemoryStore, AsyncInMemoryStore } from '../helpers/stores'
@@ -70,6 +70,18 @@ function setup(
 }
 
 describe('OAuth credential persistence', () => {
+  it('uses separate secure-store names and credential envelopes', () => {
+    const appName = __DEV__ ? 'GitHub+ Dev' : 'GitHub+'
+    assert.equal(
+      getKeyForEndpoint(account.endpoint),
+      `${appName} - ${account.endpoint}`
+    )
+    assert.equal(getKeyForAccount(account), getKeyForEndpoint(account.endpoint))
+    assert.ok(
+      serializeAccountCredential(rotating).startsWith('github-plus-oauth:')
+    )
+  })
+
   it('reads existing access-token entries', () => {
     assert.deepEqual(deserializeAccountCredential('legacy'), {
       accessToken: 'legacy',
@@ -93,11 +105,11 @@ describe('OAuth credential persistence', () => {
 
   it('rejects corrupted or unsupported records without exposing secrets', () => {
     for (const value of [
-      'github-desktop-oauth:secret',
-      'github-desktop-oauth:{"version":2,"credential":"secret"}',
-      'github-desktop-oauth:{"version":1,"credential":{"accessToken":"secret"}}',
-      'github-desktop-oauth:{"version":1,"credential":{"accessToken":" ","refreshToken":"secret"}}',
-      'github-desktop-oauth:{"version":1,"credential":{"accessToken":"secret","refreshToken":"a secret"}}',
+      'github-plus-oauth:secret',
+      'github-plus-oauth:{"version":2,"credential":"secret"}',
+      'github-plus-oauth:{"version":1,"credential":{"accessToken":"secret"}}',
+      'github-plus-oauth:{"version":1,"credential":{"accessToken":" ","refreshToken":"secret"}}',
+      'github-plus-oauth:{"version":1,"credential":{"accessToken":"secret","refreshToken":"a secret"}}',
     ]) {
       assert.throws(
         () => deserializeAccountCredential(value),

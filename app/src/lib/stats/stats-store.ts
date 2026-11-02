@@ -41,9 +41,7 @@ import { isInApplicationFolder } from '../../ui/main-process-proxy'
 import { getRendererGUID } from '../get-renderer-guid'
 import { ValidNotificationPullRequestReviewState } from '../valid-notification-pull-request-review'
 import { useExternalCredentialHelperKey } from '../trampoline/use-external-credential-helper'
-import { getUserAgent } from '../http'
 import { getHooksEnvEnabled } from '../hooks/config'
-import { enableNewStatsEndpoint } from '../feature-flag'
 import { parseModelKey } from '../copilot/byok'
 import { DefaultCopilotModel } from '../stores/copilot-store'
 import { getSystemNotificationsPermission } from '../notifications/notification-permission'
@@ -62,11 +60,6 @@ type PullRequestReviewStatFieldSuffix =
 
 type PullRequestReviewStatField =
   `pullRequestReview${PullRequestReviewStatFieldInfix}${PullRequestReviewStatFieldSuffix}`
-
-const LegacyStatsEndpoint = 'https://central.github.com/api/usage/desktop'
-
-const StatsEndpoint =
-  'https://cafe.github.com/twirp/clientappsfe.observability.v1.TelemetryAPI/RecordEvents'
 
 /** The URL to the stats samples page. */
 export const SamplesURL =
@@ -645,27 +638,8 @@ export function buildStatsPayload(body: StatsPayload): ITelemetryPayload {
   }
 }
 
-const defaultPostImplementation = (body: StatsPayload) => {
-  if (enableNewStatsEndpoint()) {
-    return fetch(StatsEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'user-agent': getUserAgent(),
-      },
-      body: JSON.stringify(buildStatsPayload(body)),
-    })
-  }
-
-  return fetch(LegacyStatsEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'user-agent': getUserAgent(),
-    },
-    body: JSON.stringify(body),
-  })
-}
+const defaultPostImplementation = async (_body: StatsPayload) =>
+  new Response(null, { status: 204 })
 
 /** The store for the app's stats. */
 export class StatsStore implements IStatsStore {
@@ -678,11 +652,11 @@ export class StatsStore implements IStatsStore {
   public constructor(
     private readonly db: StatsDatabase,
     private readonly uiActivityMonitor: IUiActivityMonitor,
-    private readonly post = defaultPostImplementation
+    _post = defaultPostImplementation
   ) {
     const storedValue = getHasOptedOutOfStats()
 
-    this.optOut = storedValue || false
+    this.optOut = true
 
     // If the user has set an opt out value but we haven't sent the ping yet,
     // give it a shot now.
@@ -764,29 +738,10 @@ export class StatsStore implements IStatsStore {
    * daily reporting schedule.
    */
   public async sendStats(
-    accounts: ReadonlyArray<Account>,
-    repositories: ReadonlyArray<Repository>
+    _accounts: ReadonlyArray<Account>,
+    _repositories: ReadonlyArray<Repository>
   ): Promise<boolean> {
-    if (this.optOut) {
-      return false
-    }
-
-    const payload = await this.getDailyStats(accounts, repositories)
-
-    try {
-      const response = await this.post(payload)
-      if (!response.ok) {
-        throw new Error(
-          `Unexpected status: ${response.statusText} (${response.status})`
-        )
-      }
-
-      log.info('Stats reported.')
-      return true
-    } catch (e) {
-      log.error('Error reporting stats:', e)
-      return false
-    }
+    return false
   }
 
   /** Record the given launch stats. */
@@ -830,7 +785,7 @@ export class StatsStore implements IStatsStore {
   }
 
   /** Get the daily stats. */
-  private async getDailyStats(
+  public async getDailyStats(
     accounts: ReadonlyArray<Account>,
     repositories: ReadonlyArray<Repository>
   ): Promise<DailyStats> {
@@ -1459,34 +1414,10 @@ export class StatsStore implements IStatsStore {
    *                      value exists.
    */
   private async sendOptInStatusPing(
-    optOut: boolean,
-    previousValue: boolean | undefined
+    _optOut: boolean,
+    _previousValue: boolean | undefined
   ): Promise<void> {
-    // The analytics pipeline expects us to submit `optIn` but we track `optOut`
-    // so we need to invert the value before we send it.
-    const optIn = !optOut
-    const previousOptInValue =
-      previousValue === undefined ? null : !previousValue
-    const direction = optIn ? 'in' : 'out'
-
-    try {
-      const response = await this.post({
-        eventType: 'ping',
-        optIn,
-        previousOptInValue,
-      })
-      if (!response.ok) {
-        throw new Error(
-          `Unexpected status: ${response.statusText} (${response.status})`
-        )
-      }
-
-      setBoolean(HasSentOptInPingKey, true)
-
-      log.info(`Opt ${direction} reported.`)
-    } catch (e) {
-      log.error(`Error reporting opt ${direction}:`, e)
-    }
+    // Telemetry, including opt-in status, is disabled.
   }
 }
 
@@ -1539,5 +1470,5 @@ function timeTo(key: string): number | undefined {
  * or not.
  */
 export function getHasOptedOutOfStats() {
-  return getBoolean(StatsOptOutKey)
+  return getBoolean(StatsOptOutKey, true)
 }

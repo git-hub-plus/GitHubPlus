@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test'
 import assert from 'node:assert'
 import { ipcRenderer } from 'electron'
 import { TestStatsDatabase } from '../helpers/databases'
-import { mockNotification } from '../helpers/mock-notification'
 
 import { StatsStore } from '../../src/lib/stats'
 import { TestActivityMonitor } from '../helpers/test-activity-monitor'
@@ -35,6 +34,7 @@ describe('StatsStore', () => {
     statsDb.close()
     localStorage.removeItem('has-sent-stats-opt-in-ping')
     localStorage.removeItem('last-daily-stats-report')
+    localStorage.removeItem('stats-opt-out')
   })
 
   it("unsubscribes from the activity monitor when it's no longer needed", async () => {
@@ -92,14 +92,7 @@ describe('StatsStore', () => {
     statsDb = await createStatsDb()
     localStorage.setItem('has-sent-stats-opt-in-ping', '1')
     const payloads: ReturnType<typeof buildStatsPayload>[] = []
-    const store = new StatsStore(
-      statsDb,
-      new TestActivityMonitor(),
-      async body => {
-        payloads.push(buildStatsPayload(body))
-        return new Response(null, { status: 200 })
-      }
-    )
+    const store = new StatsStore(statsDb, new TestActivityMonitor(), fakePost)
     const events: ReadonlyArray<TokenRefreshEvent> = [
       'attempt',
       'success',
@@ -110,7 +103,7 @@ describe('StatsStore', () => {
     ]
     await Promise.all(events.map(event => store.recordTokenRefreshEvent(event)))
     store.setUsesShortLivedToken(true)
-    await store.sendStats([], [])
+    payloads.push(buildStatsPayload(await store.getDailyStats([], [])))
     const entry = await statsDb.dailyMeasures.limit(1).first()
     const fields = [
       'tokenRefreshAttemptCount',
@@ -133,13 +126,13 @@ describe('StatsStore', () => {
       false
     )
     store.setUsesShortLivedToken(false)
-    await store.sendStats([], [])
+    payloads.push(buildStatsPayload(await store.getDailyStats([], [])))
     assert.strictEqual(
       payloads[1].events[0].dimensions.usesShortLivedToken,
       'false'
     )
     await store.clearDailyStats()
-    await store.sendStats([], [])
+    payloads.push(buildStatsPayload(await store.getDailyStats([], [])))
     for (const field of fields) {
       assert.strictEqual(payloads[2].events[0].measures?.[field], 0)
     }
@@ -148,22 +141,7 @@ describe('StatsStore', () => {
   it('includes zero token refresh counters when reading existing daily records', async () => {
     statsDb = await createStatsDb()
     localStorage.setItem('has-sent-stats-opt-in-ping', '1')
-    const store = new StatsStore(
-      statsDb,
-      new TestActivityMonitor(),
-      async body => {
-        if (body.eventType === 'usage') {
-          assert.strictEqual(body.tokenRefreshAttemptCount, 0)
-          assert.strictEqual(body.tokenRefreshSuccessCount, 0)
-          assert.strictEqual(body.tokenRefreshTransientFailureCount, 0)
-          assert.strictEqual(body.tokenRefreshNonTransientFailureCount, 0)
-          assert.strictEqual(body.tokenRefreshAbandonedCount, 0)
-          assert.strictEqual(body.tokenRefreshRequiredSignInCount, 0)
-          assert.strictEqual(body.usesShortLivedToken, false)
-        }
-        return new Response(null, { status: 200 })
-      }
-    )
+    const store = new StatsStore(statsDb, new TestActivityMonitor(), fakePost)
     await store.increment('commits')
     await statsDb.dailyMeasures.toCollection().modify(record => {
       Reflect.deleteProperty(record, 'tokenRefreshAttemptCount')
@@ -173,7 +151,14 @@ describe('StatsStore', () => {
       Reflect.deleteProperty(record, 'tokenRefreshAbandonedCount')
       Reflect.deleteProperty(record, 'tokenRefreshRequiredSignInCount')
     })
-    assert.strictEqual(await store.sendStats([], []), true)
+    const daily = await store.getDailyStats([], [])
+    assert.strictEqual(daily.tokenRefreshAttemptCount, 0)
+    assert.strictEqual(daily.tokenRefreshSuccessCount, 0)
+    assert.strictEqual(daily.tokenRefreshTransientFailureCount, 0)
+    assert.strictEqual(daily.tokenRefreshNonTransientFailureCount, 0)
+    assert.strictEqual(daily.tokenRefreshAbandonedCount, 0)
+    assert.strictEqual(daily.tokenRefreshRequiredSignInCount, 0)
+    assert.strictEqual(daily.usesShortLivedToken, false)
   })
 
   it('does not submit token refresh counters or usage dimensions when opted out', async () => {
@@ -248,196 +233,25 @@ describe('StatsStore', () => {
     )
   })
 
-  it('reports stats on demand in a test environment', async () => {
-    statsDb = await createStatsDb()
-    const activityMonitor = new TestActivityMonitor()
-    const postedBodies: Array<Record<string, any>> = []
-    localStorage.setItem('has-sent-stats-opt-in-ping', '1')
-
-    const store = new StatsStore(statsDb, activityMonitor, async body => {
-      postedBodies.push(body)
-      return new Response(null, { status: 200 })
-    })
-
-    await store.increment('commits')
-    await store.sendStats([], [])
-
-    assert.strictEqual(postedBodies.length, 1)
-    assert.strictEqual(postedBodies[0].eventType, 'usage')
-    assert.strictEqual(postedBodies[0].commits, 1)
-    assert.strictEqual(localStorage.getItem('last-daily-stats-report'), null)
-    assert.strictEqual(await statsDb.dailyMeasures.count(), 1)
-  })
-
-  for (const permission of ['denied', null] as const) {
-    it(`reports ${
-      permission === null
-        ? 'null after lookup failure'
-        : 'false for denied permission'
-    } to the new endpoint`, async t => {
+  for (const storedValue of [null, '0', '1']) {
+    it(`never sends telemetry with saved opt-out ${storedValue}`, async t => {
       statsDb = await createStatsDb()
-      localStorage.setItem('has-sent-stats-opt-in-ping', '1')
-      mockNotification(t, {
-        get permission() {
-          if (permission !== null) {
-            return permission
-          }
-          throw new Error('Permission lookup failed')
-        },
-      })
-      const invoke = ipcRenderer.invoke
-      t.mock.method(
-        ipcRenderer,
-        'invoke',
-        async (channel: string, ...args: unknown[]) => {
-          if (channel === 'get-notifications-permission') {
-            if (permission !== null) {
-              return permission
-            }
-            throw new Error('Permission lookup failed')
-          }
-          return invoke(channel, ...args)
-        }
-      )
-      const warn = t.mock.method(log, 'warn')
-      let requestBody: string | undefined
-      t.mock.method(
-        globalThis,
-        'fetch',
-        async (_input: string | URL | Request, init?: RequestInit) => {
-          requestBody = typeof init?.body === 'string' ? init.body : undefined
-          return new Response(null, { status: 200 })
-        }
-      )
-      const store = new StatsStore(statsDb, new TestActivityMonitor())
+      if (storedValue === null) {
+        localStorage.removeItem('stats-opt-out')
+      } else {
+        localStorage.setItem('stats-opt-out', storedValue)
+      }
+      const fetch = t.mock.method(globalThis, 'fetch')
+      const post = t.mock.fn(async () => new Response(null, { status: 200 }))
+      const store = new StatsStore(statsDb, new TestActivityMonitor(), post)
+      assert.strictEqual(store.getOptOut(), true)
+      await store.setOptOut(false, true)
       await store.increment('commits')
-
-      assert.strictEqual(await store.sendStats([], []), true)
-      assert.strictEqual(warn.mock.callCount(), permission === null ? 1 : 0)
-      assert.ok(requestBody)
-      const payload = JSON.parse(requestBody)
-      assert.strictEqual(
-        payload.events[0].dimensions.notificationsPermission,
-        String(permission === null ? null : false)
-      )
-      assert.strictEqual(payload.events[0].measures.commits, 1)
-      assert.strictEqual(
-        'notificationsPermission' in payload.events[0].measures,
-        false
-      )
+      await store.reportStats([], [])
+      assert.strictEqual(await store.sendStats([], []), false)
+      assert.strictEqual(fetch.mock.callCount(), 0)
+      assert.strictEqual(post.mock.callCount(), 0)
+      assert.strictEqual((await statsDb.dailyMeasures.toArray())[0].commits, 1)
     })
   }
-  it('posts structured stats to the new endpoint by default', async t => {
-    statsDb = await createStatsDb()
-    const activityMonitor = new TestActivityMonitor()
-    let requestUrl: string | undefined
-    let requestBody: string | undefined
-    const previousPreviewFeatures = process.env.GITHUB_DESKTOP_PREVIEW_FEATURES
-    localStorage.setItem('has-sent-stats-opt-in-ping', '1')
-    delete process.env.GITHUB_DESKTOP_PREVIEW_FEATURES
-    t.after(() => {
-      if (previousPreviewFeatures !== undefined) {
-        process.env.GITHUB_DESKTOP_PREVIEW_FEATURES = previousPreviewFeatures
-      }
-    })
-
-    t.mock.method(
-      globalThis,
-      'fetch',
-      async (input: string | URL | Request, init?: RequestInit) => {
-        requestUrl = String(input)
-        requestBody = typeof init?.body === 'string' ? init.body : undefined
-        return new Response(null, { status: 200 })
-      }
-    )
-
-    const store = new StatsStore(statsDb, activityMonitor)
-    await store.increment('commits')
-    await store.increment('checksFailedNotificationShownCount')
-    await store.recordLaunchStats({
-      mainReadyTime: 112.29,
-      loadTime: 15481.89,
-      rendererReadyTime: 7216.25,
-    })
-
-    assert.strictEqual(await store.sendStats([], []), true)
-    assert.strictEqual(
-      requestUrl,
-      'https://cafe.github.com/twirp/clientappsfe.observability.v1.TelemetryAPI/RecordEvents'
-    )
-    assert.notStrictEqual(requestBody, undefined)
-
-    const payload = JSON.parse(requestBody ?? '')
-    assert.strictEqual(payload.events[0].app, 'desktop')
-    assert.strictEqual(payload.events[0].event_type, 'usage')
-    assert.strictEqual(payload.events[0].measures.commits, 1)
-    assert.strictEqual(
-      payload.events[0].measures.checksFailedNotificationShownCount,
-      1
-    )
-    assert.strictEqual(payload.events[0].measures.mainReadyTime, 112)
-    assert.strictEqual(payload.events[0].measures.loadTime, 15482)
-    assert.strictEqual(payload.events[0].measures.rendererReadyTime, 7216)
-    assert.strictEqual(payload.events[0].dimensions.version, 'dev')
-    assert.strictEqual(
-      payload.events[0].dimensions.notificationsPermission,
-      __DARWIN__ || __WIN32__ ? 'true' : 'null'
-    )
-    assert.strictEqual(
-      'notificationsPermission' in payload.events[0].measures,
-      false
-    )
-    assert.strictEqual(
-      typeof payload.events[0].dimensions.gitHooksEnvEnabled,
-      'string'
-    )
-    assert.strictEqual(typeof payload.events[0].dimensions.active, 'string')
-    assert.strictEqual(payload.events[0].measures.repositoryCount, 0)
-    assert.ok(Buffer.byteLength(requestBody ?? '') < 16 * 1024)
-  })
-
-  it('posts structured opt-in pings to the new endpoint', async t => {
-    statsDb = await createStatsDb()
-    const activityMonitor = new TestActivityMonitor()
-    let requestBody: string | undefined
-    let resolveRequest: (() => void) | undefined
-    const requestReceived = new Promise<void>(resolve => {
-      resolveRequest = resolve
-    })
-    const previousPreviewFeatures = process.env.GITHUB_DESKTOP_PREVIEW_FEATURES
-    process.env.GITHUB_DESKTOP_PREVIEW_FEATURES = '1'
-    localStorage.removeItem('has-sent-stats-opt-in-ping')
-    localStorage.removeItem('stats-opt-out')
-    t.after(() => {
-      localStorage.removeItem('stats-opt-out')
-      if (previousPreviewFeatures === undefined) {
-        delete process.env.GITHUB_DESKTOP_PREVIEW_FEATURES
-      } else {
-        process.env.GITHUB_DESKTOP_PREVIEW_FEATURES = previousPreviewFeatures
-      }
-    })
-
-    t.mock.method(
-      globalThis,
-      'fetch',
-      async (_input: string | URL | Request, init?: RequestInit) => {
-        requestBody = typeof init?.body === 'string' ? init.body : undefined
-        resolveRequest?.()
-        return new Response(null, { status: 200 })
-      }
-    )
-
-    new StatsStore(statsDb, activityMonitor)
-    await requestReceived
-
-    const payload = JSON.parse(requestBody ?? '')
-    assert.deepStrictEqual(payload.events[0], {
-      app: 'desktop',
-      event_type: 'ping',
-      dimensions: {
-        optIn: 'true',
-        previousOptInValue: 'null',
-      },
-    })
-  })
 })

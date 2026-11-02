@@ -8,10 +8,10 @@ import {
   getDistPath,
   getOSXZipPath,
   getWindowsIdentifierName,
+  getExecutableName,
   getWindowsStandaloneName,
   getWindowsInstallerName,
   shouldMakeDelta,
-  getUpdatesURL,
   isPublishable,
   getBundleSizes,
   getDistRoot,
@@ -100,18 +100,10 @@ function packageWindows() {
     iconUrl: iconUrl,
     setupIcon: iconSource,
     loadingGif: splashScreenPath,
-    exe: `${nugetPkgName}.exe`,
+    exe: `${getExecutableName()}.exe`,
     title: productName,
     setupExe: getWindowsStandaloneName(),
     setupMsi: getWindowsInstallerName(),
-  }
-
-  if (shouldMakeDelta()) {
-    const url = new URL(getUpdatesURL())
-    // Make sure Squirrel.Windows isn't affected by partially or completely
-    // disabled releases.
-    url.searchParams.set('bypassStaggeredRelease', '1')
-    options.remoteReleases = url.toString()
   }
 
   if (isGitHubActions() && isPublishable()) {
