@@ -1,7 +1,5 @@
-import { getLocale } from './i18n'
 import {
   getNumberFormatPreference,
-  defaultNumberFormat,
   INumberFormat,
 } from '../models/formatting-preferences'
 import { round } from '../ui/lib/round'
@@ -11,24 +9,18 @@ import { enableFormattingPreferences } from './feature-flag'
  * Format a number using the given separator configuration.
  *
  * This is a simple formatter that handles integer and decimal parts with
- * configurable separators. Without a custom preference it uses the app locale.
+ * configurable separators. It does not use Intl.NumberFormat.
  *
  * @param value - The number to format
  * @param fmt   - The number format configuration with thousands and decimal
  *                separators, defaults to the user's preferred format.
  */
 export function formatNumber(value: number, fmt?: INumberFormat): string {
-  const preference = fmt ?? getNumberFormatPreference()
-  if (
-    fmt === undefined &&
-    (!enableFormattingPreferences() || preference === defaultNumberFormat)
-  ) {
-    return new Intl.NumberFormat(getLocale(), {
-      maximumFractionDigits: 20,
-    }).format(value)
+  if (!fmt && !enableFormattingPreferences()) {
+    return value.toString()
   }
 
-  fmt = preference
+  fmt ??= getNumberFormatPreference()
 
   if (!Number.isFinite(value)) {
     return String(value)

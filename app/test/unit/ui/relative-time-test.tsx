@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, it } from 'node:test'
 import * as React from 'react'
 
 import { formatDate } from '../../../src/lib/format-date'
+import { getLanguage, setLanguage } from '../../../src/lib/i18n'
 import { render, screen } from '../../helpers/ui/render'
 import {
   advanceTimersBy,
@@ -14,12 +15,16 @@ import { RelativeTime } from '../../../src/ui/relative-time'
 const now = Date.parse('2026-03-26T12:00:00.000Z')
 
 describe('RelativeTime', () => {
+  const originalLanguage = getLanguage()
+
   beforeEach(() => {
+    setLanguage('en')
     enableTestTimers(['Date', 'setTimeout'], now)
   })
 
   afterEach(() => {
     resetTestTimers()
+    setLanguage(originalLanguage)
   })
 
   it('renders recent relative text without a tooltip wrapper when disabled', () => {

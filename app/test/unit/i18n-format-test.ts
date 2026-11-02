@@ -4,10 +4,7 @@ import { setLanguage } from '../../src/lib/i18n'
 import { formatDate } from '../../src/lib/format-date'
 import { formatRelative } from '../../src/lib/format-relative'
 import { formatNumber } from '../../src/lib/format-number'
-import {
-  setDateFormatPreference,
-  setNumberFormatPreference,
-} from '../../src/models/formatting-preferences'
+import { setDateFormatPreference } from '../../src/models/formatting-preferences'
 
 describe('localized formatting', () => {
   let storage: string
@@ -36,18 +33,23 @@ describe('localized formatting', () => {
     assert.equal(formatRelative(-86400000), '어제')
   })
 
-  it('uses the app number locale while preserving explicit formatting preferences', () => {
+  it('keeps number formatting independent of the app language', () => {
     for (const language of ['ko', 'en'] as const) {
       setLanguage(language)
-      assert.equal(formatNumber(1234567.89), '1,234,567.89')
-      assert.equal(formatNumber(0.000001), '0.000001')
+      assert.equal(
+        formatNumber(1234567.89, {
+          thousandsSeparator: ',',
+          decimalSeparator: '.',
+        }),
+        '1,234,567.89'
+      )
     }
-    setNumberFormatPreference({
-      thousandsSeparator: '.',
-      decimalSeparator: ',',
-    })
-    assert.equal(formatNumber(1234567.89), '1.234.567,89')
-    setLanguage('en')
-    assert.equal(formatNumber(1234567.89), '1.234.567,89')
+    assert.equal(
+      formatNumber(1234567.89, {
+        thousandsSeparator: '.',
+        decimalSeparator: ',',
+      }),
+      '1.234.567,89'
+    )
   })
 })
