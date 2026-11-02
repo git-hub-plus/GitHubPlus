@@ -1,0 +1,140 @@
+﻿.root {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--font-size-md);
+}
+.root > :first-child {
+  flex: 1;
+  min-height: 0;
+}
+.listHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+.file {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+}
+.file:hover {
+  background: var(--color-bg-hover);
+}
+.active,
+.active:hover {
+  background: var(--color-bg-selected);
+}
+.file input,
+.listHeader input,
+.amend input {
+  accent-color: var(--color-accent);
+}
+.status {
+  flex-shrink: 0;
+  min-width: 3ch;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.New,
+.Untracked,
+.Copied {
+  color: var(--color-success);
+}
+.Modified,
+.Renamed {
+  color: var(--color-warning);
+}
+.Deleted,
+.Conflicted {
+  color: var(--color-danger);
+}
+.path {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: var(--space-1);
+}
+.path strong {
+  font-weight: 600;
+}
+.folder {
+  color: var(--color-text-muted);
+}
+.commit {
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  overflow: auto;
+  max-height: 60%;
+  flex-shrink: 0;
+}
+.commit > label {
+  font-size: var(--font-size-sm);
+}
+.commit > input,
+.commit textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  padding: var(--space-2);
+  user-select: text;
+}
+.commit textarea {
+  resize: vertical;
+  min-height: 52px;
+}
+.amend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.commitButton {
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+}
+.commitButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.warning {
+  color: var(--color-warning);
+  font-size: var(--font-size-sm);
+}
+.message {
+  padding: var(--space-4);
+  color: var(--color-text-muted);
+}
+.error {
+  padding: var(--space-2);
+  color: var(--color-danger);
+}
+.error p {
+  margin: 0 0 var(--space-1);
+}
+.error pre {
+  max-height: 140px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  user-select: text;
+}

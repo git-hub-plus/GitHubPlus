@@ -1,0 +1,73 @@
+.split {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.left {
+  flex-shrink: 0;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+}
+.right {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.separator {
+  width: var(--space-1);
+  flex-shrink: 0;
+  cursor: col-resize;
+  touch-action: none;
+  background: var(--color-border);
+}
+.separator:hover {
+  background: var(--color-accent);
+}
+.menu {
+  position: fixed;
+  z-index: 20;
+  width: 220px;
+  padding: var(--space-1);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+.menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  padding: var(--space-2);
+  background: var(--color-bg);
+}
+.menu button:hover {
+  background: var(--color-bg-hover);
+}
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--color-bg-sidebar) 75%, transparent);
+}
+.dialog {
+  max-width: 440px;
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+.actions button {
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
