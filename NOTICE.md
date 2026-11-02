@@ -16,3 +16,5 @@ ported.
 | `src/shared/models/status.ts` | `app/src/models/status.ts` | Status types as plain data |
 | `src/shared/models/diff.ts` | `app/src/models/diff/*` | Classes replaced by plain data |
 | `src/shared/i18n/index.ts` | (written for the GitHub+ fork, not upstream) | |
+| `src/shared/models/diff-selection.ts` | `app/src/models/diff/diff-selection.ts` | Class replaced by pure functions |
+| `src/main/git/core.ts` | `app/src/lib/git/core.ts` | Simplified (no hooks/trampoline) |

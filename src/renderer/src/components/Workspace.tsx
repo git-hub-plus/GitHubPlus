@@ -1,10 +1,12 @@
 import { useAppStore, useSelectedRepository, type WorkspaceTab } from '../state/app-store'
 import { useT } from '../i18n'
+import { ChangesView } from './changes/ChangesView'
+import { HistoryView } from './history/HistoryView'
 import styles from './Workspace.module.css'
 
 const tabs: ReadonlyArray<WorkspaceTab> = ['changes', 'history']
 
-/** Changes / History tabs for the selected repository (contents land in N2). */
+/** Changes / History tabs for the selected repository. */
 export function Workspace() {
   const t = useT()
   const repository = useSelectedRepository()
@@ -30,7 +32,9 @@ export function Workspace() {
           </button>
         ))}
       </div>
-      <section className={styles.panel} role="tabpanel" aria-label={t(`workspace.${tab}`)} />
+      <section className={styles.panel} role="tabpanel" aria-label={t(`workspace.${tab}`)}>
+        {tab === 'changes' ? <ChangesView /> : <HistoryView />}
+      </section>
     </main>
   )
 }

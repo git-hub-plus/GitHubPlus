@@ -6,6 +6,7 @@ import { Toolbar } from './components/Toolbar'
 import { Workspace } from './components/Workspace'
 import { PreferencesDialog } from './components/PreferencesDialog'
 import { subscribe } from './ipc'
+import { startRepoStatusUpdates } from './state/repo-store'
 import styles from './App.module.css'
 
 export function App() {
@@ -15,7 +16,7 @@ export function App() {
   useAppliedTheme()
 
   useEffect(() => {
-    void init()
+    void init().then(startRepoStatusUpdates)
   }, [init])
 
   useEffect(() => {
