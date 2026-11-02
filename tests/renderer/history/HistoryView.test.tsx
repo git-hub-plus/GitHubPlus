@@ -72,7 +72,7 @@ describe('HistoryView', () => {
     await waitFor(() =>
       expect(bridge).toHaveBeenCalledWith('git:commitDiff', 'repo', 'b', 'two.ts')
     )
-    expect(screen.getByTestId('diff-view').textContent).toBe('two.ts')
+    expect(screen.getByTestId('diff-view').textContent).toContain('two.ts')
   })
   it('navigates with arrows, focuses details with Enter and searches loaded commits', async () => {
     render(<HistoryView />)

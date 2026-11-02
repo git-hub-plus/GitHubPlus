@@ -25,3 +25,6 @@ ported.
 | `src/main/git/log.ts`, `git-delimiter-parser.ts` | `app/src/lib/git/{log,git-delimiter-parser}.ts` | |
 | `src/main/git/discard.ts` | `app/src/lib/git/{checkout,reset}.ts` | File discard |
 | `tests/main/git/*` | `app/test/unit/**` | Converted to Vitest |
+| `src/main/git/branch.ts`, `for-each-ref.ts`, `checkout.ts`, `remote.ts`, `config.ts` | `app/src/lib/git/{branch,for-each-ref,checkout,remote,config}.ts` | |
+| `src/main/git/fetch.ts`, `pull.ts`, `push.ts`, `clone.ts` | `app/src/lib/git/{fetch,pull,push,clone}.ts` | No trampoline; credential helper handles auth |
+| `src/main/git/progress/*` | `app/src/lib/progress/*` | |

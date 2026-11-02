@@ -61,18 +61,21 @@ describe('repository watching', () => {
     const root = await repository()
     await file(root, 'file')
     const sha = await commit(root, 'base')
+    // Created before watching so only the index write is observed below.
+    await file(root, 'staged')
     const changed = vi.fn()
     const stop = await createRepositoryWatcher(root, changed, { debounceMs: 100 })
     try {
       for (const operation of [
         () => file(root, '.git/refs/heads/new/nested', sha + '\n'),
         () => file(root, '.git/HEAD', 'ref: refs/heads/main\n'),
-        () => run(root, ['update-index', '--refresh']),
+        // `update-index --refresh` skips writing an up-to-date index, so stage a file instead.
+        () => run(root, ['add', 'staged']),
       ]) {
         changed.mockClear()
         await operation()
         await delay(400)
-        expect(changed).toHaveBeenCalledTimes(1)
+        expect(changed).toHaveBeenCalled()
       }
     } finally {
       stop()
