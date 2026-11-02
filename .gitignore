@@ -20,3 +20,7 @@ junit*.xml
 *.swp
 tslint-rules/
 playwright-videos/
+
+# Local secrets (OAuth credentials etc.)
+.env
+.env.*
