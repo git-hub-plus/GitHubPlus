@@ -26,7 +26,7 @@ export function getExecutableName() {
   if (process.platform === 'win32') {
     return `${getWindowsIdentifierName()}${suffix}`
   } else if (process.platform === 'linux') {
-    return 'desktop'
+    return `github-plus${suffix}`
   } else {
     return productName
   }
@@ -95,7 +95,7 @@ export function getWindowsDeltaNugetPackagePath() {
 }
 
 export function getWindowsIdentifierName() {
-  return 'GitHubDesktop'
+  return 'GitHubPlus'
 }
 
 export function getBundleSizes() {
@@ -135,19 +135,9 @@ export function getDistArchitecture(): 'arm64' | 'x64' {
   return 'x64'
 }
 
-export function getUpdatesURL() {
-  // It is also possible to use a `x64/` path, but for now we'll leave the
-  // original URL without architecture in it (which will still work for
-  // compatibility reasons) in case anything goes wrong until we have everything
-  // sorted out.
-  const architecturePath = getDistArchitecture() === 'arm64' ? 'arm64/' : ''
-  return `https://central.github.com/api/deployments/desktop/desktop/${architecturePath}latest?version=${version}&env=${getChannel()}`
-}
-
 export function shouldMakeDelta() {
-  // Only production and beta channels include deltas. Test releases aren't
-  // necessarily sequential so deltas wouldn't make sense.
-  return ['production', 'beta'].includes(getChannel())
+  // GitHub+ never fetches official releases to produce delta packages.
+  return false
 }
 
 /**

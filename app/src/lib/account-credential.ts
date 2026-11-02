@@ -1,6 +1,6 @@
 import { IOAuthToken, isToken } from './oauth-token'
 
-const prefix = 'github-desktop-oauth:'
+const prefix = 'github-plus-oauth:'
 
 /** A null credential represents missing or previously invalidated credentials. */
 export type AccountCredential = IOAuthToken | null

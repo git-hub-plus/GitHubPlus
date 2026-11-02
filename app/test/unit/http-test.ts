@@ -1,7 +1,18 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { getAbsoluteUrl } from '../../src/lib/http'
+import { getAbsoluteUrl, getUserAgent } from '../../src/lib/http'
 import { getDotComAPIEndpoint } from '../../src/lib/api'
+import { getVersion } from '../../src/ui/lib/app-proxy'
+
+describe('getUserAgent', () => {
+  it('identifies GitHub+ and the current platform', () => {
+    const platform = __DARWIN__ ? 'Macintosh' : __WIN32__ ? 'Windows' : 'Linux'
+    assert.strictEqual(
+      getUserAgent(),
+      `GitHubPlus/${getVersion()} (${platform})`
+    )
+  })
+})
 
 describe('getAbsoluteUrl', () => {
   describe('dotcom endpoint', () => {
