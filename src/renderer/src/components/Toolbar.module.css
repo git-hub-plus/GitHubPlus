@@ -37,3 +37,11 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
+
+.anchor {
+  position: relative;
+}
+.progress {
+  width: 100px;
+  accent-color: var(--color-accent);
+}
