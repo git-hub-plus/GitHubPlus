@@ -62,6 +62,10 @@ export const ko = {
     history: '히스토리',
     noRepository: '왼쪽에서 저장소를 선택하세요.',
   },
+  // U1 (changes view) adds its keys here.
+  changesView: {
+    title: '변경 사항 화면',
+  },
   common: {
     ok: '확인',
     cancel: '취소',
@@ -70,6 +74,10 @@ export const ko = {
     retry: '다시 시도',
     loading: '불러오는 중…',
     details: '자세히',
+  },
+  // U2 (history view) adds its keys here.
+  historyView: {
+    title: '히스토리 화면',
   },
   preferences: {
     title: '환경설정',
@@ -80,6 +88,10 @@ export const ko = {
       dark: '다크',
       system: '시스템 설정',
     },
+  },
+  // U3 (toolbar, branches, sync, dialogs) adds its keys here.
+  repoActions: {
+    title: '저장소 작업',
   },
   errors: {
     generic: '작업을 완료하지 못했습니다.',

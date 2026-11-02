@@ -62,6 +62,10 @@ export const en: Translations = {
     history: 'History',
     noRepository: 'Select a repository on the left.',
   },
+  // U1 (changes view) adds its keys here.
+  changesView: {
+    title: 'Changes view',
+  },
   common: {
     ok: 'OK',
     cancel: 'Cancel',
@@ -70,6 +74,10 @@ export const en: Translations = {
     retry: 'Retry',
     loading: 'Loading…',
     details: 'Details',
+  },
+  // U2 (history view) adds its keys here.
+  historyView: {
+    title: 'History view',
   },
   preferences: {
     title: 'Preferences',
@@ -80,6 +88,10 @@ export const en: Translations = {
       dark: 'Dark',
       system: 'System',
     },
+  },
+  // U3 (toolbar, branches, sync, dialogs) adds its keys here.
+  repoActions: {
+    title: 'Repository actions',
   },
   errors: {
     generic: 'The operation could not be completed.',
