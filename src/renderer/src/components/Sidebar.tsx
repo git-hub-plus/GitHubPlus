@@ -12,6 +12,8 @@ import { Dialog } from './dialogs/Dialog'
 import { VirtualList } from './common/VirtualList'
 import { HubGroupMenu } from './hub/HubGroupMenu'
 import { useHubStore } from '../state/hub-store'
+import { githubRepositoryMenuItems } from './github/repository-menu'
+import { repositorySettingsMenuItems } from './repository-settings/repository-menu'
 
 const groupOrder: ReadonlyArray<RepositoryGroup> = ['local', 'hub', 'github']
 
@@ -205,6 +207,19 @@ export function Sidebar() {
           >
             {t('hub.publish')}
           </button>
+          {[...githubRepositoryMenuItems(context), ...repositorySettingsMenuItems(context)].map(
+            (item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  closeContext()
+                  item.onSelect(context)
+                }}
+              >
+                {item.label}
+              </button>
+            )
+          )}
           <button
             onClick={() => {
               setAlias(context.alias ?? context.name)

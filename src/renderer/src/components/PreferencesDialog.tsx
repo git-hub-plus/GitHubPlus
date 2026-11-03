@@ -7,6 +7,8 @@ import type { ThemePreference } from '@shared/models/app'
 import type { Language } from '@shared/i18n'
 import { useAppStore } from '../state/app-store'
 import { useT } from '../i18n'
+import { GitHubAccountSection } from './github/GitHubAccountSection'
+import { AiSettingsSection } from './ai/AiSettingsSection'
 import styles from './PreferencesDialog.module.css'
 
 const themes: ReadonlyArray<ThemePreference> = ['light', 'dark', 'system']
@@ -64,6 +66,8 @@ export function PreferencesDialog() {
         </div>
       </fieldset>
       {open && <GitUser key={repoId} repoId={repoId} />}
+      {open && <GitHubAccountSection />}
+      {open && <AiSettingsSection />}
       <div className={styles.footer}>
         <button onClick={() => setOpen(false)}>{t('common.close')}</button>
       </div>

@@ -13,6 +13,8 @@ import { showToast } from './state/toast-store'
 import { useShortcuts } from './hooks/use-shortcuts'
 import { RepositoryDialogs } from './components/dialogs/RepositoryDialogs'
 import { Toasts } from './components/common/Toasts'
+import { DropZone } from './components/dropzone/DropZone'
+import { CommandPalette } from './components/command-palette/CommandPalette'
 import styles from './App.module.css'
 
 export function App() {
@@ -61,6 +63,8 @@ export function App() {
       </div>
       <PreferencesDialog />
       <RepositoryDialogs />
+      <DropZone />
+      <CommandPalette />
       <Toasts />
     </div>
   )
