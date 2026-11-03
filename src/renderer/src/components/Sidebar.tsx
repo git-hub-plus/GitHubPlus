@@ -9,7 +9,7 @@ import { showToast } from '../state/toast-store'
 import { invoke } from '../ipc'
 import { Popover } from './common/Popover'
 import { Dialog } from './dialogs/Dialog'
-import { VirtualList } from './toolbar/VirtualList'
+import { VirtualList } from './common/VirtualList'
 import { HubGroupMenu } from './hub/HubGroupMenu'
 import { useHubStore } from '../state/hub-store'
 

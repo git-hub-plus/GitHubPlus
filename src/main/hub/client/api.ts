@@ -2,6 +2,7 @@ import { HandlerError } from '@shared/errors'
 import type { HubRepository } from '@shared/ipc/hub'
 import type { Commit, CommittedFile } from '@shared/models/git'
 import type { FileDiff } from '@shared/models/diff'
+import { isValidRepositoryName } from '../shared/validation'
 
 export function normalizeHubUrl(input: string): string {
   try {
@@ -75,11 +76,8 @@ export class HubApi {
     return this.request<HubRepository[]>(url, '/api/repos')
   }
   create(url: string, name: string, description?: string) {
-    if (
-      !/^[\p{L}\p{N}_-][\p{L}\p{N}_.-]{0,99}$/u.test(name) ||
-      name.endsWith('.git') ||
-      name.includes('..')
-    )
+    // Same rule as the hub server, so a name accepted here is never rejected there.
+    if (!isValidRepositoryName(name))
       throw new HandlerError('invalid-argument', '저장소 이름을 확인하세요.')
     return this.request<HubRepository>(url, '/api/repos', { name, description })
   }
