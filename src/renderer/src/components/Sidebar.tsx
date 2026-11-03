@@ -10,6 +10,8 @@ import { invoke } from '../ipc'
 import { Popover } from './common/Popover'
 import { Dialog } from './dialogs/Dialog'
 import { VirtualList } from './toolbar/VirtualList'
+import { HubGroupMenu } from './hub/HubGroupMenu'
+import { useHubStore } from '../state/hub-store'
 
 const groupOrder: ReadonlyArray<RepositoryGroup> = ['local', 'hub', 'github']
 
@@ -75,7 +77,7 @@ export function Sidebar() {
       )
     return groupOrder
       .map((group) => ({ group, items: visible.filter((r) => r.group === group) }))
-      .filter((g) => g.items.length > 0)
+      .filter((g) => g.group === 'hub' || g.items.length > 0)
   }, [repositories, filter])
 
   return (
@@ -113,7 +115,11 @@ export function Sidebar() {
         {repositories.length === 0 && <p className={styles.empty}>{t('sidebar.empty')}</p>}
         {groups.map(({ group, items }) => (
           <section key={group} className={styles.group}>
-            <h2 className={styles.groupTitle}>{t(`sidebar.groups.${group}`)}</h2>
+            {group === 'hub' ? (
+              <HubGroupMenu titleClassName={styles.groupTitle} />
+            ) : (
+              <h2 className={styles.groupTitle}>{t(`sidebar.groups.${group}`)}</h2>
+            )}
             <div role="listbox" aria-label={t(`sidebar.groups.${group}`)}>
               <VirtualList
                 key={filter}
@@ -191,6 +197,14 @@ export function Sidebar() {
       </div>
       {context && !edit && (
         <Popover label={displayName(context)} onClose={closeContext}>
+          <button
+            onClick={() => {
+              useHubStore.getState().open('publish', context.id)
+              closeContext()
+            }}
+          >
+            {t('hub.publish')}
+          </button>
           <button
             onClick={() => {
               setAlias(context.alias ?? context.name)
