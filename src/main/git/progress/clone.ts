@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/src/lib/progress/clone.ts
+// Ported from GitHub Desktop (MIT): app/src/lib/progress/clone.ts
 import { GitProgressParser } from './git'
 
 /**

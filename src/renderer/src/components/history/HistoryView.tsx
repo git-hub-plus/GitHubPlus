@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { getLocale } from '@shared/i18n'
 import { useAppStore } from '../../state/app-store'
 import { useHistoryStore } from '../../state/history-store'

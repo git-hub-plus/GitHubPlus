@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { GhpApi, IpcResult } from '@shared/ipc'
 import type { Commit, CommittedFile } from '@shared/models/git'

@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/test/unit/progress/clone-test.ts
+// Ported from GitHub Desktop (MIT): app/test/unit/progress/clone-test.ts
 import { describe, it, afterEach } from 'vitest'
 import assert from 'node:assert'
 import { CloneProgressParser } from '../../../src/main/git/progress/clone'

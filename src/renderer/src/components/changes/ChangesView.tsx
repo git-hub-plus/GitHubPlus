@@ -23,6 +23,7 @@ import { SplitPane } from '../common/SplitPane'
 import { ContextMenu } from '../common/ContextMenu'
 import { ConfirmDialog } from '../common/ConfirmDialog'
 import { DiffView } from '../diff/DiffView'
+import { AiCommitButton } from '../ai/AiCommitButton'
 import styles from './ChangesView.module.css'
 
 const emptyFiles: ReadonlyArray<WorkingFile> = []
@@ -182,6 +183,19 @@ function CommitForm({
           }
         }}
       >
+        <AiCommitButton
+          repoId={repoId}
+          input={{ files: included.map(({ path }) => ({ path, selection: selections[path] })) }}
+          disabled={
+            busy ||
+            !included.length ||
+            files.some((f) => f.status.kind === AppFileStatusKind.Conflicted)
+          }
+          onGenerated={(message) => {
+            setSummary(message.summary)
+            setDescription(message.description)
+          }}
+        />
         <label htmlFor="commit-summary">{t('changesView.summary')}</label>
         <input
           id="commit-summary"
@@ -390,7 +404,7 @@ function RepositoryChanges() {
         )}
       />
       <CommitForm
-        key={repoId}
+        key={`commit:${repoId}`}
         repoId={repoId}
         branch={status.currentBranch}
         files={files}

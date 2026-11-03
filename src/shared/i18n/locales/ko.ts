@@ -353,6 +353,35 @@ export const ko = {
   // C2 (AI commit messages, drag & drop upload) adds its keys here.
   ai: {
     title: 'AI 커밋 메시지',
+    provider: '공급자',
+    none: '사용 안 함',
+    anthropic: 'Claude',
+    openaiCompatible: 'OpenAI 호환',
+    model: '모델',
+    baseUrl: '서버 주소',
+    apiKey: 'API 키',
+    saved: '저장됨',
+    save: '저장',
+    clearKey: '키 지우기',
+    write: 'AI로 작성',
+    previewTitle: '보낼 내용 미리보기',
+    previewHelp: '아래 내용이 선택한 공급자로 전송됩니다. 생략 표시는 전송할 내용에도 포함됩니다.',
+    send: '보내기',
+    generating: '작성 중…',
+    drop: {
+      overlay: '여기에 놓으면 저장소에 복사합니다',
+      title: '저장소에 파일 추가',
+      target: '대상 폴더 (기본: 저장소 루트)',
+      chooseFolder: '폴더 선택',
+      commitNow: '바로 커밋',
+      summary: '커밋 요약',
+      copy: '복사',
+      result:
+        '파일 {copied}개를 추가했습니다, {skipped}개는 이미 있거나 복사할 수 없어 건너뛰었습니다.',
+      committed: '추가한 파일을 커밋했습니다.',
+      invalidPaths: '끌어온 파일의 경로를 확인할 수 없습니다.',
+      done: '파일 복사를 완료했습니다.',
+    },
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {

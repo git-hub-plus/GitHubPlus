@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/src/lib/progress/checkout.ts
+// Ported from GitHub Desktop (MIT): app/src/lib/progress/checkout.ts
 import { GitProgressParser } from './git'
 
 const steps = [{ title: 'Checking out files', weight: 1 }]
