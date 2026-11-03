@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/models/app_models.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
 import '../../ui/theme.dart';
 
@@ -19,6 +20,9 @@ class _SettingsDialog extends ConsumerWidget {
     final l = L10n.of(context);
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
+    final t = Terms.of(context);
+    final plain = Terms.resolve(settings.language, TermStyle.plain);
+    final git = Terms.resolve(settings.language, TermStyle.git);
 
     Widget section(String title, Widget child) => Padding(
       padding: const EdgeInsets.only(bottom: Space.lg),
@@ -76,14 +80,39 @@ class _SettingsDialog extends ConsumerWidget {
               ),
             ),
             section(
+              l.settingsTerms,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<TermStyle>(
+                    segments: [
+                      ButtonSegment(value: TermStyle.plain, label: Text(l.termPlain)),
+                      ButtonSegment(value: TermStyle.git, label: Text(l.termGit)),
+                    ],
+                    selected: {settings.termStyle},
+                    onSelectionChanged: (v) => notifier.update((s) => s.copyWith(termStyle: v.first)),
+                  ),
+                  const SizedBox(height: Space.xs + 2),
+                  Text(
+                    [
+                      l.termExample(plain.push, git.push),
+                      l.termExample(plain.commit, git.commit),
+                      l.termExample(plain.branch, git.branch),
+                    ].join('   '),
+                    style: TextStyle(fontSize: 12, color: c.muted),
+                  ),
+                ],
+              ),
+            ),
+            section(
               l.settingsGoals,
               Row(
                 children: [
-                  Text(l.settingsDailyGoal),
+                  Text(l.settingsDailyGoal(t.commitUnit)),
                   const SizedBox(width: Space.sm),
                   goalField(settings.dailyCommitGoal, (v) => notifier.update((s) => s.copyWith(dailyCommitGoal: v))),
                   const SizedBox(width: Space.xl),
-                  Text(l.settingsPushGoal),
+                  Text(l.settingsPushGoal(t.push)),
                   const SizedBox(width: Space.sm),
                   goalField(settings.pushGoal, (v) => notifier.update((s) => s.copyWith(pushGoal: v))),
                 ],

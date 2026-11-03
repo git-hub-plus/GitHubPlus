@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../ui/theme.dart';
 
 /// Shown when there is no repository: brand art and the first quest steps.
@@ -16,7 +17,8 @@ class WelcomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = L10n.of(context);
-    final steps = [l.questAddRepo, l.questFirstCommit, l.questFirstPush];
+    final t = Terms.of(context);
+    final steps = [l.questAddRepo, l.questFirstCommit(t.commit), l.questFirstPush(t.remote, t.push)];
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(Space.xxl),

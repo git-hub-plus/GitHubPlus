@@ -8,6 +8,7 @@ import '../../core/git/sync.dart';
 import '../../core/models/app_models.dart';
 import '../../core/models/status.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../state/repo_state.dart';
 import '../../ui/format.dart';
 import '../../ui/theme.dart';
@@ -28,10 +29,11 @@ class RepoBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
     final l = L10n.of(context);
+    final t = Terms.of(context);
     final cover = coverColor(repo.id);
     final lastFetch = ref.watch(lastFetchProvider)[repo.id];
     final branch = status?.currentBranch ??
-        (status?.headSha != null ? l.detachedHead(status!.headSha!.substring(0, 7)) : l.noBranch);
+        (status?.headSha != null ? l.detachedHead(status!.headSha!.substring(0, 7)) : l.noBranch(t.branch));
 
     return SizedBox(
       height: height,
@@ -112,7 +114,7 @@ class RepoBanner extends ConsumerWidget {
                           if (status?.upstream != null) _Chip(icon: Icons.cloud_rounded, label: status!.upstream!),
                           _Chip(
                             icon: Icons.schedule_rounded,
-                            label: lastFetch == null ? l.neverFetched : l.lastFetched(formatAgo(context, lastFetch)),
+                            label: lastFetch == null ? l.neverFetched(t.fetch) : l.lastFetched(t.fetch, formatAgo(context, lastFetch)),
                           ),
                         ],
                       ),
@@ -181,6 +183,7 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
 
   Future<void> _run(PrimaryAction action) async {
     final l = L10n.of(context);
+    final t = Terms.of(context);
     if (action == PrimaryAction.commit || action == PrimaryAction.resolve) {
       widget.onCommitRequested();
       return;
@@ -188,14 +191,14 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
     setState(() => _busy = true);
     final remote = widget.status.upstream?.split('/').first ?? 'origin';
     final title = switch (action) {
-      PrimaryAction.pull => l.jobPull(remote),
-      PrimaryAction.push => l.jobPush(remote),
-      PrimaryAction.publish => l.jobPublish(widget.status.currentBranch ?? ''),
-      _ => l.jobFetch(remote),
+      PrimaryAction.pull => l.jobPull(remote, t.pull),
+      PrimaryAction.push => l.jobPush(remote, t.push),
+      PrimaryAction.publish => l.jobPublish(widget.status.currentBranch ?? '', t.publish),
+      _ => l.jobFetch(remote, t.fetch),
     };
     String describe(SyncOutcome o) => switch (action) {
-      PrimaryAction.push || PrimaryAction.publish => l.resultSent(o.sent),
-      _ => o.received == 0 ? l.resultUpToDate : l.resultReceived(o.received),
+      PrimaryAction.push || PrimaryAction.publish => l.resultSent(t.commitUnit, o.sent, t.push),
+      _ => o.received == 0 ? l.resultUpToDate : l.resultReceived(t.commitUnit, o.received),
     };
     try {
       final ok = await ref.read(syncControllerProvider).run(widget.repo, action, describe: describe, title: title);
@@ -211,15 +214,16 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = L10n.of(context);
+    final t = Terms.of(context);
     final status = widget.status;
     final action = primaryActionFor(status);
     final (label, icon, color) = switch (action) {
-      PrimaryAction.resolve => (l.actionResolve, Icons.healing_rounded, c.danger),
-      PrimaryAction.commit => (l.actionCommit, Icons.check_circle_rounded, c.success),
-      PrimaryAction.publish => (l.actionPublish, Icons.rocket_launch_rounded, c.accent),
-      PrimaryAction.pull => (l.actionPull(status.behind), Icons.download_rounded, c.warning),
-      PrimaryAction.push => (l.actionPush(status.ahead), Icons.upload_rounded, c.accent),
-      PrimaryAction.fetch => (l.actionFetch, Icons.sync_rounded, c.accent),
+      PrimaryAction.resolve => (l.actionResolve(t.conflict), Icons.healing_rounded, c.danger),
+      PrimaryAction.commit => (l.actionCommit(t.commit), Icons.check_circle_rounded, c.success),
+      PrimaryAction.publish => (l.actionPublish(t.publish), Icons.rocket_launch_rounded, c.accent),
+      PrimaryAction.pull => (l.actionPull(t.pull, status.behind), Icons.download_rounded, c.warning),
+      PrimaryAction.push => (l.actionPush(t.push, status.ahead), Icons.upload_rounded, c.accent),
+      PrimaryAction.fetch => (l.actionFetch(t.fetch), Icons.sync_rounded, c.accent),
     };
     return AnimatedSwitcher(
       duration: context.motion(Motion.normal),

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/models/app_models.dart';
 import 'features/shell/launcher_shell.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/terms.dart';
 import 'state/app_state.dart';
 import 'ui/theme.dart';
 
@@ -37,7 +38,11 @@ class GitHubPlusApp extends ConsumerWidget {
         final media = MediaQuery.of(context);
         return MediaQuery(
           data: media.copyWith(disableAnimations: media.disableAnimations || settings.reduceMotion),
-          child: child!,
+          child: TermsScope(
+            terms: Terms.resolve(settings.language, settings.termStyle),
+            language: settings.language,
+            child: child!,
+          ),
         );
       },
       home: const LauncherShell(),

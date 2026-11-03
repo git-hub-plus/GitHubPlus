@@ -47,7 +47,9 @@ class L10nKo extends L10n {
   String get addCreate => '새 저장소 만들기…';
 
   @override
-  String get addClone => '원격 저장소 내려받기(Clone)…';
+  String addClone(String clone) {
+    return '저장소 $clone…';
+  }
 
   @override
   String get pickRepositoryFolder => '저장소 폴더 선택';
@@ -71,13 +73,19 @@ class L10nKo extends L10n {
   String get questAddRepo => '저장소 추가하기';
 
   @override
-  String get questFirstCommit => '첫 버전 저장하기(Commit)';
+  String questFirstCommit(String commit) {
+    return '첫 $commit';
+  }
 
   @override
-  String get questFirstPush => '원격 저장소에 업로드하기(Push)';
+  String questFirstPush(String remote, String push) {
+    return '$remote에 첫 $push';
+  }
 
   @override
-  String get branchLabel => '작업 갈래(Branch)';
+  String branchLabel(String branch) {
+    return '$branch';
+  }
 
   @override
   String detachedHead(String sha) {
@@ -85,52 +93,74 @@ class L10nKo extends L10n {
   }
 
   @override
-  String get noBranch => '작업 갈래 없음';
-
-  @override
-  String get actionCommit => '버전 저장(Commit)';
-
-  @override
-  String actionPush(int count) {
-    return '업로드(Push) $count';
+  String noBranch(String branch) {
+    return '$branch 없음';
   }
 
   @override
-  String actionPull(int count) {
-    return '다운로드(Pull) $count';
+  String actionCommit(String commit) {
+    return '$commit';
   }
 
   @override
-  String get actionPublish => '처음 올리기(Publish)';
-
-  @override
-  String get actionFetch => '변경 확인(Fetch)';
-
-  @override
-  String get actionResolve => '충돌 해결(Conflict)';
-
-  @override
-  String lastFetched(String time) {
-    return '마지막 변경 확인 $time';
+  String actionPush(String push, int count) {
+    return '$push $count';
   }
 
   @override
-  String get neverFetched => '아직 변경 확인 안 함';
+  String actionPull(String pull, int count) {
+    return '$pull $count';
+  }
 
   @override
-  String get hudChanges => '바뀐 파일';
+  String actionPublish(String publish) {
+    return '$publish';
+  }
 
   @override
-  String get hudToPush => '업로드 대기';
+  String actionFetch(String fetch) {
+    return '$fetch';
+  }
 
   @override
-  String get hudToPull => '다운로드 대기';
+  String actionResolve(String conflict) {
+    return '$conflict 해결';
+  }
 
   @override
-  String get hudStashes => '임시 보관';
+  String lastFetched(String fetch, String time) {
+    return '마지막 $fetch $time';
+  }
 
   @override
-  String get hudConflicts => '충돌';
+  String neverFetched(String fetch) {
+    return '아직 $fetch 안 함';
+  }
+
+  @override
+  String hudChanges(String changes) {
+    return '$changes';
+  }
+
+  @override
+  String hudToPush(String push) {
+    return '$push 대기';
+  }
+
+  @override
+  String hudToPull(String pull) {
+    return '$pull 대기';
+  }
+
+  @override
+  String hudStashes(String stash) {
+    return '$stash';
+  }
+
+  @override
+  String hudConflicts(String conflict) {
+    return '$conflict';
+  }
 
   @override
   String get hudHub => '허브';
@@ -145,19 +175,29 @@ class L10nKo extends L10n {
   String get hudHubNone => '없음';
 
   @override
-  String get hudChangesTip => '아직 버전으로 저장(Commit)하지 않은 바뀐 파일 수';
+  String hudChangesTip(String commit) {
+    return '아직 $commit하지 않은 바뀐 파일 수';
+  }
 
   @override
-  String get hudToPushTip => '이 PC에만 저장돼 있고 아직 원격 저장소에 업로드(Push)하지 않은 버전 수';
+  String hudToPushTip(String remote, String push, String commitUnit) {
+    return '이 PC에만 있고 아직 $remote에 $push하지 않은 $commitUnit 수';
+  }
 
   @override
-  String get hudToPullTip => '원격 저장소에 새로 올라왔고 아직 다운로드(Pull)하지 않은 버전 수';
+  String hudToPullTip(String remote, String pull, String commitUnit) {
+    return '$remote에 새로 올라왔고 아직 $pull하지 않은 $commitUnit 수';
+  }
 
   @override
-  String get goalPush => '업로드 대기 목표';
+  String goalPush(String push) {
+    return '$push 대기 목표';
+  }
 
   @override
-  String get goalDailyCommits => '오늘 저장한 버전';
+  String goalDailyCommits(String commitUnit) {
+    return '오늘의 $commitUnit';
+  }
 
   @override
   String get goalReached => '목표 달성!';
@@ -168,10 +208,14 @@ class L10nKo extends L10n {
   }
 
   @override
-  String get tabChanges => '바뀐 파일';
+  String tabChanges(String changes) {
+    return '$changes';
+  }
 
   @override
-  String get tabHistory => '버전 기록(History)';
+  String tabHistory(String history) {
+    return '$history';
+  }
 
   @override
   String get tabExpeditions => '작업 현황';
@@ -180,8 +224,9 @@ class L10nKo extends L10n {
   String get expeditionsTitle => '작업 현황';
 
   @override
-  String get expeditionsEmpty =>
-      '진행 중인 작업이 없습니다. 업로드(Push)·다운로드(Pull)·내려받기(Clone)처럼 시간이 걸리는 작업이 여기에 표시됩니다.';
+  String expeditionsEmpty(String push, String pull, String clone) {
+    return '진행 중인 작업이 없습니다. $push·$pull·$clone처럼 시간이 걸리는 작업이 여기에 표시됩니다.';
+  }
 
   @override
   String get expeditionRunning => '진행 중';
@@ -235,10 +280,14 @@ class L10nKo extends L10n {
   String get settingsGoals => '목표 바';
 
   @override
-  String get settingsDailyGoal => '하루 버전 저장 목표';
+  String settingsDailyGoal(String commitUnit) {
+    return '하루 $commitUnit 목표';
+  }
 
   @override
-  String get settingsPushGoal => '업로드 대기 목표';
+  String settingsPushGoal(String push) {
+    return '$push 대기 목표';
+  }
 
   @override
   String get settingsReduceMotion => '애니메이션 줄이기';
@@ -274,41 +323,62 @@ class L10nKo extends L10n {
   String get openSettings => '환경설정';
 
   @override
-  String get hudStashesTip => '잠시 치워 둔 작업 수 — 임시 보관(Stash)';
+  String hudStashesTip(String stash) {
+    return '$stash로 잠시 치워 둔 작업 수';
+  }
 
   @override
   String get hudConflictsTip => '두 작업이 같은 곳을 고쳐서 직접 골라야 하는 파일 수 — 충돌(Conflict)';
 
   @override
-  String jobPull(String remote) {
-    return '$remote에서 다운로드(Pull)';
+  String jobPull(String name, String pull) {
+    return '$name에서 $pull';
   }
 
   @override
-  String jobPush(String remote) {
-    return '$remote에 업로드(Push)';
+  String jobPush(String name, String push) {
+    return '$name에 $push';
   }
 
   @override
-  String jobPublish(String branch) {
-    return '$branch 처음 올리기(Publish)';
+  String jobPublish(String name, String publish) {
+    return '$name $publish';
   }
 
   @override
-  String jobFetch(String remote) {
-    return '$remote 변경 확인(Fetch)';
+  String jobFetch(String name, String fetch) {
+    return '$name $fetch';
   }
 
   @override
-  String resultSent(int count) {
-    return '버전 $count개 업로드 완료';
+  String resultSent(String commitUnit, int count, String push) {
+    return '$commitUnit $count개 $push 완료';
   }
 
   @override
-  String resultReceived(int count) {
-    return '새 버전 $count개 다운로드 완료';
+  String resultReceived(String commitUnit, int count) {
+    return '새 $commitUnit $count개 받음';
   }
 
   @override
   String get resultUpToDate => '이미 최신 상태입니다';
+
+  @override
+  String get settingsTerms => '용어 표시';
+
+  @override
+  String get termPlain => '쉬운 말 (Git이 처음인 분)';
+
+  @override
+  String get termGit => 'Git 용어 (GitHub 사용자)';
+
+  @override
+  String termExample(String plain, String git) {
+    return '예: $plain  ↔  $git';
+  }
+
+  @override
+  String gitTermHint(String term) {
+    return 'Git 용어: $term';
+  }
 }

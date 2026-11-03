@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_models.dart';
 import '../../core/models/status.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
 import '../../state/repo_state.dart';
 import '../../ui/theme.dart';
@@ -54,8 +55,8 @@ class _RepoHomeState extends ConsumerState<RepoHome> {
           child: AnimatedSwitcher(
             duration: context.motion(Motion.fast),
             child: switch (_tab) {
-              HomeTab.changes => _Placeholder(key: const ValueKey('changes'), text: L10n.of(context).tabChanges),
-              HomeTab.history => _Placeholder(key: const ValueKey('history'), text: L10n.of(context).tabHistory),
+              HomeTab.changes => _Placeholder(key: const ValueKey('changes'), text: L10n.of(context).tabChanges(Terms.of(context).changes)),
+              HomeTab.history => _Placeholder(key: const ValueKey('history'), text: L10n.of(context).tabHistory(Terms.of(context).history)),
               HomeTab.expeditions => ExpeditionPanel(key: const ValueKey('exp'), repoId: widget.repo.id),
             },
           ),
@@ -74,47 +75,52 @@ class _HudPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L10n.of(context);
+    final t = Terms.of(context);
     final settings = ref.watch(settingsProvider);
     final today = ref.watch(todayCommitsProvider(repoId)).value ?? 0;
+    // In plain mode every tooltip also names the Git term, so both audiences can read it.
+    String tip(String text, String Function(Terms t) term) => t.isPlain
+        ? '$text\n${l.gitTermHint(Terms.gitHint(settings.language, term))}'
+        : text;
     final toPush = status.toPush;
     final conflicts = status.conflictCount;
 
     final stats = [
       HudStat(
         icon: Icons.edit_note_rounded,
-        label: l.hudChanges,
+        label: l.hudChanges(t.changes),
         value: status.files.length,
         tone: status.files.isEmpty ? HudTone.neutral : HudTone.accent,
-        tooltip: l.hudChangesTip,
+        tooltip: tip(l.hudChangesTip(t.commit), (t) => t.commit),
       ),
       HudStat(
         icon: Icons.upload_rounded,
-        label: l.hudToPush,
+        label: l.hudToPush(t.push),
         value: toPush,
         max: settings.pushGoal,
         tone: toPush == 0 ? HudTone.good : (toPush >= settings.pushGoal ? HudTone.danger : HudTone.attention),
-        tooltip: l.hudToPushTip,
+        tooltip: tip(l.hudToPushTip(t.remote, t.push, t.commitUnit), (t) => t.push),
       ),
       HudStat(
         icon: Icons.download_rounded,
-        label: l.hudToPull,
+        label: l.hudToPull(t.pull),
         value: status.behind,
         tone: status.behind == 0 ? HudTone.good : HudTone.attention,
-        tooltip: l.hudToPullTip,
+        tooltip: tip(l.hudToPullTip(t.remote, t.pull, t.commitUnit), (t) => t.pull),
       ),
       HudStat(
         icon: Icons.inventory_2_rounded,
-        label: l.hudStashes,
+        label: l.hudStashes(t.stash),
         value: status.stashCount,
         tone: HudTone.neutral,
-        tooltip: l.hudStashesTip,
+        tooltip: tip(l.hudStashesTip(t.stash), (t) => t.stash),
       ),
       HudStat(
         icon: Icons.bolt_rounded,
-        label: l.hudConflicts,
+        label: l.hudConflicts(t.conflict),
         value: conflicts,
         tone: conflicts == 0 ? HudTone.good : HudTone.danger,
-        tooltip: l.hudConflictsTip,
+        tooltip: tip(l.hudConflictsTip, (t) => t.conflict),
       ),
     ];
 
@@ -134,7 +140,7 @@ class _HudPanel extends ConsumerWidget {
           children: [
             Expanded(
               child: GoalBar(
-                title: l.goalDailyCommits,
+                title: l.goalDailyCommits(t.commitUnit),
                 current: today,
                 target: settings.dailyCommitGoal,
                 tone: HudTone.good,
@@ -146,7 +152,7 @@ class _HudPanel extends ConsumerWidget {
             const SizedBox(width: Space.xl),
             Expanded(
               child: GoalBar(
-                title: l.goalPush,
+                title: l.goalPush(t.push),
                 current: toPush,
                 target: settings.pushGoal,
                 tone: toPush >= settings.pushGoal ? HudTone.danger : HudTone.attention,
@@ -209,8 +215,8 @@ class _TabBar extends ConsumerWidget {
       decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
       child: Row(
         children: [
-          item(HomeTab.changes, l.tabChanges, badge: changes, badgeColor: c.accent),
-          item(HomeTab.history, l.tabHistory),
+          item(HomeTab.changes, l.tabChanges(Terms.of(context).changes), badge: changes, badgeColor: c.accent),
+          item(HomeTab.history, l.tabHistory(Terms.of(context).history)),
           item(
             HomeTab.expeditions,
             l.tabExpeditions,

@@ -47,7 +47,9 @@ class L10nEn extends L10n {
   String get addCreate => 'Create new repository…';
 
   @override
-  String get addClone => 'Clone repository…';
+  String addClone(String clone) {
+    return '$clone…';
+  }
 
   @override
   String get pickRepositoryFolder => 'Choose a repository folder';
@@ -71,13 +73,19 @@ class L10nEn extends L10n {
   String get questAddRepo => 'Add a repository';
 
   @override
-  String get questFirstCommit => 'Make your first commit';
+  String questFirstCommit(String commit) {
+    return '$commit for the first time';
+  }
 
   @override
-  String get questFirstPush => 'Push to a remote';
+  String questFirstPush(String remote, String push) {
+    return 'First $push to a $remote';
+  }
 
   @override
-  String get branchLabel => 'Branch';
+  String branchLabel(String branch) {
+    return '$branch';
+  }
 
   @override
   String detachedHead(String sha) {
@@ -85,52 +93,74 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get noBranch => 'No branch';
-
-  @override
-  String get actionCommit => 'Commit';
-
-  @override
-  String actionPush(int count) {
-    return 'Push $count';
+  String noBranch(String branch) {
+    return 'No $branch';
   }
 
   @override
-  String actionPull(int count) {
-    return 'Pull $count';
+  String actionCommit(String commit) {
+    return '$commit';
   }
 
   @override
-  String get actionPublish => 'Publish';
-
-  @override
-  String get actionFetch => 'Fetch';
-
-  @override
-  String get actionResolve => 'Resolve conflicts';
-
-  @override
-  String lastFetched(String time) {
-    return 'Last fetched $time';
+  String actionPush(String push, int count) {
+    return '$push $count';
   }
 
   @override
-  String get neverFetched => 'Never fetched';
+  String actionPull(String pull, int count) {
+    return '$pull $count';
+  }
 
   @override
-  String get hudChanges => 'Changed files';
+  String actionPublish(String publish) {
+    return '$publish';
+  }
 
   @override
-  String get hudToPush => 'To push';
+  String actionFetch(String fetch) {
+    return '$fetch';
+  }
 
   @override
-  String get hudToPull => 'To pull';
+  String actionResolve(String conflict) {
+    return 'Resolve: $conflict';
+  }
 
   @override
-  String get hudStashes => 'Stashes';
+  String lastFetched(String fetch, String time) {
+    return 'Last $fetch: $time';
+  }
 
   @override
-  String get hudConflicts => 'Conflicts';
+  String neverFetched(String fetch) {
+    return '$fetch: not yet';
+  }
+
+  @override
+  String hudChanges(String changes) {
+    return '$changes';
+  }
+
+  @override
+  String hudToPush(String push) {
+    return '$push queue';
+  }
+
+  @override
+  String hudToPull(String pull) {
+    return '$pull queue';
+  }
+
+  @override
+  String hudStashes(String stash) {
+    return '$stash';
+  }
+
+  @override
+  String hudConflicts(String conflict) {
+    return '$conflict';
+  }
 
   @override
   String get hudHub => 'Hub';
@@ -145,19 +175,29 @@ class L10nEn extends L10n {
   String get hudHubNone => 'None';
 
   @override
-  String get hudChangesTip => 'Files with uncommitted changes';
+  String hudChangesTip(String commit) {
+    return 'Changed files not saved with $commit yet';
+  }
 
   @override
-  String get hudToPushTip => 'Commits only on this PC, not pushed yet';
+  String hudToPushTip(String remote, String push, String commitUnit) {
+    return '$commitUnit only on this PC, not sent with $push yet';
+  }
 
   @override
-  String get hudToPullTip => 'Commits on the remote you have not pulled yet';
+  String hudToPullTip(String remote, String pull, String commitUnit) {
+    return 'New $commitUnit on the $remote not received with $pull yet';
+  }
 
   @override
-  String get goalPush => 'Push backlog goal';
+  String goalPush(String push) {
+    return '$push queue goal';
+  }
 
   @override
-  String get goalDailyCommits => 'Today\'s commits';
+  String goalDailyCommits(String commitUnit) {
+    return 'Today\'s $commitUnit';
+  }
 
   @override
   String get goalReached => 'Goal reached!';
@@ -168,10 +208,14 @@ class L10nEn extends L10n {
   }
 
   @override
-  String get tabChanges => 'Changes';
+  String tabChanges(String changes) {
+    return '$changes';
+  }
 
   @override
-  String get tabHistory => 'History';
+  String tabHistory(String history) {
+    return '$history';
+  }
 
   @override
   String get tabExpeditions => 'Activity';
@@ -180,8 +224,9 @@ class L10nEn extends L10n {
   String get expeditionsTitle => 'Activity';
 
   @override
-  String get expeditionsEmpty =>
-      'Nothing running. Long operations such as push, pull and clone show up here.';
+  String expeditionsEmpty(String push, String pull, String clone) {
+    return 'Nothing running. Long operations such as $push, $pull and $clone show up here.';
+  }
 
   @override
   String get expeditionRunning => 'Running';
@@ -235,10 +280,14 @@ class L10nEn extends L10n {
   String get settingsGoals => 'Goal bars';
 
   @override
-  String get settingsDailyGoal => 'Daily commit goal';
+  String settingsDailyGoal(String commitUnit) {
+    return 'Daily $commitUnit goal';
+  }
 
   @override
-  String get settingsPushGoal => 'Push backlog goal';
+  String settingsPushGoal(String push) {
+    return '$push queue goal';
+  }
 
   @override
   String get settingsReduceMotion => 'Reduce animations';
@@ -274,42 +323,63 @@ class L10nEn extends L10n {
   String get openSettings => 'Preferences';
 
   @override
-  String get hudStashesTip => 'Work set aside with stash';
+  String hudStashesTip(String stash) {
+    return 'Work set aside ($stash)';
+  }
 
   @override
   String get hudConflictsTip =>
       'Files changed on both sides that need a decision';
 
   @override
-  String jobPull(String remote) {
-    return 'Pull from $remote';
+  String jobPull(String name, String pull) {
+    return '$pull from $name';
   }
 
   @override
-  String jobPush(String remote) {
-    return 'Push to $remote';
+  String jobPush(String name, String push) {
+    return '$push to $name';
   }
 
   @override
-  String jobPublish(String branch) {
-    return 'Publish $branch';
+  String jobPublish(String name, String publish) {
+    return '$publish $name';
   }
 
   @override
-  String jobFetch(String remote) {
-    return 'Fetch from $remote';
+  String jobFetch(String name, String fetch) {
+    return '$fetch: $name';
   }
 
   @override
-  String resultSent(int count) {
-    return '$count commits pushed';
+  String resultSent(String commitUnit, int count, String push) {
+    return '$count $commitUnit sent ($push)';
   }
 
   @override
-  String resultReceived(int count) {
-    return '$count new commits pulled';
+  String resultReceived(String commitUnit, int count) {
+    return '$count new $commitUnit received';
   }
 
   @override
   String get resultUpToDate => 'Already up to date';
+
+  @override
+  String get settingsTerms => 'Terminology';
+
+  @override
+  String get termPlain => 'Plain words (new to Git)';
+
+  @override
+  String get termGit => 'Git terms (GitHub users)';
+
+  @override
+  String termExample(String plain, String git) {
+    return 'e.g. $plain  ↔  $git';
+  }
+
+  @override
+  String gitTermHint(String term) {
+    return 'Git term: $term';
+  }
 }

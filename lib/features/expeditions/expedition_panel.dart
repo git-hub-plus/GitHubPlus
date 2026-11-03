@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/expeditions/expedition.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
 import '../../ui/format.dart';
 import '../../ui/theme.dart';
@@ -58,7 +59,11 @@ class _ExpeditionPanelState extends ConsumerState<ExpeditionPanel> {
               const SizedBox(height: Space.md),
               SizedBox(
                 width: 420,
-                child: Text(l.expeditionsEmpty, textAlign: TextAlign.center, style: TextStyle(color: c.muted)),
+                child: Text(
+                  l.expeditionsEmpty(Terms.of(context).push, Terms.of(context).pull, Terms.of(context).clone),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: c.muted),
+                ),
               ),
             ],
           ),

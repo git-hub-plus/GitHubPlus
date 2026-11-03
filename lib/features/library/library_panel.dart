@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_models.dart';
 import '../../core/storage/repository_store.dart';
 import '../../l10n/app_localizations.dart';
+import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/feedback.dart';
@@ -82,7 +83,7 @@ class _LibraryPanelState extends ConsumerState<LibraryPanel> {
                   itemBuilder: (_) => [
                     PopupMenuItem(value: 'existing', child: Text(l.addExisting)),
                     PopupMenuItem(value: 'create', enabled: false, child: Text(l.addCreate)),
-                    PopupMenuItem(value: 'clone', enabled: false, child: Text(l.addClone)),
+                    PopupMenuItem(value: 'clone', enabled: false, child: Text(l.addClone(Terms.of(context).clone))),
                   ],
                 ),
               ],

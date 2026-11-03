@@ -5,6 +5,9 @@ enum ThemePreference { dark, light, system }
 
 enum AppLanguage { ko, en }
 
+/// Which vocabulary the UI uses: Git terms (커밋, 푸시) or plain words (버전 저장, 업로드).
+enum TermStyle { plain, git }
+
 class RepositoryInfo {
   const RepositoryInfo({
     required this.id,
@@ -95,6 +98,7 @@ class AppSettings {
     this.dailyCommitGoal = 5,
     this.pushGoal = 10,
     this.reduceMotion = false,
+    this.termStyle = TermStyle.plain,
   });
 
   final AppLanguage language;
@@ -108,6 +112,8 @@ class AppSettings {
   /// Turns off decorative animations in addition to the OS setting.
   final bool reduceMotion;
 
+  final TermStyle termStyle;
+
   AppSettings copyWith({
     AppLanguage? language,
     ThemePreference? theme,
@@ -115,6 +121,7 @@ class AppSettings {
     int? dailyCommitGoal,
     int? pushGoal,
     bool? reduceMotion,
+    TermStyle? termStyle,
   }) => AppSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -122,6 +129,7 @@ class AppSettings {
     dailyCommitGoal: dailyCommitGoal ?? this.dailyCommitGoal,
     pushGoal: pushGoal ?? this.pushGoal,
     reduceMotion: reduceMotion ?? this.reduceMotion,
+    termStyle: termStyle ?? this.termStyle,
   );
 
   Map<String, Object?> toJson() => {
@@ -131,6 +139,7 @@ class AppSettings {
     'dailyCommitGoal': dailyCommitGoal,
     'pushGoal': pushGoal,
     'reduceMotion': reduceMotion,
+    'termStyle': termStyle.name,
   };
 
   static AppSettings fromJson(Object? json) {
@@ -143,6 +152,7 @@ class AppSettings {
       dailyCommitGoal: goal(json['dailyCommitGoal'], 5),
       pushGoal: goal(json['pushGoal'], 10),
       reduceMotion: json['reduceMotion'] == true,
+      termStyle: TermStyle.values.asNameMap()[json['termStyle']] ?? TermStyle.plain,
     );
   }
 }
