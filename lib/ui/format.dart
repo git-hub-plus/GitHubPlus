@@ -20,3 +20,10 @@ String formatAgo(BuildContext context, DateTime time, {DateTime? now}) {
   if (diff.inHours < 24) return ko ? '${diff.inHours}시간 전' : '${diff.inHours}h ago';
   return ko ? '${diff.inDays}일 전' : '${diff.inDays}d ago';
 }
+
+/// File size: "512 B", "12.4 KB", "3.1 MB".
+String formatBytes(int bytes) {
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+}

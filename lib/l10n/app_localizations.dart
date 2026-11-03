@@ -666,6 +666,126 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'Git 용어: {term}'**
   String gitTermHint(String term);
+
+  /// No description provided for @tabOverview.
+  ///
+  /// In ko, this message translates to:
+  /// **'개요'**
+  String get tabOverview;
+
+  /// No description provided for @overviewWorkingTree.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 폴더'**
+  String get overviewWorkingTree;
+
+  /// No description provided for @overviewWorkingTreeTip.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 폴더에 있는 그대로 보여 줍니다. 아직 {commit}하지 않은 수정도 보이고, .gitignore로 숨긴 파일은 빠집니다.'**
+  String overviewWorkingTreeTip(String commit);
+
+  /// No description provided for @overviewHead.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {commitUnit} (HEAD)'**
+  String overviewHead(String commitUnit);
+
+  /// No description provided for @overviewHeadTip.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 {branch}에 마지막으로 저장된 내용을 보여 줍니다. 다른 PC나 허브에서 보는 모습과 같습니다.'**
+  String overviewHeadTip(String branch);
+
+  /// No description provided for @overviewRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'새로 고침'**
+  String get overviewRefresh;
+
+  /// No description provided for @overviewOpenFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'탐색기에서 열기'**
+  String get overviewOpenFolder;
+
+  /// No description provided for @overviewEmptyFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'빈 폴더입니다.'**
+  String get overviewEmptyFolder;
+
+  /// No description provided for @overviewNoReadme.
+  ///
+  /// In ko, this message translates to:
+  /// **'README가 없습니다. README.md 파일을 만들면 이 자리에 저장소 소개가 보입니다.'**
+  String get overviewNoReadme;
+
+  /// No description provided for @overviewNoCommits.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 {commitUnit}이 없습니다. 작업 폴더 기준으로 보세요.'**
+  String overviewNoCommits(String commitUnit);
+
+  /// No description provided for @overviewTooLarge.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일이 너무 커서 미리 볼 수 없습니다 ({size}).'**
+  String overviewTooLarge(String size);
+
+  /// No description provided for @overviewBinary.
+  ///
+  /// In ko, this message translates to:
+  /// **'텍스트가 아닌 파일이라 미리 볼 수 없습니다 ({size}).'**
+  String overviewBinary(String size);
+
+  /// No description provided for @overviewMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 찾을 수 없습니다.'**
+  String get overviewMissing;
+
+  /// No description provided for @overviewBlocked.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 밖을 가리켜서 열지 않았습니다.'**
+  String get overviewBlocked;
+
+  /// No description provided for @overviewSubmodule.
+  ///
+  /// In ko, this message translates to:
+  /// **'하위 저장소'**
+  String get overviewSubmodule;
+
+  /// No description provided for @overviewSymlink.
+  ///
+  /// In ko, this message translates to:
+  /// **'바로 가기 링크'**
+  String get overviewSymlink;
+
+  /// No description provided for @overviewRemoteImage.
+  ///
+  /// In ko, this message translates to:
+  /// **'외부 이미지: {alt}'**
+  String overviewRemoteImage(String alt);
+
+  /// No description provided for @overviewRaw.
+  ///
+  /// In ko, this message translates to:
+  /// **'원문'**
+  String get overviewRaw;
+
+  /// No description provided for @overviewRendered.
+  ///
+  /// In ko, this message translates to:
+  /// **'미리보기'**
+  String get overviewRendered;
+
+  /// No description provided for @overviewLoadError.
+  ///
+  /// In ko, this message translates to:
+  /// **'불러오지 못했습니다: {error}'**
+  String overviewLoadError(String error);
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

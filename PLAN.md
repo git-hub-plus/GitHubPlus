@@ -24,6 +24,20 @@
 
 - 기본 테마는 **다크(런처 느낌)**, 라이트도 지원. 강조색은 로고의 파랑(`#1F7AE0` 계열).
 - 정보는 숨기지 않고 **숫자와 상태색으로 객관적으로** 보여 준다. 게임 요소는 꾸밈이 아니라 상태를 빨리 읽게 하는 장치로만 쓴다.
+- **용어 두 가지**: 설정에서 "쉬운 말(업로드·버전 저장)"과 "Git 용어(푸시·커밋)" 중 고른다. 기준은 `docs/GLOSSARY.md`, 코드는 `lib/l10n/terms.dart`.
+
+### 개요 창 (저장소 첫 화면)
+
+GitHub 저장소 페이지처럼 **파일 목록 + README**를 보여 주는 기본 탭. 배너·HUD는 스크롤하면 위로 접힌다.
+
+| 보기 | 내용 | 내용 공급 |
+|---|---|---|
+| 작업 폴더 | 지금 폴더 그대로(저장 전 수정 포함, `.gitignore` 제외) | `WorkingTreeSource` (`git ls-files -co --exclude-standard`) |
+| 마지막 버전 (HEAD) | 저장된 내용 | `GitTreeSource` (`ls-tree`·`cat-file`, ref 지정 가능) |
+| 허브 저장소 (F3) | 허브 PC의 bare 저장소, 브랜치별 | 같은 `GitTreeSource` 재사용 |
+
+- 화면(`lib/features/overview/`)은 `RepoContentSource` 인터페이스(`lib/core/content/`)만 쓴다. 허브·GitHub 원격도 같은 인터페이스를 구현하면 그대로 붙는다.
+- 안전 규칙: 경로는 저장소 안으로만(`..`·절대 경로·저장소 밖 심볼릭 링크 거부), 미리보기 2MB 제한, README 링크는 http·https·mailto만 브라우저로 열고 나머지 스킴은 무시, 외부 이미지는 불러오지 않고 자리표시만 한다(README를 여는 것만으로 외부 서버에 접속하지 않음).
 
 ### 로고 사용
 
@@ -46,7 +60,8 @@
 | 허브 서버 | `dart:io` `HttpServer` + `git upload-pack/receive-pack --stateless-rpc`, UDP `RawDatagramSocket`(47321) |
 | GitHub | `package:http`로 Device Flow·REST |
 | AI | Claude Messages API(Dart 공식 SDK가 없어 HTTP 직접 호출), OpenAI 호환 |
-| 비밀값 | `flutter_secure_storage`(Windows 자격 증명/DPAPI) |
+| 비밀값 | Windows DPAPI(FFI 직접 호출, ATL이 필요한 `flutter_secure_storage`는 뺌) |
+| 마크다운 | `flutter_markdown_plus`(링크·이미지 처리는 직접 지정) |
 | 창·트레이 | `window_manager`(사용자 정의 제목 표시줄), `tray_manager`, 시작 시 실행 |
 | 드래그&드롭 | `desktop_drop` |
 | 테스트 | `flutter test`(단위·위젯), `integration_test`(실제 앱) |
@@ -57,6 +72,7 @@ lib/
   main.dart, app.dart
   core/            # UI와 무관한 로직 (Flutter 없이 테스트 가능)
     git/           # 실행기, 파서, 명령 묶음 (v1 이식)
+    content/       # 개요 창 내용 공급 (작업 폴더, 커밋 트리, 허브 bare 저장소)
     hub/           # 서버, 클라이언트, 발견
     github/  ai/  storage/
     models/        # 상태·diff·커밋 등 불변 데이터 클래스

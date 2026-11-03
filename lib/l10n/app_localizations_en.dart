@@ -382,4 +382,82 @@ class L10nEn extends L10n {
   String gitTermHint(String term) {
     return 'Git term: $term';
   }
+
+  @override
+  String get tabOverview => 'Overview';
+
+  @override
+  String get overviewWorkingTree => 'Working folder';
+
+  @override
+  String overviewWorkingTreeTip(String commit) {
+    return 'Shows the folder as it is now, including edits not yet ${commit}ted. Files hidden by .gitignore are left out.';
+  }
+
+  @override
+  String overviewHead(String commitUnit) {
+    return 'Last $commitUnit (HEAD)';
+  }
+
+  @override
+  String overviewHeadTip(String branch) {
+    return 'Shows what is saved on the current $branch, the same as other PCs and the hub see it.';
+  }
+
+  @override
+  String get overviewRefresh => 'Refresh';
+
+  @override
+  String get overviewOpenFolder => 'Open in Explorer';
+
+  @override
+  String get overviewEmptyFolder => 'This folder is empty.';
+
+  @override
+  String get overviewNoReadme =>
+      'No README yet. Add a README.md file and it will introduce this repository here.';
+
+  @override
+  String overviewNoCommits(String commitUnit) {
+    return 'No $commitUnit yet. Switch to the working folder view.';
+  }
+
+  @override
+  String overviewTooLarge(String size) {
+    return 'Too large to preview ($size).';
+  }
+
+  @override
+  String overviewBinary(String size) {
+    return 'Binary file, no preview ($size).';
+  }
+
+  @override
+  String get overviewMissing => 'File not found.';
+
+  @override
+  String get overviewBlocked =>
+      'Points outside the repository, so it was not opened.';
+
+  @override
+  String get overviewSubmodule => 'Submodule';
+
+  @override
+  String get overviewSymlink => 'Symbolic link';
+
+  @override
+  String overviewRemoteImage(String alt) {
+    return 'External image: $alt';
+  }
+
+  @override
+  String get overviewRaw => 'Source';
+
+  @override
+  String get overviewRendered => 'Preview';
+
+  @override
+  String overviewLoadError(String error) {
+    return 'Could not load: $error';
+  }
 }

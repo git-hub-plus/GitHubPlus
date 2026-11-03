@@ -381,4 +381,81 @@ class L10nKo extends L10n {
   String gitTermHint(String term) {
     return 'Git 용어: $term';
   }
+
+  @override
+  String get tabOverview => '개요';
+
+  @override
+  String get overviewWorkingTree => '작업 폴더';
+
+  @override
+  String overviewWorkingTreeTip(String commit) {
+    return '지금 폴더에 있는 그대로 보여 줍니다. 아직 $commit하지 않은 수정도 보이고, .gitignore로 숨긴 파일은 빠집니다.';
+  }
+
+  @override
+  String overviewHead(String commitUnit) {
+    return '마지막 $commitUnit (HEAD)';
+  }
+
+  @override
+  String overviewHeadTip(String branch) {
+    return '현재 $branch에 마지막으로 저장된 내용을 보여 줍니다. 다른 PC나 허브에서 보는 모습과 같습니다.';
+  }
+
+  @override
+  String get overviewRefresh => '새로 고침';
+
+  @override
+  String get overviewOpenFolder => '탐색기에서 열기';
+
+  @override
+  String get overviewEmptyFolder => '빈 폴더입니다.';
+
+  @override
+  String get overviewNoReadme =>
+      'README가 없습니다. README.md 파일을 만들면 이 자리에 저장소 소개가 보입니다.';
+
+  @override
+  String overviewNoCommits(String commitUnit) {
+    return '아직 $commitUnit이 없습니다. 작업 폴더 기준으로 보세요.';
+  }
+
+  @override
+  String overviewTooLarge(String size) {
+    return '파일이 너무 커서 미리 볼 수 없습니다 ($size).';
+  }
+
+  @override
+  String overviewBinary(String size) {
+    return '텍스트가 아닌 파일이라 미리 볼 수 없습니다 ($size).';
+  }
+
+  @override
+  String get overviewMissing => '파일을 찾을 수 없습니다.';
+
+  @override
+  String get overviewBlocked => '저장소 밖을 가리켜서 열지 않았습니다.';
+
+  @override
+  String get overviewSubmodule => '하위 저장소';
+
+  @override
+  String get overviewSymlink => '바로 가기 링크';
+
+  @override
+  String overviewRemoteImage(String alt) {
+    return '외부 이미지: $alt';
+  }
+
+  @override
+  String get overviewRaw => '원문';
+
+  @override
+  String get overviewRendered => '미리보기';
+
+  @override
+  String overviewLoadError(String error) {
+    return '불러오지 못했습니다: $error';
+  }
 }

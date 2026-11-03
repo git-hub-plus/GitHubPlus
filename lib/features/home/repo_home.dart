@@ -10,9 +10,10 @@ import '../../state/repo_state.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/hud.dart';
 import '../expeditions/expedition_panel.dart';
+import '../overview/overview_view.dart';
 import 'repo_banner.dart';
 
-enum HomeTab { changes, history, expeditions }
+enum HomeTab { overview, changes, history, expeditions }
 
 /// Selected repository: banner, HUD, goal bars and the tabbed workspace.
 class RepoHome extends ConsumerStatefulWidget {
@@ -24,44 +25,61 @@ class RepoHome extends ConsumerStatefulWidget {
 }
 
 class _RepoHomeState extends ConsumerState<RepoHome> {
-  var _tab = HomeTab.changes;
+  var _tab = HomeTab.overview;
 
   @override
   Widget build(BuildContext context) {
     final statusAsync = ref.watch(repoStatusProvider(widget.repo.id));
     final status = statusAsync.value;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RepoBanner(
-          repo: widget.repo,
-          status: status,
-          onCommitRequested: () => setState(() => _tab = HomeTab.changes),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.xxl, Space.sm, Space.xxl, Space.lg),
-          child: status == null
-              ? (statusAsync.hasError
-                    ? Text('${statusAsync.error}', style: TextStyle(color: context.colors.danger))
-                    : const LinearProgressIndicator(minHeight: 2))
-              : _HudPanel(repoId: widget.repo.id, status: status),
-        ),
-        _TabBar(
-          tab: _tab,
-          onChanged: (tab) => setState(() => _tab = tab),
-          changes: status?.files.length ?? 0,
-        ),
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: context.motion(Motion.fast),
-            child: switch (_tab) {
-              HomeTab.changes => _Placeholder(key: const ValueKey('changes'), text: L10n.of(context).tabChanges(Terms.of(context).changes)),
-              HomeTab.history => _Placeholder(key: const ValueKey('history'), text: L10n.of(context).tabHistory(Terms.of(context).history)),
-              HomeTab.expeditions => ExpeditionPanel(key: const ValueKey('exp'), repoId: widget.repo.id),
-            },
+    final c = context.colors;
+    // Banner and HUD scroll away so the tab content (README, files) gets the
+    // height; the tab bar sits on top of the body and stays visible.
+    return NestedScrollView(
+      headerSliverBuilder: (context, _) => [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              RepoBanner(
+                repo: widget.repo,
+                status: status,
+                onCommitRequested: () => setState(() => _tab = HomeTab.changes),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(Space.xxl, Space.sm, Space.xxl, Space.lg),
+                child: status == null
+                    ? (statusAsync.hasError
+                          ? Text('${statusAsync.error}', style: TextStyle(color: c.danger))
+                          : const LinearProgressIndicator(minHeight: 2))
+                    : _HudPanel(repoId: widget.repo.id, status: status),
+              ),
+            ],
           ),
         ),
       ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _TabBar(tab: _tab, onChanged: (tab) => setState(() => _tab = tab), changes: status?.files.length ?? 0),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: context.motion(Motion.fast),
+              child: switch (_tab) {
+                HomeTab.overview => OverviewView(key: ValueKey('overview-${widget.repo.id}'), repo: widget.repo),
+                HomeTab.changes => _Placeholder(
+                  key: const ValueKey('changes'),
+                  text: L10n.of(context).tabChanges(Terms.of(context).changes),
+                ),
+                HomeTab.history => _Placeholder(
+                  key: const ValueKey('history'),
+                  text: L10n.of(context).tabHistory(Terms.of(context).history),
+                ),
+                HomeTab.expeditions => ExpeditionPanel(key: const ValueKey('exp'), repoId: widget.repo.id),
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -79,9 +97,8 @@ class _HudPanel extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final today = ref.watch(todayCommitsProvider(repoId)).value ?? 0;
     // In plain mode every tooltip also names the Git term, so both audiences can read it.
-    String tip(String text, String Function(Terms t) term) => t.isPlain
-        ? '$text\n${l.gitTermHint(Terms.gitHint(settings.language, term))}'
-        : text;
+    String tip(String text, String Function(Terms t) term) =>
+        t.isPlain ? '$text\n${l.gitTermHint(Terms.gitHint(settings.language, term))}' : text;
     final toPush = status.toPush;
     final conflicts = status.conflictCount;
 
@@ -201,7 +218,10 @@ class _TabBar extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                   decoration: BoxDecoration(color: badgeColor ?? c.raised, borderRadius: BorderRadius.circular(10)),
-                  child: Text('$badge', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
+                  child: Text(
+                    '$badge',
+                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
+                  ),
                 ),
               ],
             ],
@@ -212,9 +232,12 @@ class _TabBar extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: c.border)),
+      ),
       child: Row(
         children: [
+          item(HomeTab.overview, l.tabOverview),
           item(HomeTab.changes, l.tabChanges(Terms.of(context).changes), badge: changes, badgeColor: c.accent),
           item(HomeTab.history, l.tabHistory(Terms.of(context).history)),
           item(
@@ -234,6 +257,7 @@ class _Placeholder extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) =>
-      Center(child: Text(text, style: TextStyle(color: context.colors.muted)));
+  Widget build(BuildContext context) => Center(
+    child: Text(text, style: TextStyle(color: context.colors.muted)),
+  );
 }
