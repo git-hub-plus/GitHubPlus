@@ -172,7 +172,7 @@ abstract class L10n {
   /// No description provided for @addClone.
   ///
   /// In ko, this message translates to:
-  /// **'저장소 복제…'**
+  /// **'원격 저장소 내려받기(Clone)…'**
   String get addClone;
 
   /// No description provided for @pickRepositoryFolder.
@@ -214,19 +214,19 @@ abstract class L10n {
   /// No description provided for @questFirstCommit.
   ///
   /// In ko, this message translates to:
-  /// **'첫 커밋 만들기'**
+  /// **'첫 버전 저장하기(Commit)'**
   String get questFirstCommit;
 
   /// No description provided for @questFirstPush.
   ///
   /// In ko, this message translates to:
-  /// **'원격에 푸시하기'**
+  /// **'원격 저장소에 업로드하기(Push)'**
   String get questFirstPush;
 
   /// No description provided for @branchLabel.
   ///
   /// In ko, this message translates to:
-  /// **'브랜치'**
+  /// **'작업 갈래(Branch)'**
   String get branchLabel;
 
   /// No description provided for @detachedHead.
@@ -238,79 +238,79 @@ abstract class L10n {
   /// No description provided for @noBranch.
   ///
   /// In ko, this message translates to:
-  /// **'브랜치 없음'**
+  /// **'작업 갈래 없음'**
   String get noBranch;
 
   /// No description provided for @actionCommit.
   ///
   /// In ko, this message translates to:
-  /// **'커밋하기'**
+  /// **'버전 저장(Commit)'**
   String get actionCommit;
 
   /// No description provided for @actionPush.
   ///
   /// In ko, this message translates to:
-  /// **'푸시 {count}'**
+  /// **'업로드(Push) {count}'**
   String actionPush(int count);
 
   /// No description provided for @actionPull.
   ///
   /// In ko, this message translates to:
-  /// **'풀 {count}'**
+  /// **'다운로드(Pull) {count}'**
   String actionPull(int count);
 
   /// No description provided for @actionPublish.
   ///
   /// In ko, this message translates to:
-  /// **'게시하기'**
+  /// **'처음 올리기(Publish)'**
   String get actionPublish;
 
   /// No description provided for @actionFetch.
   ///
   /// In ko, this message translates to:
-  /// **'가져오기'**
+  /// **'변경 확인(Fetch)'**
   String get actionFetch;
 
   /// No description provided for @actionResolve.
   ///
   /// In ko, this message translates to:
-  /// **'충돌 해결'**
+  /// **'충돌 해결(Conflict)'**
   String get actionResolve;
 
   /// No description provided for @lastFetched.
   ///
   /// In ko, this message translates to:
-  /// **'마지막 가져오기 {time}'**
+  /// **'마지막 변경 확인 {time}'**
   String lastFetched(String time);
 
   /// No description provided for @neverFetched.
   ///
   /// In ko, this message translates to:
-  /// **'아직 가져오지 않음'**
+  /// **'아직 변경 확인 안 함'**
   String get neverFetched;
 
   /// No description provided for @hudChanges.
   ///
   /// In ko, this message translates to:
-  /// **'변경 파일'**
+  /// **'바뀐 파일'**
   String get hudChanges;
 
   /// No description provided for @hudToPush.
   ///
   /// In ko, this message translates to:
-  /// **'푸시 대기'**
+  /// **'업로드 대기'**
   String get hudToPush;
 
   /// No description provided for @hudToPull.
   ///
   /// In ko, this message translates to:
-  /// **'풀 대기'**
+  /// **'다운로드 대기'**
   String get hudToPull;
 
   /// No description provided for @hudStashes.
   ///
   /// In ko, this message translates to:
-  /// **'임시 저장'**
+  /// **'임시 보관'**
   String get hudStashes;
 
   /// No description provided for @hudConflicts.
@@ -346,31 +346,31 @@ abstract class L10n {
   /// No description provided for @hudChangesTip.
   ///
   /// In ko, this message translates to:
-  /// **'커밋하지 않은 변경 파일 수'**
+  /// **'아직 버전으로 저장(Commit)하지 않은 바뀐 파일 수'**
   String get hudChangesTip;
 
   /// No description provided for @hudToPushTip.
   ///
   /// In ko, this message translates to:
-  /// **'이 PC에만 있고 아직 원격에 올리지 않은 커밋 수'**
+  /// **'이 PC에만 저장돼 있고 아직 원격 저장소에 업로드(Push)하지 않은 버전 수'**
   String get hudToPushTip;
 
   /// No description provided for @hudToPullTip.
   ///
   /// In ko, this message translates to:
-  /// **'원격에 있고 아직 받지 않은 커밋 수'**
+  /// **'원격 저장소에 새로 올라왔고 아직 다운로드(Pull)하지 않은 버전 수'**
   String get hudToPullTip;
 
   /// No description provided for @goalPush.
   ///
   /// In ko, this message translates to:
-  /// **'푸시 대기 목표'**
+  /// **'업로드 대기 목표'**
   String get goalPush;
 
   /// No description provided for @goalDailyCommits.
   ///
   /// In ko, this message translates to:
-  /// **'오늘의 커밋'**
+  /// **'오늘 저장한 버전'**
   String get goalDailyCommits;
 
   /// No description provided for @goalReached.
@@ -388,31 +388,31 @@ abstract class L10n {
   /// No description provided for @tabChanges.
   ///
   /// In ko, this message translates to:
-  /// **'변경 사항'**
+  /// **'바뀐 파일'**
   String get tabChanges;
 
   /// No description provided for @tabHistory.
   ///
   /// In ko, this message translates to:
-  /// **'히스토리'**
+  /// **'버전 기록(History)'**
   String get tabHistory;
 
   /// No description provided for @tabExpeditions.
   ///
   /// In ko, this message translates to:
-  /// **'파견'**
+  /// **'작업 현황'**
   String get tabExpeditions;
 
   /// No description provided for @expeditionsTitle.
   ///
   /// In ko, this message translates to:
-  /// **'파견'**
+  /// **'작업 현황'**
   String get expeditionsTitle;
 
   /// No description provided for @expeditionsEmpty.
   ///
   /// In ko, this message translates to:
-  /// **'진행 중인 파견이 없습니다. 푸시·풀·복제 같은 오래 걸리는 작업이 여기에 표시됩니다.'**
+  /// **'진행 중인 작업이 없습니다. 업로드(Push)·다운로드(Pull)·내려받기(Clone)처럼 시간이 걸리는 작업이 여기에 표시됩니다.'**
   String get expeditionsEmpty;
 
   /// No description provided for @expeditionRunning.
@@ -460,7 +460,7 @@ abstract class L10n {
   /// No description provided for @expeditionTo.
   ///
   /// In ko, this message translates to:
-  /// **'목적지: {destination}'**
+  /// **'대상: {destination}'**
   String expeditionTo(String destination);
 
   /// No description provided for @settingsTitle.
@@ -508,13 +508,13 @@ abstract class L10n {
   /// No description provided for @settingsDailyGoal.
   ///
   /// In ko, this message translates to:
-  /// **'하루 커밋 목표'**
+  /// **'하루 버전 저장 목표'**
   String get settingsDailyGoal;
 
   /// No description provided for @settingsPushGoal.
   ///
   /// In ko, this message translates to:
-  /// **'푸시 대기 목표'**
+  /// **'업로드 대기 목표'**
   String get settingsPushGoal;
 
   /// No description provided for @settingsReduceMotion.
@@ -582,6 +582,60 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'환경설정'**
   String get openSettings;
+
+  /// No description provided for @hudStashesTip.
+  ///
+  /// In ko, this message translates to:
+  /// **'잠시 치워 둔 작업 수 — 임시 보관(Stash)'**
+  String get hudStashesTip;
+
+  /// No description provided for @hudConflictsTip.
+  ///
+  /// In ko, this message translates to:
+  /// **'두 작업이 같은 곳을 고쳐서 직접 골라야 하는 파일 수 — 충돌(Conflict)'**
+  String get hudConflictsTip;
+
+  /// No description provided for @jobPull.
+  ///
+  /// In ko, this message translates to:
+  /// **'{remote}에서 다운로드(Pull)'**
+  String jobPull(String remote);
+
+  /// No description provided for @jobPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'{remote}에 업로드(Push)'**
+  String jobPush(String remote);
+
+  /// No description provided for @jobPublish.
+  ///
+  /// In ko, this message translates to:
+  /// **'{branch} 처음 올리기(Publish)'**
+  String jobPublish(String branch);
+
+  /// No description provided for @jobFetch.
+  ///
+  /// In ko, this message translates to:
+  /// **'{remote} 변경 확인(Fetch)'**
+  String jobFetch(String remote);
+
+  /// No description provided for @resultSent.
+  ///
+  /// In ko, this message translates to:
+  /// **'버전 {count}개 업로드 완료'**
+  String resultSent(int count);
+
+  /// No description provided for @resultReceived.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 버전 {count}개 다운로드 완료'**
+  String resultReceived(int count);
+
+  /// No description provided for @resultUpToDate.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 최신 상태입니다'**
+  String get resultUpToDate;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

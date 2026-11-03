@@ -1,48 +1,27 @@
-# GitHub+ 개발 규칙 (사람·AI 워커 공통)
+# GitHub+ 개발 규칙 (Flutter)
 
-기획은 `PLAN.md`가 기준이다. 범위(1장)·이식 목록(4장)에 없는 기능이나 원본 파일을 추가하려면 먼저 PLAN.md에 이유를 적는다.
+기획은 `PLAN.md`(v2.0)가 기준이다. v1(Electron)은 원격 `electron` 브랜치에 있고, 로직·테스트 기대값의 참고 자료로만 쓴다.
 
 ## 구조
 
 | 위치 | 역할 | 규칙 |
 | --- | --- | --- |
-| `src/main/` | Electron main 프로세스: 창, 메뉴, IPC 핸들러, git, 허브, 저장소 | Node·Electron 사용 가능 |
-| `src/main/git/` | GitHub Desktop `app/src/lib/git` 이식 | 전역 상태 없이 순수 함수 위주. 파일 맨 위에 원본 경로 주석 |
-| `src/preload/` | `window.ghp` 브리지 하나만 노출 | 로직을 넣지 않는다 |
-| `src/shared/` | IPC 계약, 데이터 모델, i18n | main·renderer 양쪽에서 import. **Node·DOM API 금지** |
-| `src/renderer/src/` | React 화면 | Node·Electron·dugite import 금지(ESLint가 막음). main 호출은 `ipc.ts`의 `invoke`/`subscribe`만 |
-| `tests/` | Vitest 단위 테스트 (`tests/main`, `tests/shared`, `tests/renderer`) | renderer 테스트는 첫 줄에 `// @vitest-environment jsdom`, 가짜 브리지는 `tests/renderer/helpers/fake-bridge.ts`의 `installFakeBridge()` |
+| `lib/core/` | Git·허브·저장소 로직, 모델 | Flutter 위젯 import 금지. `flutter test test/core`로 단위 테스트 |
+| `lib/core/git/` | Git 실행기와 명령 (v1·GitHub Desktop 이식) | 이식 파일 맨 위에 원본 경로 주석, `NOTICE.md`에 한 줄 |
+| `lib/state/` | Riverpod 공급자 | 화면 상태와 core 호출을 잇는다 |
+| `lib/features/` | 화면 단위 위젯 | 색·간격은 `lib/ui/theme.dart`의 `context.colors`, `Space`, `Radii`만 사용 |
+| `lib/ui/` | 디자인 시스템(테마, HUD, 게이지, 알림) | |
+| `lib/l10n/` | ARB 번역 (ko 기준) | 화면 문자열은 전부 여기. 한국어 표기는 `docs/GLOSSARY.md` 규칙(`업로드(Push)`) |
+| `test/` | 단위·위젯 테스트 | Git을 쓰는 테스트는 `test/core/git/helpers.dart`의 임시 저장소 사용, 전역 git 설정 변경 금지 |
 
-## IPC 계약
-
-- 채널과 이벤트는 `src/shared/ipc/*.ts`에 타입으로 정의한다. 새 도메인(hub, github, ai, 고급 git 등)은 **새 파일**을 만들고 `src/shared/ipc/index.ts`의 `IpcContract`/`IpcEventMap`에 한 줄씩 추가한다.
-- IPC로 오가는 값은 **평범한 데이터**(클래스 인스턴스 금지, structured clone 가능)만 쓴다. 모델은 `src/shared/models/`.
-- 도메인별 핸들러는 각자의 `register()` 파일(`src/main/register-all.ts`에서 모두 호출)에 등록한다. 파일마다 담당자가 하나다.
-- main 핸들러는 `src/main/ipc.ts`의 `handle()`로 등록한다. 실패를 특정 종류로 알리려면 `HandlerError(kind, message, detail)`을 던진다. renderer에서는 `GhpError.kind`로 받는다.
-- 오래 걸리는 작업(clone/fetch/pull/push/checkout)은 `opId`를 받고 `git:progress` 이벤트로 진행률을 보낸다.
-- git 인증·추가 설정은 `registerGitAuthProvider()`(core.ts)로 넣는다. 제공한 인자는 로그·오류에 남지 않는다.
-
-## 원본(GitHub Desktop) 이식 규칙
-
-- 참고용 원본: `../GitHubPlus-legacy/app/src/` (같은 PC), 원격 `legacy-fork` 브랜치.
-- 그대로 복사하지 말고 새 구조에 맞게 정리한다: 클래스 모델 → `src/shared/models`의 평범한 데이터, `Repository` 객체 → 저장소 경로 문자열, Electron/전역 의존 제거.
-- 이식한 파일 맨 위에 `// Ported from GitHub Desktop (MIT): app/src/lib/git/xxx.ts` 주석을 달고, `NOTICE.md` 표에 한 줄 추가한다.
-- 원본의 해당 단위 테스트도 Vitest로 옮겨 같은 동작을 확인한다. 테스트용 임시 저장소는 OS 임시 폴더에 만들고 끝나면 지운다.
-
-## 문자열·스타일
-
-- 화면 문자열은 전부 `t('key')`. 키는 `src/shared/i18n/locales/ko.ts`(기준)와 `en.ts`에 같이 추가한다(빠지면 컴파일 에러). 용어는 `src/shared/i18n/GLOSSARY.md`.
-- 색·간격·글꼴은 `src/renderer/src/styles/tokens.css`의 CSS 변수만 쓴다. 컴포넌트 스타일은 CSS Modules(`*.module.css`).
-- 상태는 Zustand 스토어를 기능별로 작게 나눈다(`src/renderer/src/state/`).
-
-## 검증 (작업을 끝내기 전에 반드시)
+## 명령
 
 ```shell
-npm run typecheck
-npm run lint
-npm test            # 또는 관련 파일만: npx vitest run tests/main/git/status.test.ts
-npx prettier --check <바꾼 파일>
+python tool/vendor_git.py        # 포터블 Git 준비 (처음 한 번)
+flutter gen-l10n                 # ARB 수정 후
+flutter test                     # 테스트
+flutter build windows --debug    # 빌드 → build/windows/x64/runner/Debug/GitHubPlus.exe
 ```
 
-- Windows에서는 `npm.cmd` / `npx.cmd`로 실행한다(PowerShell).
-- 의존성을 추가할 때는 이유를 적는다. 런타임 의존성은 15개 이하를 유지하고, **네이티브 모듈은 추가하지 않는다**.
+- `flutter analyze` 전체 실행은 이 PC에서 분석 서버가 죽으므로 `dart analyze lib`, `dart analyze test`로 나눠 실행한다.
+- 애니메이션은 `context.motion(...)`을 거쳐 "애니메이션 줄이기"를 따른다. 0.2~0.4초 이내, 흔들림·소리 없음.

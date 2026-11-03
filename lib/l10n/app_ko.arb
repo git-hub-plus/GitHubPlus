@@ -1,7 +1,6 @@
 {
   "@@locale": "ko",
   "appName": "GitHub+",
-
   "libraryTitle": "라이브러리",
   "libraryFilter": "저장소 검색  (Ctrl+P)",
   "libraryEmpty": "아직 저장소가 없습니다.",
@@ -11,75 +10,127 @@
   "groupGithub": "GitHub",
   "repoMissing": "찾을 수 없음",
   "repoChanges": "변경 {count}",
-  "@repoChanges": { "placeholders": { "count": { "type": "int" } } },
-
+  "@repoChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "addExisting": "로컬 저장소 추가…",
   "addCreate": "새 저장소 만들기…",
-  "addClone": "저장소 복제…",
+  "addClone": "원격 저장소 내려받기(Clone)…",
   "pickRepositoryFolder": "저장소 폴더 선택",
   "notARepository": "{path}은(는) Git 저장소가 아닙니다.",
-  "@notARepository": { "placeholders": { "path": { "type": "String" } } },
-
+  "@notARepository": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "welcomeTitle": "GitHub+에 오신 것을 환영합니다",
   "welcomeBody": "내부망 허브와 한눈에 보이는 상태 표시를 갖춘 가벼운 Git 클라이언트입니다. 시작하려면 저장소를 추가하세요.",
   "questFirstTitle": "첫 퀘스트",
   "questAddRepo": "저장소 추가하기",
-  "questFirstCommit": "첫 커밋 만들기",
-  "questFirstPush": "원격에 푸시하기",
-
-  "branchLabel": "브랜치",
+  "questFirstCommit": "첫 버전 저장하기(Commit)",
+  "questFirstPush": "원격 저장소에 업로드하기(Push)",
+  "branchLabel": "작업 갈래(Branch)",
   "detachedHead": "분리된 HEAD {sha}",
-  "@detachedHead": { "placeholders": { "sha": { "type": "String" } } },
-  "noBranch": "브랜치 없음",
-  "actionCommit": "커밋하기",
-  "actionPush": "푸시 {count}",
-  "@actionPush": { "placeholders": { "count": { "type": "int" } } },
-  "actionPull": "풀 {count}",
-  "@actionPull": { "placeholders": { "count": { "type": "int" } } },
-  "actionPublish": "게시하기",
-  "actionFetch": "가져오기",
-  "actionResolve": "충돌 해결",
-  "lastFetched": "마지막 가져오기 {time}",
-  "@lastFetched": { "placeholders": { "time": { "type": "String" } } },
-  "neverFetched": "아직 가져오지 않음",
-
-  "hudChanges": "변경 파일",
-  "hudToPush": "푸시 대기",
-  "hudToPull": "풀 대기",
-  "hudStashes": "임시 저장",
+  "@detachedHead": {
+    "placeholders": {
+      "sha": {
+        "type": "String"
+      }
+    }
+  },
+  "noBranch": "작업 갈래 없음",
+  "actionCommit": "버전 저장(Commit)",
+  "actionPush": "업로드(Push) {count}",
+  "@actionPush": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionPull": "다운로드(Pull) {count}",
+  "@actionPull": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionPublish": "처음 올리기(Publish)",
+  "actionFetch": "변경 확인(Fetch)",
+  "actionResolve": "충돌 해결(Conflict)",
+  "lastFetched": "마지막 변경 확인 {time}",
+  "@lastFetched": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "neverFetched": "아직 변경 확인 안 함",
+  "hudChanges": "바뀐 파일",
+  "hudToPush": "업로드 대기",
+  "hudToPull": "다운로드 대기",
+  "hudStashes": "임시 보관",
   "hudConflicts": "충돌",
   "hudHub": "허브",
   "hudHubOnline": "연결됨",
   "hudHubOffline": "끊김",
   "hudHubNone": "없음",
-  "hudChangesTip": "커밋하지 않은 변경 파일 수",
-  "hudToPushTip": "이 PC에만 있고 아직 원격에 올리지 않은 커밋 수",
-  "hudToPullTip": "원격에 있고 아직 받지 않은 커밋 수",
-
-  "goalPush": "푸시 대기 목표",
-  "goalDailyCommits": "오늘의 커밋",
+  "hudChangesTip": "아직 버전으로 저장(Commit)하지 않은 바뀐 파일 수",
+  "hudToPushTip": "이 PC에만 저장돼 있고 아직 원격 저장소에 업로드(Push)하지 않은 버전 수",
+  "hudToPullTip": "원격 저장소에 새로 올라왔고 아직 다운로드(Pull)하지 않은 버전 수",
+  "goalPush": "업로드 대기 목표",
+  "goalDailyCommits": "오늘 저장한 버전",
   "goalReached": "목표 달성!",
   "goalRemaining": "목표까지 {count}",
-  "@goalRemaining": { "placeholders": { "count": { "type": "int" } } },
-
-  "tabChanges": "변경 사항",
-  "tabHistory": "히스토리",
-  "tabExpeditions": "파견",
-
-  "expeditionsTitle": "파견",
-  "expeditionsEmpty": "진행 중인 파견이 없습니다. 푸시·풀·복제 같은 오래 걸리는 작업이 여기에 표시됩니다.",
+  "@goalRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tabChanges": "바뀐 파일",
+  "tabHistory": "버전 기록(History)",
+  "tabExpeditions": "작업 현황",
+  "expeditionsTitle": "작업 현황",
+  "expeditionsEmpty": "진행 중인 작업이 없습니다. 업로드(Push)·다운로드(Pull)·내려받기(Clone)처럼 시간이 걸리는 작업이 여기에 표시됩니다.",
   "expeditionRunning": "진행 중",
   "expeditionDone": "완료",
   "expeditionFailed": "실패",
   "expeditionCollect": "결과 보기",
   "expeditionDismiss": "닫기",
   "expeditionElapsed": "경과 {time}",
-  "@expeditionElapsed": { "placeholders": { "time": { "type": "String" } } },
+  "@expeditionElapsed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "expeditionRemaining": "남은 시간 약 {time}",
-  "@expeditionRemaining": { "placeholders": { "time": { "type": "String" } } },
-  "expeditionTo": "목적지: {destination}",
-  "@expeditionTo": { "placeholders": { "destination": { "type": "String" } } },
-
+  "@expeditionRemaining": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "expeditionTo": "대상: {destination}",
+  "@expeditionTo": {
+    "placeholders": {
+      "destination": {
+        "type": "String"
+      }
+    }
+  },
   "settingsTitle": "환경설정",
   "settingsLanguage": "언어 / Language",
   "settingsTheme": "테마",
@@ -87,19 +138,68 @@
   "themeLight": "라이트",
   "themeSystem": "시스템 설정",
   "settingsGoals": "목표 바",
-  "settingsDailyGoal": "하루 커밋 목표",
-  "settingsPushGoal": "푸시 대기 목표",
+  "settingsDailyGoal": "하루 버전 저장 목표",
+  "settingsPushGoal": "업로드 대기 목표",
   "settingsReduceMotion": "애니메이션 줄이기",
-
   "commonCancel": "취소",
   "commonClose": "닫기",
   "commonOk": "확인",
   "commonRetry": "다시 시도",
   "commonLoading": "불러오는 중…",
   "commonDetails": "자세히",
-
   "windowMinimize": "최소화",
   "windowMaximize": "최대화",
   "windowClose": "닫기",
-  "openSettings": "환경설정"
+  "openSettings": "환경설정",
+  "hudStashesTip": "잠시 치워 둔 작업 수 — 임시 보관(Stash)",
+  "hudConflictsTip": "두 작업이 같은 곳을 고쳐서 직접 골라야 하는 파일 수 — 충돌(Conflict)",
+  "jobPull": "{remote}에서 다운로드(Pull)",
+  "jobPush": "{remote}에 업로드(Push)",
+  "jobPublish": "{branch} 처음 올리기(Publish)",
+  "jobFetch": "{remote} 변경 확인(Fetch)",
+  "resultSent": "버전 {count}개 업로드 완료",
+  "resultReceived": "새 버전 {count}개 다운로드 완료",
+  "resultUpToDate": "이미 최신 상태입니다",
+  "@jobPull": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@jobPush": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@jobPublish": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "@jobFetch": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "@resultSent": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@resultReceived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

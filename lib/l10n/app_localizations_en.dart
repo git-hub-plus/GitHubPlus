@@ -174,14 +174,14 @@ class L10nEn extends L10n {
   String get tabHistory => 'History';
 
   @override
-  String get tabExpeditions => 'Expeditions';
+  String get tabExpeditions => 'Activity';
 
   @override
-  String get expeditionsTitle => 'Expeditions';
+  String get expeditionsTitle => 'Activity';
 
   @override
   String get expeditionsEmpty =>
-      'No expeditions running. Long operations such as push, pull and clone show up here.';
+      'Nothing running. Long operations such as push, pull and clone show up here.';
 
   @override
   String get expeditionRunning => 'Running';
@@ -210,7 +210,7 @@ class L10nEn extends L10n {
 
   @override
   String expeditionTo(String destination) {
-    return 'Destination: $destination';
+    return 'Target: $destination';
   }
 
   @override
@@ -272,4 +272,44 @@ class L10nEn extends L10n {
 
   @override
   String get openSettings => 'Preferences';
+
+  @override
+  String get hudStashesTip => 'Work set aside with stash';
+
+  @override
+  String get hudConflictsTip =>
+      'Files changed on both sides that need a decision';
+
+  @override
+  String jobPull(String remote) {
+    return 'Pull from $remote';
+  }
+
+  @override
+  String jobPush(String remote) {
+    return 'Push to $remote';
+  }
+
+  @override
+  String jobPublish(String branch) {
+    return 'Publish $branch';
+  }
+
+  @override
+  String jobFetch(String remote) {
+    return 'Fetch from $remote';
+  }
+
+  @override
+  String resultSent(int count) {
+    return '$count commits pushed';
+  }
+
+  @override
+  String resultReceived(int count) {
+    return '$count new commits pulled';
+  }
+
+  @override
+  String get resultUpToDate => 'Already up to date';
 }

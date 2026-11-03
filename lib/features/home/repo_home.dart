@@ -107,12 +107,14 @@ class _HudPanel extends ConsumerWidget {
         label: l.hudStashes,
         value: status.stashCount,
         tone: HudTone.neutral,
+        tooltip: l.hudStashesTip,
       ),
       HudStat(
         icon: Icons.bolt_rounded,
         label: l.hudConflicts,
         value: conflicts,
         tone: conflicts == 0 ? HudTone.good : HudTone.danger,
+        tooltip: l.hudConflictsTip,
       ),
     ];
 

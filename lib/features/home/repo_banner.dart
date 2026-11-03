@@ -187,16 +187,15 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
     }
     setState(() => _busy = true);
     final remote = widget.status.upstream?.split('/').first ?? 'origin';
-    final ko = Localizations.localeOf(context).languageCode == 'ko';
     final title = switch (action) {
-      PrimaryAction.pull => ko ? '$remote에서 풀' : 'Pull from $remote',
-      PrimaryAction.push => ko ? '$remote에 푸시' : 'Push to $remote',
-      PrimaryAction.publish => ko ? '${widget.status.currentBranch} 브랜치 게시' : 'Publish ${widget.status.currentBranch}',
-      _ => ko ? '$remote에서 가져오기' : 'Fetch from $remote',
+      PrimaryAction.pull => l.jobPull(remote),
+      PrimaryAction.push => l.jobPush(remote),
+      PrimaryAction.publish => l.jobPublish(widget.status.currentBranch ?? ''),
+      _ => l.jobFetch(remote),
     };
     String describe(SyncOutcome o) => switch (action) {
-      PrimaryAction.push || PrimaryAction.publish => ko ? '커밋 ${o.sent}개 올림' : '${o.sent} commits sent',
-      _ => o.received == 0 ? (ko ? '새 커밋 없음' : 'Already up to date') : (ko ? '새 커밋 ${o.received}개 받음' : '${o.received} new commits'),
+      PrimaryAction.push || PrimaryAction.publish => l.resultSent(o.sent),
+      _ => o.received == 0 ? l.resultUpToDate : l.resultReceived(o.received),
     };
     try {
       final ok = await ref.read(syncControllerProvider).run(widget.repo, action, describe: describe, title: title);

@@ -47,7 +47,7 @@ class L10nKo extends L10n {
   String get addCreate => '새 저장소 만들기…';
 
   @override
-  String get addClone => '저장소 복제…';
+  String get addClone => '원격 저장소 내려받기(Clone)…';
 
   @override
   String get pickRepositoryFolder => '저장소 폴더 선택';
@@ -71,13 +71,13 @@ class L10nKo extends L10n {
   String get questAddRepo => '저장소 추가하기';
 
   @override
-  String get questFirstCommit => '첫 커밋 만들기';
+  String get questFirstCommit => '첫 버전 저장하기(Commit)';
 
   @override
-  String get questFirstPush => '원격에 푸시하기';
+  String get questFirstPush => '원격 저장소에 업로드하기(Push)';
 
   @override
-  String get branchLabel => '브랜치';
+  String get branchLabel => '작업 갈래(Branch)';
 
   @override
   String detachedHead(String sha) {
@@ -85,49 +85,49 @@ class L10nKo extends L10n {
   }
 
   @override
-  String get noBranch => '브랜치 없음';
+  String get noBranch => '작업 갈래 없음';
 
   @override
-  String get actionCommit => '커밋하기';
+  String get actionCommit => '버전 저장(Commit)';
 
   @override
   String actionPush(int count) {
-    return '푸시 $count';
+    return '업로드(Push) $count';
   }
 
   @override
   String actionPull(int count) {
-    return '풀 $count';
+    return '다운로드(Pull) $count';
   }
 
   @override
-  String get actionPublish => '게시하기';
+  String get actionPublish => '처음 올리기(Publish)';
 
   @override
-  String get actionFetch => '가져오기';
+  String get actionFetch => '변경 확인(Fetch)';
 
   @override
-  String get actionResolve => '충돌 해결';
+  String get actionResolve => '충돌 해결(Conflict)';
 
   @override
   String lastFetched(String time) {
-    return '마지막 가져오기 $time';
+    return '마지막 변경 확인 $time';
   }
 
   @override
-  String get neverFetched => '아직 가져오지 않음';
+  String get neverFetched => '아직 변경 확인 안 함';
 
   @override
-  String get hudChanges => '변경 파일';
+  String get hudChanges => '바뀐 파일';
 
   @override
-  String get hudToPush => '푸시 대기';
+  String get hudToPush => '업로드 대기';
 
   @override
-  String get hudToPull => '풀 대기';
+  String get hudToPull => '다운로드 대기';
 
   @override
-  String get hudStashes => '임시 저장';
+  String get hudStashes => '임시 보관';
 
   @override
   String get hudConflicts => '충돌';
@@ -145,19 +145,19 @@ class L10nKo extends L10n {
   String get hudHubNone => '없음';
 
   @override
-  String get hudChangesTip => '커밋하지 않은 변경 파일 수';
+  String get hudChangesTip => '아직 버전으로 저장(Commit)하지 않은 바뀐 파일 수';
 
   @override
-  String get hudToPushTip => '이 PC에만 있고 아직 원격에 올리지 않은 커밋 수';
+  String get hudToPushTip => '이 PC에만 저장돼 있고 아직 원격 저장소에 업로드(Push)하지 않은 버전 수';
 
   @override
-  String get hudToPullTip => '원격에 있고 아직 받지 않은 커밋 수';
+  String get hudToPullTip => '원격 저장소에 새로 올라왔고 아직 다운로드(Pull)하지 않은 버전 수';
 
   @override
-  String get goalPush => '푸시 대기 목표';
+  String get goalPush => '업로드 대기 목표';
 
   @override
-  String get goalDailyCommits => '오늘의 커밋';
+  String get goalDailyCommits => '오늘 저장한 버전';
 
   @override
   String get goalReached => '목표 달성!';
@@ -168,20 +168,20 @@ class L10nKo extends L10n {
   }
 
   @override
-  String get tabChanges => '변경 사항';
+  String get tabChanges => '바뀐 파일';
 
   @override
-  String get tabHistory => '히스토리';
+  String get tabHistory => '버전 기록(History)';
 
   @override
-  String get tabExpeditions => '파견';
+  String get tabExpeditions => '작업 현황';
 
   @override
-  String get expeditionsTitle => '파견';
+  String get expeditionsTitle => '작업 현황';
 
   @override
   String get expeditionsEmpty =>
-      '진행 중인 파견이 없습니다. 푸시·풀·복제 같은 오래 걸리는 작업이 여기에 표시됩니다.';
+      '진행 중인 작업이 없습니다. 업로드(Push)·다운로드(Pull)·내려받기(Clone)처럼 시간이 걸리는 작업이 여기에 표시됩니다.';
 
   @override
   String get expeditionRunning => '진행 중';
@@ -210,7 +210,7 @@ class L10nKo extends L10n {
 
   @override
   String expeditionTo(String destination) {
-    return '목적지: $destination';
+    return '대상: $destination';
   }
 
   @override
@@ -235,10 +235,10 @@ class L10nKo extends L10n {
   String get settingsGoals => '목표 바';
 
   @override
-  String get settingsDailyGoal => '하루 커밋 목표';
+  String get settingsDailyGoal => '하루 버전 저장 목표';
 
   @override
-  String get settingsPushGoal => '푸시 대기 목표';
+  String get settingsPushGoal => '업로드 대기 목표';
 
   @override
   String get settingsReduceMotion => '애니메이션 줄이기';
@@ -272,4 +272,43 @@ class L10nKo extends L10n {
 
   @override
   String get openSettings => '환경설정';
+
+  @override
+  String get hudStashesTip => '잠시 치워 둔 작업 수 — 임시 보관(Stash)';
+
+  @override
+  String get hudConflictsTip => '두 작업이 같은 곳을 고쳐서 직접 골라야 하는 파일 수 — 충돌(Conflict)';
+
+  @override
+  String jobPull(String remote) {
+    return '$remote에서 다운로드(Pull)';
+  }
+
+  @override
+  String jobPush(String remote) {
+    return '$remote에 업로드(Push)';
+  }
+
+  @override
+  String jobPublish(String branch) {
+    return '$branch 처음 올리기(Publish)';
+  }
+
+  @override
+  String jobFetch(String remote) {
+    return '$remote 변경 확인(Fetch)';
+  }
+
+  @override
+  String resultSent(int count) {
+    return '버전 $count개 업로드 완료';
+  }
+
+  @override
+  String resultReceived(int count) {
+    return '새 버전 $count개 다운로드 완료';
+  }
+
+  @override
+  String get resultUpToDate => '이미 최신 상태입니다';
 }
