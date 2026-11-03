@@ -9,6 +9,8 @@ import {
   type SelectionType,
 } from '@shared/models/diff-selection'
 import type { WorkingFile } from '@shared/models/status'
+import type { GitIdentity } from '@shared/ipc/git-advanced'
+import { IdentityDialog } from '../dialogs/IdentityDialog'
 import { invoke } from '../../ipc'
 import { useAppStore } from '../../state/app-store'
 import { useRepoStore } from '../../state/repo-store'
@@ -92,17 +94,25 @@ function CommitForm({
   const [amend, setAmend] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<unknown>()
+  const [identity, setIdentity] = useState<GitIdentity>()
   const pending = useRef(false)
   const included = files.filter(
     (file) => selections[file.path] && getSelectionType(selections[file.path]) !== 'none'
   )
   const disabled = busy || !summary.trim() || !included.length
-  const commit = async () => {
+  const commit = async (identitySaved = false) => {
     if (disabled || pending.current) return
     pending.current = true
     setBusy(true)
     setError(undefined)
     try {
+      if (!identitySaved) {
+        const current = await invoke('git:getIdentity', repoId)
+        if (current.source === 'none') {
+          setIdentity(current)
+          return
+        }
+      }
       await invoke('git:commit', repoId, {
         summary: summary.trim(),
         description,
@@ -114,64 +124,84 @@ function CommitForm({
       setAmend(false)
       await useRepoStore.getState().refresh()
     } catch (failure) {
-      setError(failure)
+      if (
+        failure instanceof GhpError &&
+        /Author identity unknown|Please tell me who you are/i.test(
+          `${failure.message} ${failure.detail ?? ''}`
+        )
+      )
+        setIdentity({ source: 'none' })
+      else setError(failure)
     } finally {
       setBusy(false)
       pending.current = false
     }
   }
   return (
-    <form
-      className={styles.commit}
-      onSubmit={(event) => {
-        event.preventDefault()
-        void commit()
-      }}
-      onKeyDown={(event) => {
-        if (event.ctrlKey && event.key === 'Enter') {
+    <>
+      {identity && (
+        <IdentityDialog
+          repoId={repoId}
+          identity={identity}
+          onClose={() => setIdentity(undefined)}
+          onSaved={() => {
+            setIdentity(undefined)
+            void commit(true)
+          }}
+        />
+      )}
+      <form
+        className={styles.commit}
+        onSubmit={(event) => {
           event.preventDefault()
           void commit()
-        }
-      }}
-    >
-      <label htmlFor="commit-summary">{t('changesView.summary')}</label>
-      <input
-        id="commit-summary"
-        required
-        value={summary}
-        disabled={busy}
-        onChange={(event) => setSummary(event.target.value)}
-        aria-describedby={summary.length > 72 ? 'summary-warning' : undefined}
-      />
-      {summary.length > 72 && (
-        <span id="summary-warning" className={styles.warning}>
-          {t('changesView.summaryWarning', { count: summary.length })}
-        </span>
-      )}
-      <label htmlFor="commit-description">{t('changesView.description')}</label>
-      <textarea
-        id="commit-description"
-        rows={4}
-        value={description}
-        disabled={busy}
-        onChange={(event) => setDescription(event.target.value)}
-      />
-      <label className={styles.amend}>
+        }}
+        onKeyDown={(event) => {
+          if (event.ctrlKey && event.key === 'Enter') {
+            event.preventDefault()
+            void commit()
+          }
+        }}
+      >
+        <label htmlFor="commit-summary">{t('changesView.summary')}</label>
         <input
-          type="checkbox"
-          checked={amend}
+          id="commit-summary"
+          required
+          value={summary}
           disabled={busy}
-          onChange={(event) => setAmend(event.target.checked)}
+          onChange={(event) => setSummary(event.target.value)}
+          aria-describedby={summary.length > 72 ? 'summary-warning' : undefined}
         />
-        {t('changesView.amend')}
-      </label>
-      <button type="submit" disabled={disabled} className={styles.commitButton}>
-        {busy
-          ? t('changesView.committing')
-          : t('changesView.commit', { branch: branch ?? t('changesView.currentBranch') })}
-      </button>
-      {error !== undefined && <ErrorMessage error={error} />}
-    </form>
+        {summary.length > 72 && (
+          <span id="summary-warning" className={styles.warning}>
+            {t('changesView.summaryWarning', { count: summary.length })}
+          </span>
+        )}
+        <label htmlFor="commit-description">{t('changesView.description')}</label>
+        <textarea
+          id="commit-description"
+          rows={4}
+          value={description}
+          disabled={busy}
+          onChange={(event) => setDescription(event.target.value)}
+        />
+        <label className={styles.amend}>
+          <input
+            type="checkbox"
+            checked={amend}
+            disabled={busy}
+            onChange={(event) => setAmend(event.target.checked)}
+          />
+          {t('changesView.amend')}
+        </label>
+        <button type="submit" disabled={disabled} className={styles.commitButton}>
+          {busy
+            ? t('changesView.committing')
+            : t('changesView.commit', { branch: branch ?? t('changesView.currentBranch') })}
+        </button>
+        {error !== undefined && <ErrorMessage error={error} />}
+      </form>
+    </>
   )
 }
 function WorkingDiff({

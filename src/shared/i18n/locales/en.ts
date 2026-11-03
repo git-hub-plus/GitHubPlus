@@ -183,6 +183,18 @@ export const en: Translations = {
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {
+    submit: { add: 'Add', create: 'Create', branch: 'Create', clone: 'Clone' },
+    completed: {
+      fetch: 'Fetched',
+      pull: 'Pulled from {remote}',
+      push: 'Pushed to {remote}',
+      publish: 'Published branch {branch}',
+      branch: 'Created and switched to branch {branch}',
+      checkout: 'Switched to branch {branch}',
+      rename: 'Renamed branch {branch}',
+      delete: 'Deleted branch {branch}',
+    },
+    fetchedNow: 'Fetched just now',
     title: 'Repository actions',
     add: '+ Add',
     dialogs: {
@@ -254,6 +266,19 @@ export const en: Translations = {
   },
   // P1 (git identity setup, N2 polish) adds its keys here.
   identity: {
+    name: 'Name',
+    email: 'Email',
+    scope: 'Save for',
+    repository: 'This repository',
+    global: 'All repositories on this PC',
+    none: 'Not configured',
+    disclosure: 'Recorded in commits and made public when pushed to a remote.',
+    source: 'Source: {source}',
+    mixedScope: 'Repository settings take precedence over global settings.',
+    invalid: 'Enter a name and a valid email address.',
+    failed: 'Could not save or load Git identity.',
+    edit: 'Edit',
+    noRepository: 'Select a repository to view and edit Git identity.',
     title: 'Git identity',
   },
 }

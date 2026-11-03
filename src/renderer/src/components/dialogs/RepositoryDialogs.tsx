@@ -6,7 +6,7 @@ import { useT } from '../../i18n'
 import { useAppStore, useSelectedRepository } from '../../state/app-store'
 import { useRepoStore } from '../../state/repo-store'
 import { useDialogStore } from '../../state/dialog-store'
-import { runOperation, useSyncStore } from '../../state/sync-store'
+import { runOperation, useSyncStore, refreshHistory, notifyOperation } from '../../state/sync-store'
 import { showToast } from '../../state/toast-store'
 import { Dialog } from './Dialog'
 
@@ -113,9 +113,11 @@ function RepositoryDialog() {
           checkout: true,
         })
         await useRepoStore.getState().refresh()
+        await refreshHistory(repository.id)
       }
       close()
-      showToast()
+      if (kind === 'branch') notifyOperation('repoActions.completed.branch', { branch: name })
+      else showToast()
     } catch (error) {
       if (kind === 'add' && error instanceof GhpError && error.kind === 'not-a-repository')
         setNotRepository(true)
@@ -145,7 +147,7 @@ function RepositoryDialog() {
       onSubmit={kind === 'about' ? undefined : () => void submit()}
       busy={busy}
       disabled={disabled}
-      submitLabel={title}
+      submitLabel={kind === 'about' ? undefined : t(`repoActions.submit.${kind}`)}
     >
       {kind === 'about' ? (
         <>

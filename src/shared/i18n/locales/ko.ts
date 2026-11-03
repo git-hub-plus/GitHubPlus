@@ -183,6 +183,18 @@ export const ko = {
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {
+    submit: { add: '추가', create: '만들기', branch: '만들기', clone: '복제' },
+    completed: {
+      fetch: '가져왔습니다',
+      pull: '{remote}에서 풀했습니다',
+      push: '{remote}에 푸시했습니다',
+      publish: '{branch} 브랜치를 게시했습니다',
+      branch: '브랜치 {branch}를 만들고 전환했습니다',
+      checkout: '{branch} 브랜치로 전환했습니다',
+      rename: '브랜치 {branch}의 이름을 변경했습니다',
+      delete: '브랜치 {branch}를 삭제했습니다',
+    },
+    fetchedNow: '방금 전 가져옴',
     title: '저장소 작업',
     add: '+ 추가',
     dialogs: {
@@ -254,6 +266,19 @@ export const ko = {
   },
   // P1 (git identity setup, N2 polish) adds its keys here.
   identity: {
+    name: '이름',
+    email: '이메일',
+    scope: '저장 범위',
+    repository: '이 저장소만',
+    global: '이 PC의 모든 저장소',
+    none: '설정되지 않음',
+    disclosure: '커밋에 기록되며 원격에 올리면 공개됩니다.',
+    source: '출처: {source}',
+    mixedScope: '저장소 설정이 전역 설정보다 우선합니다.',
+    invalid: '이름과 올바른 이메일 주소를 입력하세요.',
+    failed: 'Git 사용자 정보를 저장하거나 불러오지 못했습니다.',
+    edit: '수정',
+    noRepository: '저장소를 선택하면 Git 사용자 정보를 확인하고 수정할 수 있습니다.',
     title: 'Git 사용자 정보',
   },
 } as const
