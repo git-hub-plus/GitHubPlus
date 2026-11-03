@@ -29,3 +29,6 @@ ported.
 | `src/main/git/fetch.ts`, `pull.ts`, `push.ts`, `clone.ts` | `app/src/lib/git/{fetch,pull,push,clone}.ts` | No trampoline; credential helper handles auth |
 | `src/main/git/progress/*` | `app/src/lib/progress/*` | |
 | `src/main/git/identity.ts` | (written for GitHub+) | Identity setup replaces upstream's welcome-flow git config |
+| `src/main/git/merge.ts`, `conflicts.ts` | `app/src/lib/git/{merge,checkout}.ts`, `app/src/models/manual-conflict-resolution.ts` | |
+| `src/main/git/stash.ts`, `revert.ts`, `reset.ts`, `tag.ts` | `app/src/lib/git/{stash,revert,reset,tag}.ts` | |
+| `src/main/git/cherry-pick.ts`, `rebase.ts`, `squash.ts`, `reorder.ts` | `app/src/lib/git/{cherry-pick,rebase,squash,reorder}.ts` | Non-interactive rebase via generated todo |

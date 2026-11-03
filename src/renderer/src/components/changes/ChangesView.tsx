@@ -95,6 +95,18 @@ function CommitForm({
   const [summary, setSummary] = useState('')
   const [description, setDescription] = useState('')
   const [amend, setAmend] = useState(false)
+  // A draft arrives when "undo last commit" hands the undone message back.
+  // Adopt it during render (React's derived-state pattern), then consume it.
+  const draft = useChangesStore((state) => state.messageDrafts[repoId])
+  const [adoptedDraft, setAdoptedDraft] = useState<typeof draft>()
+  if (draft && draft !== adoptedDraft) {
+    setAdoptedDraft(draft)
+    setSummary(draft.summary)
+    setDescription(draft.description)
+  }
+  useEffect(() => {
+    if (draft) useChangesStore.getState().clearMessageDraft(repoId)
+  }, [draft, repoId])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<unknown>()
   const [identity, setIdentity] = useState<GitIdentity>()
