@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useHubStore } from '../state/hub-store'
+import { invoke, subscribe } from '../ipc'
 import { useSelectedRepository } from '../state/app-store'
 import { useRepoStore } from '../state/repo-store'
 import { synchronize, useSyncStore, dismissOperation } from '../state/sync-store'
@@ -11,6 +13,56 @@ import styles from './Toolbar.module.css'
 export function Toolbar() {
   const t = useT()
   const repository = useSelectedRepository()
+  const hub = useHubStore()
+  useEffect(() => {
+    let cancelled = false
+    let received = false
+    const off = subscribe('hub:statusChanged', (status) => {
+      received = true
+      useHubStore.setState({ status })
+    })
+    void Promise.resolve()
+      .then(() => invoke('hub:status'))
+      .then((status) => {
+        if (!cancelled && !received && status) useHubStore.setState({ status })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+      off()
+    }
+  }, [])
+  const [hubRemote, setHubRemote] = useState<{ repoId: string; url?: string }>()
+  useEffect(() => {
+    if (!repository || repository.group !== 'hub') return
+    let cancelled = false
+    void invoke('git:remotes', repository.id)
+      .then((remotes) => {
+        if (!cancelled)
+          setHubRemote({
+            repoId: repository.id,
+            url: remotes?.find((remote) => remote.name === 'origin')?.url ?? remotes?.[0]?.url,
+          })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [repository])
+  const remoteUrl =
+    (hubRemote?.repoId === repository?.id ? hubRemote?.url : undefined) ?? repository?.remoteUrl
+  const connectedHub = hub.hubs.find((item) => {
+    try {
+      const remote = new URL(remoteUrl ?? '')
+      const base = new URL(item.url)
+      return (
+        remote.origin === base.origin &&
+        remote.pathname.startsWith(base.pathname.replace(/\/$/, '') + '/')
+      )
+    } catch {
+      return false
+    }
+  })
   const status = useRepoStore((s) => (s.repoId === repository?.id ? s.status : undefined))
   const { active, lastFetch, needsPull, notices } = useSyncStore()
   const [branchRepo, setBranchRepo] = useState<string>()
@@ -82,6 +134,16 @@ export function Toolbar() {
           </span>
         )}
         <div className={styles.spacer} />
+        {hub.status?.running && (
+          <button className={styles.hubStatus} onClick={() => hub.open('host')}>
+            {t('lfs.hubStatus.running')}
+          </button>
+        )}
+        {(repository?.group === 'hub' || connectedHub) && (
+          <span className={styles.label} role="status">
+            {t(connectedHub?.online ? 'lfs.hubStatus.connected' : 'lfs.hubStatus.offline')}
+          </span>
+        )}
       </header>
       <aside
         className={noticeStyles.operationNotices}
