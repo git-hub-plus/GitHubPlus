@@ -79,6 +79,8 @@ export interface HubIpc {
   'hub:createLocalRepository': (name: string, description?: string) => HubRepository
   /** Moves the bare repository into the hub's trash folder (host only). */
   'hub:deleteLocalRepository': (name: string) => void
+  /** Bundles every hub repository into `backupDirectory` now (N6). Returns the last backup time. */
+  'hub:backupNow': () => { at: number; repositories: number }
   'hub:pushLog': (query: { repository?: string; limit: number }) => ReadonlyArray<HubPushRecord>
 
   'hub:discovered': () => ReadonlyArray<DiscoveredHub>

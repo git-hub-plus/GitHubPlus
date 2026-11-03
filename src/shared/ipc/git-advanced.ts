@@ -44,6 +44,8 @@ export interface GitAdvancedIpc {
   /** Finishes the in-progress merge/rebase/cherry-pick/revert. */
   'git:continueOperation': (repoId: string, opts?: { message?: string }) => OperationOutcome
   'git:abortOperation': (repoId: string) => void
+  /** Message git prepared for the in-progress operation (MERGE_MSG etc.), comments removed. */
+  'git:pendingOperationMessage': (repoId: string) => string
 
   // Stash (N4)
   'git:stashList': (repoId: string) => ReadonlyArray<StashEntry>
@@ -78,6 +80,12 @@ export interface GitAdvancedIpc {
     repoId: string,
     input: { shas: ReadonlyArray<string>; afterSha: string | null }
   ) => OperationOutcome
+
+  /** Whether each commit is on the current branch and already on a remote (N6). */
+  'git:commitPlacement': (
+    repoId: string,
+    shas: ReadonlyArray<string>
+  ) => ReadonlyArray<{ sha: string; onCurrentBranch: boolean; pushed: boolean }>
 
   // LFS & submodules (N5)
   'git:submodules': (repoId: string) => ReadonlyArray<Submodule>
