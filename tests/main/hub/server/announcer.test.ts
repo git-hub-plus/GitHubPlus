@@ -8,6 +8,7 @@ import {
 } from '../../../../src/main/hub/server/announcer'
 
 vi.mock('node:os', () => ({
+  hostname: () => 'office-pc',
   networkInterfaces: () => ({
     lan: [{ family: 'IPv4', address: '192.168.1.2', netmask: '255.255.255.0', internal: false }],
   }),
@@ -16,6 +17,7 @@ afterEach(() => vi.useRealTimers())
 it('encodes the discovery contract and computes subnet broadcasts', () => {
   expect(JSON.parse(announcement('Office', 8765, '1.0').toString())).toEqual({
     type: 'ghp-hub',
+    id: 'office-pc:8765',
     name: 'Office',
     port: 8765,
     version: '1.0',

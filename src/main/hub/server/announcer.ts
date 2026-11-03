@@ -1,9 +1,12 @@
 import { createSocket } from 'node:dgram'
-import { networkInterfaces, type NetworkInterfaceInfo } from 'node:os'
+import { hostname, networkInterfaces, type NetworkInterfaceInfo } from 'node:os'
 import { isPrivateAddress } from '../shared/validation'
 
 export function announcement(name: string, port: number, version: string): Buffer {
-  return Buffer.from(JSON.stringify({ type: 'ghp-hub', name, port, version }))
+  // `id` lets clients merge the same hub seen through several interfaces.
+  return Buffer.from(
+    JSON.stringify({ type: 'ghp-hub', id: `${hostname()}:${port}`, name, port, version })
+  )
 }
 
 export function broadcastAddresses(

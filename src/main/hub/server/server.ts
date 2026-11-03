@@ -9,7 +9,7 @@ import type { HubPushRecord, HubRepository, HubServerStatus, HubSettings } from 
 import { HandlerError } from '@shared/errors'
 import { getCommitFiles, getCommits } from '../../git/log'
 import { getCommitDiff, getCommittedFile } from '../../git/diff'
-import { isPrivateAddress, isValidRepositoryName } from '../shared/validation'
+import { isPrivateAddress, lanAddressRank, isValidRepositoryName } from '../shared/validation'
 import { startAnnouncer } from './announcer'
 
 class HttpError extends HandlerError {
@@ -110,7 +110,12 @@ export class HubServer {
               isPrivateAddress(i.address) &&
               (i.family === 'IPv4' || (parseInt(i.address.split(':')[0], 16) & 0xffc0) !== 0xfe80)
           )
+          .sort((x, y) => lanAddressRank(x.address) - lanAddressRank(y.address))
           .map((i) => `http://${i.family === 'IPv6' ? `[${i.address}]` : i.address}:${port}`)
+      )
+      // Interfaces are grouped per adapter; rank across all of them.
+      addresses.sort(
+        (x, y) => lanAddressRank(new URL(x).hostname) - lanAddressRank(new URL(y).hostname)
       )
       this.update({
         running: true,

@@ -2,10 +2,13 @@ import type { DiscoveredHub } from '@shared/ipc/hub'
 import { HandlerError } from '@shared/errors'
 import { readJson, writeJson } from '../../store/json-file'
 import { HubApi, normalizeHubUrl } from './api'
+import { lanAddressRank } from '../shared/validation'
 
 /** Transport-independent discovery state, so packet parsing and expiry can be tested without sockets. */
 export class HubDiscovery {
   private hubs = new Map<string, DiscoveredHub>()
+  /** Every origin a hub was seen at, so repositories cloned via any of them group as hub. */
+  private aliases = new Map<string, string>()
   private writes: Promise<void> = Promise.resolve()
   constructor(
     private readonly file: string,
@@ -56,13 +59,25 @@ export class HubDiscovery {
       const url = normalizeHubUrl(
         `http://${address.includes(':') ? `[${address}]` : address}:${data.port}`
       )
-      this.hubs.set(url, {
-        id: url,
-        url,
+      // A manual entry for this address wins; otherwise merge by the hub's id
+      // (one hub announces on every interface) and keep its best LAN address.
+      const manual = this.hubs.get(url)?.manual === true
+      const key =
+        !manual && typeof data.id === 'string' && data.id.length <= 300 ? `hub:${data.id}` : url
+      const existing = this.hubs.get(key)
+      const best =
+        existing &&
+        lanAddressRank(new URL(existing.url).hostname) <= lanAddressRank(new URL(url).hostname)
+          ? existing.url
+          : url
+      this.aliases.set(url, key)
+      this.hubs.set(key, {
+        id: key,
+        url: best,
         name: data.name,
         lastSeen: this.now(),
         online: true,
-        manual: this.hubs.get(url)?.manual ?? false,
+        manual,
       })
       this.changed(this.list())
     } catch {
@@ -109,7 +124,7 @@ export class HubDiscovery {
   matches(input: string): boolean {
     try {
       const url = new URL(input)
-      return this.hubs.has(url.origin)
+      return this.hubs.has(url.origin) || this.aliases.has(url.origin)
     } catch {
       return false
     }

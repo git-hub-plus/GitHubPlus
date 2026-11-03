@@ -56,3 +56,19 @@ export function isValidRepositoryName(name: unknown): name is string {
     !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(name)
   )
 }
+
+/**
+ * Preference order for LAN addresses shown to users and announced to clients:
+ * home/office router ranges first, then other private IPv4, then IPv6.
+ * Lower is better.
+ */
+export function lanAddressRank(address: string): number {
+  const host = address.replace(/^\[|\]$/g, '')
+  if (host.includes(':')) return (parseInt(host.split(':')[0], 16) & 0xffc0) === 0xfe80 ? 7 : 6
+  const [a, b] = host.split('.').map(Number)
+  if (a === 192 && b === 168) return 0
+  if (a === 172 && b >= 16 && b <= 31) return 1
+  if (a === 10) return 2
+  if (a === 169 && b === 254) return 5
+  return 4
+}

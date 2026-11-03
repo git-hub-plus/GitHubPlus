@@ -78,3 +78,26 @@ it('does not add failed manual endpoints and ignores malformed saved entries', a
   await expect(discovery.addManual('localhost:1')).rejects.toThrow('offline')
   expect(discovery.list()).toEqual([])
 })
+it('merges one hub announced on several interfaces and keeps the best LAN address', async () => {
+  const discovery = new HubDiscovery(await path(), vi.fn(), new HubApi(), () => 1)
+  const withId = Buffer.from(
+    JSON.stringify({
+      type: 'ghp-hub',
+      id: 'office-pc:8765',
+      name: 'office',
+      port: 8765,
+      version: '1',
+    })
+  )
+  for (const address of ['10.66.66.3', 'fd7a:115c:a1e0::3', '192.168.0.187', '10.253.187.1'])
+    discovery.receive(withId, address)
+  expect(discovery.list()).toHaveLength(1)
+  expect(discovery.list()[0]).toMatchObject({
+    id: 'hub:office-pc:8765',
+    url: 'http://192.168.0.187:8765',
+  })
+  // Repositories cloned through any announced address still count as hub remotes.
+  expect(discovery.matches('http://10.66.66.3:8765/team-api.git')).toBe(true)
+  expect(discovery.matches('http://192.168.0.187:8765/team-api.git')).toBe(true)
+  expect(discovery.matches('http://192.168.0.99:8765/x.git')).toBe(false)
+})
