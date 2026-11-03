@@ -7,6 +7,12 @@ export const en: Translations = {
   // H1 (hub host: tray, notifications) adds its keys here.
   hubTray: {
     title: 'Hub tray',
+    open: 'Open GitHub+',
+    running: 'Hub: running ({address})',
+    stopped: 'Hub: off',
+    enable: 'Turn hub on',
+    disable: 'Turn hub off',
+    quit: 'Quit',
   },
   menu: {
     file: '&File',
