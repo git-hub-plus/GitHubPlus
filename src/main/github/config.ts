@@ -1,1 +1,0 @@
-export const GITHUB_OAUTH_CLIENT_ID = process.env.GITHUBPLUS_OAUTH_CLIENT_ID ?? ''

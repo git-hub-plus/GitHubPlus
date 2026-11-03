@@ -1,11 +1,26 @@
-node_modules/
-out/
-dist/
-coverage/
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# IDE
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+
+# Windows
+windows/flutter/ephemeral/
+
+# Local
 *.log
 .env
 .env.*
 .DS_Store
-.vscode/*
-!.vscode/extensions.json
-*.tsbuildinfo
+
+# Portable git copied by tool/vendor_git.py
+/third_party/
