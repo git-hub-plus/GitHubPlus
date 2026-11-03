@@ -22,6 +22,7 @@
     "postinstall": "node node_modules/electron/install.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
     "dugite": "^3.3.2"
   },
   "devDependencies": {
