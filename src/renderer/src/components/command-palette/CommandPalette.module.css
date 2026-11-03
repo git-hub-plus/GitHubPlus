@@ -1,4 +1,4 @@
-﻿:global(dialog):has(.palette) {
+:global(dialog):has(.palette) {
   margin-top: calc(var(--toolbar-height) + var(--space-4));
   width: min(560px, calc(100vw - var(--space-6)));
 }

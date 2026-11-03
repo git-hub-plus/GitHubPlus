@@ -37,6 +37,8 @@ export default tseslint.config(
   },
   {
     rules: {
+      // Some tools write a UTF-8 BOM; keep sources BOM-free.
+      'unicode-bom': ['error', 'never'],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },

@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { App } from '../../../src/renderer/src/App'
 import { useAppStore } from '../../../src/renderer/src/state/app-store'
+import { usePaletteStore } from '../../../src/renderer/src/state/palette-store'
 import { useToastStore, showToast } from '../../../src/renderer/src/state/toast-store'
 import { GhpError } from '@shared/errors'
 import { setup } from './test-utils'
@@ -13,6 +14,7 @@ vi.mock('../../../src/renderer/src/hooks/use-applied-theme', () => ({
 }))
 let bridge: ReturnType<typeof setup>
 beforeEach(() => {
+  usePaletteStore.setState({ open: false })
   bridge = setup()
   vi.spyOn(useAppStore.getState(), 'init').mockResolvedValue()
 })
@@ -32,14 +34,15 @@ it.each([
   expect(screen.getByRole('dialog', { name: title })).toBeTruthy()
   if (command === 'about') await screen.findByText('GitHub+ 0.1.0')
 })
-it('keeps preferences and tab commands, and ignores palette', () => {
+it('keeps preferences and tab commands, and opens the command palette', () => {
   render(<App />)
   act(() => bridge.emit('menu:command', 'show-history'))
   expect(useAppStore.getState().tab).toBe('history')
   act(() => bridge.emit('menu:command', 'show-changes'))
   expect(useAppStore.getState().tab).toBe('changes')
   act(() => bridge.emit('menu:command', 'command-palette'))
-  expect(screen.queryByRole('dialog')).toBeNull()
+  expect(screen.getByRole('dialog', { name: '명령 팔레트' })).toBeTruthy()
+  act(() => usePaletteStore.getState().close())
   act(() => bridge.emit('menu:command', 'open-preferences'))
   expect(useAppStore.getState().preferencesOpen).toBe(true)
 })

@@ -32,3 +32,4 @@ ported.
 | `src/main/git/merge.ts`, `conflicts.ts` | `app/src/lib/git/{merge,checkout}.ts`, `app/src/models/manual-conflict-resolution.ts` | |
 | `src/main/git/stash.ts`, `revert.ts`, `reset.ts`, `tag.ts` | `app/src/lib/git/{stash,revert,reset,tag}.ts` | |
 | `src/main/git/cherry-pick.ts`, `rebase.ts`, `squash.ts`, `reorder.ts` | `app/src/lib/git/{cherry-pick,rebase,squash,reorder}.ts` | Non-interactive rebase via generated todo |
+| `src/main/git/lfs.ts`, `submodule.ts` | `app/src/lib/git/{lfs,submodule}.ts` | |

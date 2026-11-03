@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, afterEach, expect, it } from 'vitest'
 import { Toolbar } from '../../../src/renderer/src/components/Toolbar'

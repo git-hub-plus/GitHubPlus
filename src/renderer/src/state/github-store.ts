@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand'
+import { create } from 'zustand'
 import type { GitHubAccount, GitHubRepository } from '@shared/ipc/integrations'
 import { GhpError } from '@shared/errors'
 import { invoke } from '../ipc'

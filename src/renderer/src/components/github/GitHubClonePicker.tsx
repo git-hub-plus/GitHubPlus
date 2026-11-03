@@ -1,4 +1,4 @@
-﻿import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useT } from '../../i18n'
 import { useGitHubStore } from '../../state/github-store'
 import { GitHubSignIn } from './GitHubAccountSection'

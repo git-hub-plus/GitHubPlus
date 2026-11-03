@@ -95,8 +95,29 @@ export async function copyIntoRepository(
   return result
 }
 
+/** Sizes of working-tree files; paths outside the repository report null. */
+export async function fileSizes(
+  repositoryPath: string,
+  paths: ReadonlyArray<string>
+): Promise<Array<number | null>> {
+  const root = resolve(repositoryPath)
+  return Promise.all(
+    paths.slice(0, 5000).map(async (path) => {
+      const full = resolve(root, path)
+      if (!inside(root, full)) return null
+      try {
+        const stat = await lstat(full)
+        return stat.isFile() ? stat.size : null
+      } catch {
+        return null
+      }
+    })
+  )
+}
+
 export function register(): void {
   handle('files:copyIntoRepository', (_event, id, input) =>
     copyIntoRepository(getRepository(id).path, input)
   )
+  handle('files:sizes', (_event, id, paths) => fileSizes(getRepository(id).path, paths))
 }

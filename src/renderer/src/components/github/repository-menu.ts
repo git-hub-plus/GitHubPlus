@@ -1,4 +1,4 @@
-﻿import { createElement } from 'react'
+import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
 import type { RepositoryInfo } from '@shared/models/app'
 import { t } from '@shared/i18n'

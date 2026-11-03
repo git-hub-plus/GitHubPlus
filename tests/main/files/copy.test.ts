@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../../../src/main/ipc', () => ({ handle: vi.fn() }))
 vi.mock('../../../src/main/store/repositories', () => ({ getRepository: vi.fn() }))
-import { copyIntoRepository } from '../../../src/main/files/register'
+import { copyIntoRepository, fileSizes } from '../../../src/main/files/register'
 
 let directory: string
 let root: string
@@ -77,5 +77,23 @@ describe('copy into working tree', () => {
       skipped: ['folder'],
     })
     await expect(readFile(join(source, 'a.txt'))).rejects.toMatchObject({ code: 'ENOENT' })
+  })
+})
+
+describe('fileSizes', () => {
+  it('returns sizes for files inside the repository and null otherwise', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'ghp-sizes-'))
+    try {
+      await writeFile(join(root, 'a.bin'), Buffer.alloc(1234))
+      await mkdir(join(root, 'dir'))
+      expect(await fileSizes(root, ['a.bin', 'dir', 'missing.txt', '../outside.txt'])).toEqual([
+        1234,
+        null,
+        null,
+        null,
+      ])
+    } finally {
+      await rm(root, { recursive: true, force: true })
+    }
   })
 })

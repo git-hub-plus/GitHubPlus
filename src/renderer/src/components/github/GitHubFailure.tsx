@@ -1,4 +1,4 @@
-﻿import { GhpError } from '@shared/errors'
+import { GhpError } from '@shared/errors'
 import { useT } from '../../i18n'
 
 export function GitHubFailure({ error }: { error?: unknown }) {

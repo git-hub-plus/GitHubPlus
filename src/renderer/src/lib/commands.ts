@@ -1,4 +1,4 @@
-﻿import type { TranslationKey } from '@shared/i18n'
+import type { TranslationKey } from '@shared/i18n'
 
 export interface Command {
   readonly id: string

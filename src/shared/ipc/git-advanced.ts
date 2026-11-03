@@ -101,4 +101,6 @@ export interface FilesIpc {
     repoId: string,
     input: { sources: ReadonlyArray<string>; targetDirectory: string }
   ) => { copied: ReadonlyArray<string>; skipped: ReadonlyArray<string> }
+  /** Sizes in bytes of working-tree files (null when missing or not a regular file). */
+  'files:sizes': (repoId: string, paths: ReadonlyArray<string>) => ReadonlyArray<number | null>
 }

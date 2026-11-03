@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { beforeEach, expect, it } from 'vitest'
 import { useGitHubStore } from '../../../src/renderer/src/state/github-store'
 import { installFakeBridge } from '../helpers/fake-bridge'

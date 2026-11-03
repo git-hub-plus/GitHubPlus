@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { RepositoryInfo } from '@shared/models/app'
 import { useT } from '../../i18n'
 import { invoke } from '../../ipc'

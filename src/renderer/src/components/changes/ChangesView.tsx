@@ -1,6 +1,7 @@
 import { AppFileStatusKind } from '@shared/models/status'
 import { ConflictFileActions } from '../conflicts/ConflictFileActions'
 import { StashMenu } from '../stash/StashMenu'
+import { NewLargeFilesHint } from './NewLargeFilesHint'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '@shared/i18n'
 import { GhpError } from '@shared/errors'
@@ -338,6 +339,7 @@ function RepositoryChanges() {
   const left = (
     <>
       <StashMenu key={repoId} repoId={repoId} />
+      <NewLargeFilesHint repoId={repoId} files={files} />
       <div className={styles.listHeader}>
         <Checkbox
           type={allType}
