@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/src/lib/progress/fetch.ts
+// Ported from GitHub Desktop (MIT): app/src/lib/progress/fetch.ts
 import { GitProgressParser } from './git'
 
 /**

@@ -327,6 +327,35 @@ export const en: Translations = {
   // C2 (AI commit messages, drag & drop upload) adds its keys here.
   ai: {
     title: 'AI commit messages',
+    provider: 'Provider',
+    none: 'Disabled',
+    anthropic: 'Claude',
+    openaiCompatible: 'OpenAI compatible',
+    model: 'Model',
+    baseUrl: 'Server address',
+    apiKey: 'API key',
+    saved: 'Saved',
+    save: 'Save',
+    clearKey: 'Clear key',
+    write: 'Write with AI',
+    previewTitle: 'Preview outgoing content',
+    previewHelp:
+      'This content will be sent to the selected provider. Truncation markers are included in the transmitted content.',
+    send: 'Send',
+    generating: 'Writing?',
+    drop: {
+      overlay: 'Drop here to copy into the repository',
+      title: 'Add files to repository',
+      target: 'Target folder (default: repository root)',
+      chooseFolder: 'Choose folder',
+      commitNow: 'Commit immediately',
+      summary: 'Commit summary',
+      copy: 'Copy',
+      result: 'Added {copied} files; skipped {skipped} existing or unsupported files.',
+      committed: 'Committed the added files.',
+      invalidPaths: 'Could not determine the dropped file paths.',
+      done: 'File copy completed.',
+    },
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {

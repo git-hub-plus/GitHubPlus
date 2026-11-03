@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/test/unit/progress/git-test.ts
+// Ported from GitHub Desktop (MIT): app/test/unit/progress/git-test.ts
 import { describe, it } from 'vitest'
 import assert from 'node:assert'
 import {

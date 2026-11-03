@@ -1,4 +1,4 @@
-﻿// Ported from GitHub Desktop (MIT): app/src/lib/progress/git.ts
+// Ported from GitHub Desktop (MIT): app/src/lib/progress/git.ts
 import { stripVTControlCharacters } from 'node:util'
 
 /**

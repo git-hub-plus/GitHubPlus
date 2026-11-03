@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
 import type { Commit } from '@shared/models/git'
 import { calculateCommitGraph } from '../../../src/renderer/src/lib/commit-graph'

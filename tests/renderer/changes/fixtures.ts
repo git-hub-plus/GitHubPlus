@@ -1,4 +1,4 @@
-﻿// @vitest-environment jsdom
+// @vitest-environment jsdom
 import { DiffLineType, type FileDiff } from '@shared/models/diff'
 import { AppFileStatusKind, type RepoStatus } from '@shared/models/status'
 export const diff: FileDiff = {
