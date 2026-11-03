@@ -4,6 +4,10 @@ export const ko = {
   app: {
     name: 'GitHub+',
   },
+  // H1 (hub host: tray, notifications) adds its keys here.
+  hubTray: {
+    title: '허브 트레이',
+  },
   menu: {
     file: '파일(&F)',
     addRepository: '로컬 저장소 추가…(&A)',
@@ -35,6 +39,10 @@ export const ko = {
     reportIssue: '문제 신고…(&I)',
     about: 'GitHub+ 정보(&A)',
   },
+  // C1 (GitHub.com) adds its keys here.
+  github: {
+    title: 'GitHub',
+  },
   sidebar: {
     title: '저장소',
     groups: {
@@ -47,6 +55,10 @@ export const ko = {
     empty: '저장소가 없습니다. 추가하거나 복제해 보세요.',
     unavailable: '찾을 수 없음',
   },
+  // H2 (hub client screens) adds its keys here.
+  hub: {
+    title: '로컬 허브',
+  },
   toolbar: {
     branch: '브랜치',
     noBranch: '브랜치 없음',
@@ -56,6 +68,10 @@ export const ko = {
     publish: '게시',
     hubConnected: '허브 연결됨',
     hubOffline: '허브 오프라인',
+  },
+  // B2 (merge, conflicts, stash) adds its keys here.
+  conflicts: {
+    title: '충돌',
   },
   workspace: {
     changes: '변경 사항',
@@ -147,6 +163,10 @@ export const ko = {
     authentication: '저장소 인증을 확인하세요.',
     failed: '히스토리를 불러오지 못했습니다.',
   },
+  // B3 (history actions: revert, cherry-pick, rebase, squash, reorder, tags) adds its keys here.
+  historyActions: {
+    title: '히스토리 작업',
+  },
   preferences: {
     title: '환경설정',
     language: '언어 / Language',
@@ -156,6 +176,10 @@ export const ko = {
       dark: '다크',
       system: '시스템 설정',
     },
+  },
+  // C2 (AI commit messages, drag & drop upload) adds its keys here.
+  ai: {
+    title: 'AI 커밋 메시지',
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {
@@ -220,8 +244,16 @@ export const ko = {
       unknown: '작업을 완료하지 못했습니다.',
     },
   },
+  // C3 (LFS, submodules, command palette) adds its keys here.
+  lfs: {
+    title: 'LFS·서브모듈',
+  },
   errors: {
     generic: '작업을 완료하지 못했습니다.',
     notARepository: '{path}은(는) Git 저장소가 아닙니다.',
+  },
+  // P1 (git identity setup, N2 polish) adds its keys here.
+  identity: {
+    title: 'Git 사용자 정보',
   },
 } as const

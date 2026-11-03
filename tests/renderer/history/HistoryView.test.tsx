@@ -39,6 +39,7 @@ beforeEach(() => {
   bridge.mockClear()
   changed = undefined
   const api: GhpApi = {
+    getPathForFile: () => '',
     invoke: bridge as GhpApi['invoke'],
     on: vi.fn((_event, listener) => {
       changed = listener as typeof changed

@@ -4,6 +4,10 @@ export const en: Translations = {
   app: {
     name: 'GitHub+',
   },
+  // H1 (hub host: tray, notifications) adds its keys here.
+  hubTray: {
+    title: 'Hub tray',
+  },
   menu: {
     file: '&File',
     addRepository: '&Add local repository…',
@@ -35,6 +39,10 @@ export const en: Translations = {
     reportIssue: 'Report &issue…',
     about: '&About GitHub+',
   },
+  // C1 (GitHub.com) adds its keys here.
+  github: {
+    title: 'GitHub',
+  },
   sidebar: {
     title: 'Repositories',
     groups: {
@@ -47,6 +55,10 @@ export const en: Translations = {
     empty: 'No repositories yet. Add or clone one.',
     unavailable: 'Missing',
   },
+  // H2 (hub client screens) adds its keys here.
+  hub: {
+    title: 'Local hub',
+  },
   toolbar: {
     branch: 'Branch',
     noBranch: 'No branch',
@@ -56,6 +68,10 @@ export const en: Translations = {
     publish: 'Publish',
     hubConnected: 'Hub connected',
     hubOffline: 'Hub offline',
+  },
+  // B2 (merge, conflicts, stash) adds its keys here.
+  conflicts: {
+    title: 'Conflicts',
   },
   workspace: {
     changes: 'Changes',
@@ -147,6 +163,10 @@ export const en: Translations = {
     authentication: 'Check repository authentication.',
     failed: 'Could not load history.',
   },
+  // B3 (history actions: revert, cherry-pick, rebase, squash, reorder, tags) adds its keys here.
+  historyActions: {
+    title: 'History actions',
+  },
   preferences: {
     title: 'Preferences',
     language: '언어 / Language',
@@ -156,6 +176,10 @@ export const en: Translations = {
       dark: 'Dark',
       system: 'System',
     },
+  },
+  // C2 (AI commit messages, drag & drop upload) adds its keys here.
+  ai: {
+    title: 'AI commit messages',
   },
   // U3 (toolbar, branches, sync, dialogs) adds its keys here.
   repoActions: {
@@ -220,8 +244,16 @@ export const en: Translations = {
       unknown: 'The operation could not be completed.',
     },
   },
+  // C3 (LFS, submodules, command palette) adds its keys here.
+  lfs: {
+    title: 'LFS & submodules',
+  },
   errors: {
     generic: 'The operation could not be completed.',
     notARepository: '{path} is not a Git repository.',
+  },
+  // P1 (git identity setup, N2 polish) adds its keys here.
+  identity: {
+    title: 'Git identity',
   },
 }

@@ -1,13 +1,17 @@
 import { join } from 'node:path'
 import { app, BrowserWindow, shell } from 'electron'
-import { registerAppHandlers } from './handlers/app'
-import { registerGitHandlers } from './git/register'
+import { registerAllHandlers } from './register-all'
 import { trustWebContents } from './ipc'
 import { log } from './log'
 import { buildMenu } from './menu'
 import { loadRepositories } from './store/repositories'
 import { loadSettings, onSettingsChanged } from './store/settings'
 import { stopWatchingRepository } from './watch'
+import {
+  onMainWindowCreated,
+  shouldKeepRunningWithoutWindows,
+  shutdownHub,
+} from './hub/server/lifecycle'
 
 // Keep the user data folder separate from the official GitHub Desktop and from
 // development runs of GitHub+.
@@ -74,10 +78,13 @@ app.on('second-instance', () => {
   }
 })
 
-app.on('will-quit', () => stopWatchingRepository())
+app.on('will-quit', () => {
+  stopWatchingRepository()
+  void shutdownHub()
+})
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin' && !shouldKeepRunningWithoutWindows()) {
     app.quit()
   }
 })
@@ -85,10 +92,14 @@ app.on('window-all-closed', () => {
 void app.whenReady().then(async () => {
   await loadSettings()
   await loadRepositories()
-  registerAppHandlers()
-  registerGitHandlers()
+  registerAllHandlers()
   buildMenu()
   onSettingsChanged(() => buildMenu())
   mainWindow = createWindow()
+  onMainWindowCreated(mainWindow, () => {
+    if (!mainWindow || mainWindow.isDestroyed()) mainWindow = createWindow()
+    mainWindow.show()
+    mainWindow.focus()
+  })
   log.info(`GitHub+ ${app.getVersion()} started`)
 })

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type { GhpApi } from '@shared/ipc'
 
 // The renderer has no Node access; this typed bridge is its only way out.
@@ -9,6 +9,13 @@ const api: GhpApi = {
       listener(payload as Parameters<typeof listener>[0])
     ipcRenderer.on(event, wrapped)
     return () => ipcRenderer.removeListener(event, wrapped)
+  },
+  getPathForFile: (file) => {
+    try {
+      return webUtils.getPathForFile(file)
+    } catch {
+      return ''
+    }
   },
 }
 

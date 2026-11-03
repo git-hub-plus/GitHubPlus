@@ -11,14 +11,16 @@
 | `src/preload/` | `window.ghp` 브리지 하나만 노출 | 로직을 넣지 않는다 |
 | `src/shared/` | IPC 계약, 데이터 모델, i18n | main·renderer 양쪽에서 import. **Node·DOM API 금지** |
 | `src/renderer/src/` | React 화면 | Node·Electron·dugite import 금지(ESLint가 막음). main 호출은 `ipc.ts`의 `invoke`/`subscribe`만 |
-| `tests/` | Vitest 단위 테스트 (`tests/main`, `tests/shared`, `tests/renderer`) | renderer 테스트는 첫 줄에 `// @vitest-environment jsdom` |
+| `tests/` | Vitest 단위 테스트 (`tests/main`, `tests/shared`, `tests/renderer`) | renderer 테스트는 첫 줄에 `// @vitest-environment jsdom`, 가짜 브리지는 `tests/renderer/helpers/fake-bridge.ts`의 `installFakeBridge()` |
 
 ## IPC 계약
 
 - 채널과 이벤트는 `src/shared/ipc/*.ts`에 타입으로 정의한다. 새 도메인(hub, github, ai, 고급 git 등)은 **새 파일**을 만들고 `src/shared/ipc/index.ts`의 `IpcContract`/`IpcEventMap`에 한 줄씩 추가한다.
 - IPC로 오가는 값은 **평범한 데이터**(클래스 인스턴스 금지, structured clone 가능)만 쓴다. 모델은 `src/shared/models/`.
+- 도메인별 핸들러는 각자의 `register()` 파일(`src/main/register-all.ts`에서 모두 호출)에 등록한다. 파일마다 담당자가 하나다.
 - main 핸들러는 `src/main/ipc.ts`의 `handle()`로 등록한다. 실패를 특정 종류로 알리려면 `HandlerError(kind, message, detail)`을 던진다. renderer에서는 `GhpError.kind`로 받는다.
 - 오래 걸리는 작업(clone/fetch/pull/push/checkout)은 `opId`를 받고 `git:progress` 이벤트로 진행률을 보낸다.
+- git 인증·추가 설정은 `registerGitAuthProvider()`(core.ts)로 넣는다. 제공한 인자는 로그·오류에 남지 않는다.
 
 ## 원본(GitHub Desktop) 이식 규칙
 

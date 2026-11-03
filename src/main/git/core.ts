@@ -41,6 +41,26 @@ export class GitError extends Error {
   }
 }
 
+/**
+ * Extra git config/env for a command, e.g. an Authorization header for
+ * github.com remotes (N5) or settings for hub remotes (N3). Providers must be
+ * fast; they run before every git invocation.
+ */
+export type GitAuthProvider = (
+  args: ReadonlyArray<string>,
+  path: string
+) => { configArgs?: string[]; env?: Record<string, string> } | undefined
+
+const authProviders: GitAuthProvider[] = []
+
+export function registerGitAuthProvider(provider: GitAuthProvider): () => void {
+  authProviders.push(provider)
+  return () => {
+    const index = authProviders.indexOf(provider)
+    if (index >= 0) authProviders.splice(index, 1)
+  }
+}
+
 const baseEnv = {
   // Never block on an interactive prompt; credential helpers still run.
   GIT_TERMINAL_PROMPT: '0',
@@ -77,16 +97,25 @@ export async function git(
   options: GitOptions & { encoding?: 'utf8' | 'buffer' } = {}
 ): Promise<GitResult<string | Buffer>> {
   const successExitCodes = options.successExitCodes ?? new Set([0])
+  const extraConfig: string[] = []
+  let extraEnv: Record<string, string> = {}
+  for (const provider of authProviders) {
+    const extra = provider(args, path)
+    if (extra?.configArgs) extraConfig.push(...extra.configArgs)
+    if (extra?.env) extraEnv = { ...extraEnv, ...extra.env }
+  }
+  // Logs and errors use `args` only, so provider secrets never reach them.
+  const execArgs = [...extraConfig, ...args]
   const execOptions: IGitExecutionOptions = {
-    env: { ...baseEnv, ...options.env },
+    env: { ...baseEnv, ...extraEnv, ...options.env },
     stdin: options.stdin,
     processCallback: options.processCallback,
     maxBuffer: options.maxBuffer ?? (options.encoding === 'buffer' ? Infinity : 256 * 1024 * 1024),
   }
   const result =
     options.encoding === 'buffer'
-      ? await exec(args, path, { ...execOptions, encoding: 'buffer' })
-      : await exec(args, path, execOptions)
+      ? await exec(execArgs, path, { ...execOptions, encoding: 'buffer' })
+      : await exec(execArgs, path, execOptions)
 
   let gitError: DugiteError | null = null
   if (!successExitCodes.has(result.exitCode)) {
