@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { getLocale } from '@shared/i18n'
 import { useAppStore } from '../../state/app-store'
 import { useHistoryStore } from '../../state/history-store'
@@ -9,7 +9,24 @@ import type { GraphRow } from '../../lib/commit-graph'
 import { DiffView } from '../diff/DiffView'
 import { VirtualList } from '../common/VirtualList'
 import { SplitPane } from '../common/SplitPane'
+import { useHistoryActions } from '../history-actions/useHistoryActions'
 import styles from './HistoryView.module.css'
+
+function badgeKeyDown(event: KeyboardEvent<HTMLElement>) {
+  if (
+    event.key === 'Enter' ||
+    event.key === ' ' ||
+    event.key === 'ContextMenu' ||
+    (event.shiftKey && event.key === 'F10')
+  ) {
+    event.preventDefault()
+    event.stopPropagation()
+    const bounds = event.currentTarget.getBoundingClientRect()
+    event.currentTarget.dispatchEvent(
+      new MouseEvent('contextmenu', { bubbles: true, clientX: bounds.left, clientY: bounds.bottom })
+    )
+  }
+}
 
 function Graph({ row, width }: { row: GraphRow; width: number }) {
   const x = (lane: number) => lane * 12 + 10
@@ -34,9 +51,15 @@ function Graph({ row, width }: { row: GraphRow; width: number }) {
 }
 
 export function HistoryView() {
+  const repoId = useAppStore((state) => state.selectedRepositoryId)
+  return <RepositoryHistory key={repoId ?? ''} />
+}
+
+function RepositoryHistory() {
   const t = useT()
   const repoId = useAppStore((state) => state.selectedRepositoryId)
   const state = useHistoryStore()
+  const actions = useHistoryActions(repoId)
   const detailRef = useRef<HTMLElement>(null)
   const [copyState, setCopyState] = useState<'copied' | 'copyFailed' | undefined>()
   useEffect(() => {
@@ -74,6 +97,7 @@ export function HistoryView() {
   if (!repoId) return <div className={styles.message}>{t('historyView.noRepository')}</div>
   return (
     <div className={styles.history}>
+      {actions.ui}
       {state.error && (
         <div role="alert" className={styles.error}>
           {t(errorKey)} <button onClick={() => void state.load(true)}>{t('common.retry')}</button>
@@ -107,54 +131,165 @@ export function HistoryView() {
                 onChange={(event) => state.setSearch(event.target.value)}
               />
             </div>
-            <VirtualList
-              items={visible}
-              rowHeight={28}
-              selectedIndex={selectedIndex}
-              label={t('historyView.commits')}
-              getKey={({ commit }) => commit.sha}
-              onSelect={(index) => {
-                setCopyState(undefined)
-                void state.select(visible[index].commit.sha)
+            <div
+              className={styles.commitList}
+              onKeyDownCapture={(event) => {
+                if ((event.target as HTMLElement).closest('[data-history-badge]')) return
+                if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                  const row = event.currentTarget.querySelector<HTMLElement>(
+                    `[data-sha="${state.selectedSha}"]`
+                  )
+                  row?.dispatchEvent(
+                    new MouseEvent('contextmenu', {
+                      bubbles: true,
+                      clientX: row.getBoundingClientRect().left,
+                      clientY: row.getBoundingClientRect().bottom,
+                    })
+                  )
+                  event.preventDefault()
+                }
+                if (event.shiftKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  const next =
+                    visible[
+                      Math.max(
+                        0,
+                        Math.min(
+                          visible.length - 1,
+                          selectedIndex + (event.key === 'ArrowDown' ? 1 : -1)
+                        )
+                      )
+                    ]
+                  if (next)
+                    state.choose(
+                      next.commit.sha,
+                      { range: true },
+                      visible.map(({ commit }) => commit.sha)
+                    )
+                }
               }}
-              onActivate={() => detailRef.current?.focus()}
-              onEndReached={() => void state.load()}
-              renderRow={({ commit, row }) => (
-                <div className={styles.commitRow}>
-                  <Graph row={row} width={graphWidth} />
-                  <span className={styles.summary} title={commit.summary}>
-                    {commit.summary}
-                  </span>
-                  <span className={styles.badges}>
-                    {state.branches
-                      .filter((branch) => branch.tipSha === commit.sha)
-                      .map((branch) => (
+            >
+              <VirtualList
+                items={visible}
+                rowHeight={28}
+                selectedIndex={selectedIndex}
+                label={t('historyView.commits')}
+                getKey={({ commit }) => commit.sha}
+                onSelect={(index) => {
+                  setCopyState(undefined)
+                  state.choose(visible[index].commit.sha)
+                }}
+                onActivate={() => detailRef.current?.focus()}
+                onEndReached={() => void state.load()}
+                renderRow={({ commit, row }) => (
+                  <div
+                    className={`${styles.commitRow} ${state.selectedShas.includes(commit.sha) ? styles.multiSelected : ''}`}
+                    data-sha={commit.sha}
+                    draggable={actions.canDrag(commit.sha)}
+                    onDragStart={(event) => {
+                      actions.dragStart(commit.sha)
+                      event.dataTransfer?.setData('text/plain', commit.sha)
+                    }}
+                    onDragEnd={actions.dragEnd}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={(event) => {
+                      event.preventDefault()
+                      actions.drop(commit.sha)
+                    }}
+                    onContextMenu={(event) => actions.commitMenu(event, commit)}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      const listbox = event.currentTarget.closest<HTMLElement>('[role="listbox"]')
+                      listbox?.focus()
+                      state.choose(
+                        commit.sha,
+                        { toggle: event.ctrlKey || event.metaKey, range: event.shiftKey },
+                        visible.map(({ commit }) => commit.sha)
+                      )
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={t('historyActions.selectCommit', { summary: commit.summary })}
+                      checked={state.selectedShas.includes(commit.sha)}
+                      onClick={(event) => event.stopPropagation()}
+                      onChange={() => state.choose(commit.sha, { toggle: true })}
+                    />
+                    <Graph row={row} width={graphWidth} />
+                    <span className={styles.summary} title={commit.summary}>
+                      {commit.summary}
+                    </span>
+                    <span className={styles.badges}>
+                      {state.branches
+                        .filter((branch) => branch.tipSha === commit.sha)
+                        .map((branch) => (
+                          <span
+                            data-history-badge
+                            role="button"
+                            tabIndex={0}
+                            aria-haspopup="menu"
+                            aria-label={t('historyActions.branchBadge', { name: branch.name })}
+                            onKeyDown={badgeKeyDown}
+                            onClick={actions.rebaseMenu}
+                            onContextMenu={actions.rebaseMenu}
+                            key={`${branch.type}:${branch.name}`}
+                            className={branch.isCurrent ? styles.currentBadge : styles.badge}
+                            title={branch.isCurrent ? t('historyView.currentBranch') : branch.name}
+                          >
+                            {branch.name}
+                          </span>
+                        ))}
+                      {commit.tags.map((tag) => (
                         <span
-                          key={`${branch.type}:${branch.name}`}
-                          className={branch.isCurrent ? styles.currentBadge : styles.badge}
-                          title={branch.isCurrent ? t('historyView.currentBranch') : branch.name}
+                          data-history-badge
+                          role="button"
+                          tabIndex={0}
+                          aria-haspopup="menu"
+                          aria-label={t('historyActions.tagBadge', { name: tag })}
+                          onKeyDown={badgeKeyDown}
+                          onClick={(event) => actions.tagMenu(event, tag)}
+                          onContextMenu={(event) => actions.tagMenu(event, tag)}
+                          key={tag}
+                          className={styles.badge}
+                          title={t('historyView.tag')}
                         >
-                          {branch.name}
+                          {tag}
                         </span>
                       ))}
-                    {commit.tags.map((tag) => (
-                      <span key={tag} className={styles.badge} title={t('historyView.tag')}>
-                        {tag}
-                      </span>
-                    ))}
-                  </span>
-                  <span className={styles.author} title={commit.author.name}>
-                    {commit.author.name}
-                  </span>
-                  <time
-                    className={styles.time}
-                    dateTime={new Date(commit.author.date).toISOString()}
-                  >
-                    {relativeTime(commit.author.date)}
-                  </time>
-                </div>
-              )}
-            />
+                    </span>
+                    <span className={styles.author} title={commit.author.name}>
+                      {commit.author.name}
+                    </span>
+                    <time
+                      className={styles.time}
+                      dateTime={new Date(commit.author.date).toISOString()}
+                    >
+                      {relativeTime(commit.author.date)}
+                    </time>
+                  </div>
+                )}
+              />
+            </div>
+            <div className={styles.actionBar}>
+              <button disabled={!actions.canRebase} onClick={actions.rebase}>
+                {t('historyActions.rebase')}
+              </button>
+              <span role="status">
+                {t('historyActions.selected', { count: state.selectedShas.length })}
+              </span>
+              <button
+                disabled={actions.busy}
+                onClick={actions.moveOldest}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={(event) => {
+                  event.preventDefault()
+                  actions.drop(null)
+                }}
+              >
+                {t('historyActions.oldest')}
+              </button>
+            </div>
             {!state.loading && visible.length === 0 && (
               <p className={styles.message}>
                 {t(state.search ? 'historyView.noMatches' : 'historyView.empty')}
