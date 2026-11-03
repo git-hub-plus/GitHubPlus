@@ -7,8 +7,8 @@ import { useT } from '../../i18n'
 import { relativeTime } from '../../lib/relative-time'
 import type { GraphRow } from '../../lib/commit-graph'
 import { DiffView } from '../diff/DiffView'
-import { VirtualList } from './VirtualList'
-import { SplitPane } from './SplitPane'
+import { VirtualList } from '../common/VirtualList'
+import { SplitPane } from '../common/SplitPane'
 import styles from './HistoryView.module.css'
 
 function Graph({ row, width }: { row: GraphRow; width: number }) {
@@ -84,6 +84,10 @@ export function HistoryView() {
         </div>
       )}
       <SplitPane
+        storageKey="ghp.history.splitWidth"
+        defaultSize={48}
+        minSize={25}
+        unit="percent"
         left={
           <section className={styles.list} aria-label={t('historyView.title')}>
             <div className={styles.filters}>

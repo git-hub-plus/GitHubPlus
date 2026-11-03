@@ -80,3 +80,9 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 }
+
+.operationNotices {
+  composes: toasts;
+  top: calc(var(--toolbar-height) + var(--space-4));
+  bottom: auto;
+}

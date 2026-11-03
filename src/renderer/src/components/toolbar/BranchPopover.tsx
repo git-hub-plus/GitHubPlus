@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Branch } from '@shared/models/git'
-import { invoke } from '../../ipc'
+import { invoke, subscribe } from '../../ipc'
 import { useT } from '../../i18n'
 import { useDialogStore } from '../../state/dialog-store'
 import { useRepoStore } from '../../state/repo-store'
-import { runOperation, useSyncStore } from '../../state/sync-store'
+import { runOperation, useSyncStore, refreshHistory, notifyOperation } from '../../state/sync-store'
 import { showToast } from '../../state/toast-store'
+import { VirtualList } from '../common/VirtualList'
 import { Popover } from '../common/Popover'
 import { Dialog } from '../dialogs/Dialog'
 import { normalizeBranch, validBranch } from '../dialogs/RepositoryDialogs'
@@ -22,16 +23,30 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
   const active = useSyncStore((s) => s.active)
   useEffect(() => {
     let cancelled = false
-    void invoke('git:branches', repoId)
-      .then((items) => {
-        if (!cancelled) {
+    let version = 0
+    const load = async () => {
+      const request = ++version
+      try {
+        const items = await invoke('git:branches', repoId)
+        if (!cancelled && request === version) {
           setBranches(items)
           setLoaded(true)
         }
-      })
-      .catch(showToast)
+      } catch (error) {
+        if (!cancelled) showToast(error)
+      }
+    }
+    void load()
+    const stop = subscribe('git:repoChanged', (event) => {
+      if (event.repoId === repoId) void load()
+    })
+    const stopSync = useSyncStore.subscribe((state, previous) => {
+      if (previous.active?.repoId === repoId && !state.active) void load()
+    })
     return () => {
       cancelled = true
+      stop()
+      stopSync()
     }
   }, [repoId])
   const checkout = async (branch: Branch) => {
@@ -40,7 +55,7 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
       await runOperation(repoId, (opId) => invoke('git:checkout', repoId, branch.name, { opId }))
       await useRepoStore.getState().refresh()
       onClose()
-      showToast()
+      notifyOperation('repoActions.completed.checkout', { branch: branch.name })
     } catch (error) {
       showToast(error)
     } finally {
@@ -57,18 +72,19 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
           deleteRemote: edit.branch.type === 'remote',
         })
       await useRepoStore.getState().refresh()
+      await refreshHistory(repoId)
       setEdit(undefined)
       setBranches(await invoke('git:branches', repoId))
-      showToast()
+      notifyOperation(`repoActions.completed.${edit.action}`, {
+        branch: edit.action === 'rename' ? name : edit.branch.name,
+      })
     } catch (error) {
       showToast(error)
     } finally {
       setBusy(false)
     }
   }
-  // Temporary fixed-row window; U1 owns the shared VirtualList implementation.
-  const [scrollTop, setScrollTop] = useState(0)
-  const list = useRef<HTMLDivElement>(null)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const visible = branches.filter((branch) =>
     branch.name.toLowerCase().includes(query.toLowerCase())
   )
@@ -78,7 +94,6 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
       .filter((b) => b.type === type)
       .map((branch) => ({ key: `${type}/${branch.name}`, type, branch })),
   ])
-  const start = Math.max(0, Math.floor(scrollTop / 28) - 3)
   return (
     <>
       <Popover label={t('toolbar.branch')} onClose={onClose}>
@@ -89,7 +104,7 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
           value={query}
           onChange={(event) => {
             setQuery(event.target.value)
-            setScrollTop(0)
+            setSelectedIndex(-1)
           }}
         />
         <button
@@ -103,45 +118,19 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
         </button>
         {!loaded && <p>{t('common.loading')}</p>}
         {loaded && !visible.length && <p>{t('repoActions.noBranches')}</p>}
-        <div
-          ref={list}
-          style={{ height: Math.min(rows.length * 28, 280), overflowY: 'auto' }}
-          onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
-          onKeyDown={(event) => {
-            if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
-            const row = (event.target as HTMLElement).closest<HTMLElement>('[data-branch-index]')
-            if (!row) return
-            event.preventDefault()
-            event.stopPropagation()
-            const direction = event.key === 'ArrowDown' ? 1 : -1
-            let next = Number(row.dataset.branchIndex) + direction
-            while (next >= 0 && next < rows.length && !rows[next].branch) next += direction
-            if (next < 0 || next >= rows.length) return
-            if (next * 28 < scrollTop || next * 28 + 28 > scrollTop + 280) {
-              list.current!.scrollTop = next * 28
-              setScrollTop(next * 28)
-            }
-            const focus = () =>
-              list.current
-                ?.querySelector<HTMLElement>(`[data-branch-index="${next}"] button:not(:disabled)`)
-                ?.focus()
-            if (list.current?.querySelector(`[data-branch-index="${next}"]`)) focus()
-            else requestAnimationFrame(focus)
-          }}
-        >
-          <div style={{ height: rows.length * 28, position: 'relative' }}>
-            {rows.slice(start, start + 17).map(({ key, type, branch }, index) => (
-              <div
-                key={key}
-                data-branch-index={start + index}
-                style={{
-                  position: 'absolute',
-                  top: (start + index) * 28,
-                  height: 28,
-                  width: '100%',
-                }}
-                className={styles.row}
-              >
+        <div style={{ height: Math.min(rows.length * 28, 280) }}>
+          <VirtualList
+            items={rows}
+            rowHeight={28}
+            getKey={(row) => row.key}
+            selectedIndex={selectedIndex}
+            onSelect={setSelectedIndex}
+            onActivate={(index) => {
+              const branch = rows[index]?.branch
+              if (branch && !branch.isCurrent && !active && !busy) void checkout(branch)
+            }}
+            renderRow={({ type, branch }) => (
+              <div className={styles.row}>
                 {branch ? (
                   <>
                     <button
@@ -175,8 +164,8 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
                   <h3>{t(`repoActions.${type}`)}</h3>
                 )}
               </div>
-            ))}
-          </div>
+            )}
+          />
         </div>
       </Popover>
       {edit && (
