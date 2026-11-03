@@ -60,6 +60,9 @@ class L10nKo extends L10n {
   }
 
   @override
+  String get addFailed => '저장소를 추가하지 못했습니다.';
+
+  @override
   String get welcomeTitle => 'GitHub+에 오신 것을 환영합니다';
 
   @override

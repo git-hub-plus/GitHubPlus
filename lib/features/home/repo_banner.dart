@@ -204,7 +204,7 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
       final ok = await ref.read(syncControllerProvider).run(widget.repo, action, describe: describe, title: title);
       if (!ok && mounted) showGhpToast(context, l.expeditionFailed, tone: ToastTone.error);
     } on GitException catch (e) {
-      if (mounted) showGhpToast(context, l.expeditionFailed, tone: ToastTone.error, detail: e.result.stderr);
+      if (mounted) showGhpToast(context, l.expeditionFailed, tone: ToastTone.error, detail: redactCredentials(e.result.stderr));
     } finally {
       if (mounted) setState(() => _busy = false);
     }

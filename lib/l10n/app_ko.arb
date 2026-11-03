@@ -29,6 +29,7 @@
   },
   "pickRepositoryFolder": "저장소 폴더 선택",
   "notARepository": "{path}은(는) Git 저장소가 아닙니다.",
+  "addFailed": "저장소를 추가하지 못했습니다.",
   "@notARepository": {
     "placeholders": {
       "path": {

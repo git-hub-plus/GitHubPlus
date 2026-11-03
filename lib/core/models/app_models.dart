@@ -80,9 +80,9 @@ class RepositoryInfo {
       id: id,
       path: path,
       name: name,
-      alias: json['alias'] as String?,
+      alias: _string(json['alias']),
       group: RepositoryGroup.values.asNameMap()[json['group']] ?? RepositoryGroup.local,
-      remoteUrl: json['remoteUrl'] as String?,
+      remoteUrl: _string(json['remoteUrl']),
       pinned: json['pinned'] == true,
       addedAt: time(json['addedAt']) ?? DateTime.now(),
       lastOpenedAt: time(json['lastOpenedAt']),
@@ -148,7 +148,7 @@ class AppSettings {
     return AppSettings(
       language: AppLanguage.values.asNameMap()[json['language']] ?? AppLanguage.ko,
       theme: ThemePreference.values.asNameMap()[json['theme']] ?? ThemePreference.dark,
-      defaultRepositoryDirectory: json['defaultRepositoryDirectory'] as String?,
+      defaultRepositoryDirectory: _string(json['defaultRepositoryDirectory']),
       dailyCommitGoal: goal(json['dailyCommitGoal'], 5),
       pushGoal: goal(json['pushGoal'], 10),
       reduceMotion: json['reduceMotion'] == true,
@@ -156,3 +156,6 @@ class AppSettings {
     );
   }
 }
+
+/// Tolerates hand-edited or corrupted JSON: wrong types read as missing.
+String? _string(Object? value) => value is String ? value : null;

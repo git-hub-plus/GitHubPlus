@@ -10,8 +10,9 @@ enum ContentView { workingTree, head }
 typedef ContentKey = ({String repoId, ContentView view});
 
 /// Rebuilt whenever the repository status refreshes, so listings follow
-/// new files, commits and branch switches.
-final contentSourceProvider = Provider.family<RepoContentSource?, ContentKey>((ref, key) {
+/// new files, commits and branch switches. Disposed with the page, so a big
+/// working-folder index does not stay in memory.
+final contentSourceProvider = Provider.autoDispose.family<RepoContentSource?, ContentKey>((ref, key) {
   final repo = ref.watch(libraryProvider).repositories.where((r) => r.id == key.repoId).firstOrNull;
   if (repo == null) return null;
   ref.watch(repoStatusProvider(key.repoId).select((s) => s.value));

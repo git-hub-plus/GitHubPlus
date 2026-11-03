@@ -187,6 +187,12 @@ abstract class L10n {
   /// **'{path}은(는) Git 저장소가 아닙니다.'**
   String notARepository(String path);
 
+  /// No description provided for @addFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소를 추가하지 못했습니다.'**
+  String get addFailed;
+
   /// No description provided for @welcomeTitle.
   ///
   /// In ko, this message translates to:

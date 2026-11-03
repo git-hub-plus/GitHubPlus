@@ -1,13 +1,10 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/storage/repository_store.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../../ui/theme.dart';
-import '../../ui/widgets/feedback.dart';
 import '../home/repo_home.dart';
 import '../library/library_panel.dart';
 import '../settings/settings_dialog.dart';
@@ -31,16 +28,7 @@ class _LauncherShellState extends ConsumerState<LauncherShell> {
     super.dispose();
   }
 
-  Future<void> _addRepository() async {
-    final l = L10n.of(context);
-    final path = await FilePicker.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
-    if (path == null || !mounted) return;
-    try {
-      await ref.read(libraryProvider.notifier).add(path);
-    } on NotARepositoryException catch (e) {
-      if (mounted) showGhpToast(context, l.notARepository(e.path), tone: ToastTone.error);
-    }
-  }
+  Future<void> _addRepository() => addExistingRepository(context, ref);
 
   @override
   Widget build(BuildContext context) {

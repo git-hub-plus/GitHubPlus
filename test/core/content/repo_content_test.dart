@@ -17,6 +17,8 @@ void main() {
       expect(normalizeRepoPath(r'C:\Windows\win.ini'), isNull);
       expect(normalizeRepoPath(r'\\server\share'), isNull);
       expect(normalizeRepoPath(r'docs\guide.md'), 'docs/guide.md');
+      expect(normalizeRepoPath('.git/config'), isNull);
+      expect(normalizeRepoPath('sub/.GIT/config'), isNull);
     });
 
     test('README links resolve like GitHub', () {
@@ -98,6 +100,11 @@ void main() {
         expect(await source.read('../secret.txt'), isA<BlockedBlob>());
         expect(await source.list('../'), isEmpty);
       }
+    });
+
+    test('refs that look like options are rejected', () {
+      expect(() => GitTreeSource(repos.git, repo, ref: '--output=x'), throwsArgumentError);
+      expect(() => GitTreeSource(repos.git, repo, ref: 'main:secret'), throwsArgumentError);
     });
 
     test('large files are not loaded', () async {

@@ -43,11 +43,18 @@ class GitException implements Exception {
 
   @override
   String toString() {
-    final tail = result.stderr.trim();
-    return 'git ${args.join(' ')} failed (${result.exitCode})'
+    final tail = redactCredentials(result.stderr.trim());
+    return 'git ${redactCredentials(args.join(' '))} failed (${result.exitCode})'
         '${tail.isEmpty ? '' : ': ${tail.length > 500 ? tail.substring(tail.length - 500) : tail}'}';
   }
 }
+
+final _urlCredentials = RegExp(r'(\b[a-z][a-z0-9+.-]*://)[^/\s@]+@', caseSensitive: false);
+
+/// Hides `user:token@` in URLs so messages and logs never show credentials.
+String redactCredentials(String text) => text.replaceAllMapped(_urlCredentials, (m) => '${m[1]}***@');
+
+const _lenientUtf8 = Utf8Decoder(allowMalformed: true);
 
 /// Runs git. Prefers the portable git shipped next to the executable
 /// (`git/cmd/git.exe`), falling back to `git` on PATH.
@@ -63,13 +70,28 @@ class GitRunner {
     final directory = appDirectory ?? p.dirname(Platform.resolvedExecutable);
     final candidates = [
       p.join(directory, 'git', 'cmd', 'git.exe'),
-      // Development: `flutter test` / `dart run` from the project root.
-      p.join(Directory.current.path, 'third_party', 'git', 'cmd', 'git.exe'),
+      // Development only: `flutter test` / `dart run` from the project root.
+      if (!const bool.fromEnvironment('dart.vm.product'))
+        p.join(Directory.current.path, 'third_party', 'git', 'cmd', 'git.exe'),
     ];
     for (final candidate in candidates) {
       if (File(candidate).existsSync()) return candidate;
     }
-    return 'git';
+    return _findOnPath() ?? 'git';
+  }
+
+  /// Absolute git from PATH. A bare `git` would let Windows try the current
+  /// directory first, where a planted git.exe could run instead.
+  static String? _findOnPath() {
+    final separator = Platform.isWindows ? ';' : ':';
+    final name = Platform.isWindows ? 'git.exe' : 'git';
+    for (final entry in (Platform.environment['PATH'] ?? '').split(separator)) {
+      final dir = entry.trim().replaceAll('"', '');
+      if (dir.isEmpty || !p.isAbsolute(dir)) continue;
+      final candidate = p.join(dir, name);
+      if (File(candidate).existsSync()) return candidate;
+    }
+    return null;
   }
 
   /// Registers a provider; returns a function that unregisters it.
@@ -87,8 +109,14 @@ class GitRunner {
     'LANG': 'C',
   };
 
-  // Always applied: unquoted UTF-8 paths in output.
-  static const _baseConfig = ['-c', 'core.quotepath=false', '-c', 'i18n.logOutputEncoding=utf-8'];
+  // Always applied: unquoted UTF-8 paths in output, and no fsmonitor hook.
+  // A repository's own .git/config could set core.fsmonitor to a command that
+  // would run as soon as GitHub+ reads the status of a folder someone handed us.
+  static const _baseConfig = [
+    '-c', 'core.quotepath=false',
+    '-c', 'i18n.logOutputEncoding=utf-8',
+    '-c', 'core.fsmonitor=false',
+  ];
 
   /// Runs `git <args>` in [cwd]. Throws [GitException] unless the exit code is
   /// in [successExitCodes] or the parsed error is in [expectedErrors].
@@ -118,10 +146,10 @@ class GitRunner {
       environment: {..._baseEnvironment, ...extraEnvironment, ...environment},
     );
 
-    final stdoutFuture = process.stdout.transform(utf8.decoder).join();
+    final stdoutFuture = process.stdout.transform(_lenientUtf8).join();
     final stderrBuffer = StringBuffer();
     final stderrDone = process.stderr
-        .transform(utf8.decoder)
+        .transform(_lenientUtf8)
         .transform(const LineSplitter())
         .listen((line) {
           stderrBuffer.writeln(line);
@@ -157,7 +185,7 @@ class GitRunner {
       workingDirectory: cwd,
       environment: _baseEnvironment,
       stdoutEncoding: null,
-      stderrEncoding: utf8,
+      stderrEncoding: const Utf8Codec(allowMalformed: true),
     );
     if (result.exitCode != 0) {
       throw GitException(

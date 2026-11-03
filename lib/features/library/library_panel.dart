@@ -10,6 +10,20 @@ import '../../state/app_state.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/feedback.dart';
 
+/// Asks for a folder and adds it to the library, reporting problems as toasts.
+Future<void> addExistingRepository(BuildContext context, WidgetRef ref) async {
+  final l = L10n.of(context);
+  final path = await FilePicker.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
+  if (path == null || !context.mounted) return;
+  try {
+    await ref.read(libraryProvider.notifier).add(path);
+  } on NotARepositoryException catch (e) {
+    if (context.mounted) showGhpToast(context, l.notARepository(e.path), tone: ToastTone.error);
+  } catch (e) {
+    if (context.mounted) showGhpToast(context, l.addFailed, tone: ToastTone.error, detail: '$e');
+  }
+}
+
 /// Left "game library": repositories as cards, grouped by where they live.
 class LibraryPanel extends ConsumerStatefulWidget {
   const LibraryPanel({super.key, required this.searchFocus});
@@ -31,16 +45,7 @@ class _LibraryPanelState extends ConsumerState<LibraryPanel> {
     super.dispose();
   }
 
-  Future<void> _addExisting() async {
-    final l = L10n.of(context);
-    final path = await FilePicker.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
-    if (path == null || !mounted) return;
-    try {
-      await ref.read(libraryProvider.notifier).add(path);
-    } on NotARepositoryException catch (e) {
-      if (mounted) showGhpToast(context, l.notARepository(e.path), tone: ToastTone.error);
-    }
-  }
+  Future<void> _addExisting() => addExistingRepository(context, ref);
 
   @override
   Widget build(BuildContext context) {

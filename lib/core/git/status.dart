@@ -116,12 +116,14 @@ FileStatus mapStatus(String statusCode, {String submoduleStatusCode = 'N...', in
   return FileStatus(kind: kind, submodule: submodule);
 }
 
+const _maxConflictScanBytes = 20 * 1024 * 1024;
+
 /// Counts conflict markers the way git does (honouring `conflict-marker-size`).
 Future<FileStatus> _withConflictMarkers(GitRunner git, String repoPath, String path, FileStatus status) async {
   final action = status.conflictAction;
   if (action != ConflictAction.bothAdded && action != ConflictAction.bothModified) return status;
   final file = File(p.join(repoPath, path));
-  if (!await file.exists()) return status;
+  if (!await file.exists() || await file.length() > _maxConflictScanBytes) return status;
   final bytes = await file.readAsBytes();
   if (bytes.contains(0)) return status; // binary: a side must be picked
   final attr = await git.run(['check-attr', '-z', 'conflict-marker-size', 'diff', '--', path], cwd: repoPath);
@@ -187,7 +189,8 @@ Future<RepoStatus> getStatus(GitRunner git, String repoPath) async {
 /// Commits made today on HEAD by [email] (or by anyone when null), for the goal bar.
 Future<int> countCommitsToday(GitRunner git, String repoPath, {String? email}) async {
   final result = await git.run(
-    ['rev-list', '--count', '--since=midnight', if (email != null) '--author=<$email>', 'HEAD'],
+    // --fixed-strings: '.' and '+' in an address are not regex wildcards.
+    ['rev-list', '--count', '--since=midnight', if (email != null) ...['--fixed-strings', '--author=<$email>'], 'HEAD'],
     cwd: repoPath,
     successExitCodes: {0, 128},
   );

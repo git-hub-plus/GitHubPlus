@@ -69,13 +69,15 @@ class BlockedBlob extends BlobContent {
 }
 
 /// Normalizes a repository-relative path, or returns null when it is absolute
-/// or climbs out of the repository ('..', drive letters, UNC paths).
+/// or climbs out of the repository ('..', drive letters, UNC paths, `.git`).
 String? normalizeRepoPath(String path) {
   final unified = path.replaceAll('\\', '/');
   if (unified.startsWith('/') || RegExp(r'^[A-Za-z]:').hasMatch(unified)) return null;
   final normalized = p.posix.normalize(unified);
   if (normalized == '.') return '';
   if (normalized == '..' || normalized.startsWith('../')) return null;
+  // Git's own folder is never content (it can hold remote credentials).
+  if (normalized.split('/').any((part) => part.toLowerCase() == '.git')) return null;
   return normalized;
 }
 
@@ -130,7 +132,10 @@ List<TreeEntry> _sorted(Iterable<TreeEntry> entries) {
 /// Contents of a commit-ish ([ref]) read straight from the object database.
 /// Works on bare repositories too.
 class GitTreeSource implements RepoContentSource {
-  GitTreeSource(this.git, this.repoPath, {this.ref = 'HEAD'});
+  GitTreeSource(this.git, this.repoPath, {this.ref = 'HEAD'}) {
+    // The ref becomes a command argument; hub clients may choose it later.
+    if (ref.isEmpty || ref.startsWith('-') || ref.contains(':')) throw ArgumentError.value(ref, 'ref');
+  }
 
   final GitRunner git;
   final String repoPath;

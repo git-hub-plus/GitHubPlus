@@ -83,7 +83,7 @@ class SyncController {
       },
       result: describe,
     );
-    if (action != PrimaryAction.push) ref.read(lastFetchProvider.notifier).mark(repo.id);
+    if (outcome != null && action != PrimaryAction.push) ref.read(lastFetchProvider.notifier).mark(repo.id);
     ref.invalidate(repoStatusProvider(repo.id));
     ref.invalidate(todayCommitsProvider(repo.id));
     return outcome != null;

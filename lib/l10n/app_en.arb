@@ -15,6 +15,7 @@
   "addClone": "{clone}…",
   "pickRepositoryFolder": "Choose a repository folder",
   "notARepository": "{path} is not a Git repository.",
+  "addFailed": "Could not add the repository.",
   "welcomeTitle": "Welcome to GitHub+",
   "welcomeBody": "A lightweight Git client with a LAN hub and at-a-glance status. Add a repository to get started.",
   "questFirstTitle": "First quest",

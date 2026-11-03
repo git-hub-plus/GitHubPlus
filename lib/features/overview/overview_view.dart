@@ -45,7 +45,7 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
   /// Follows a repository link from a README: folder or file.
   Future<void> _navigate(String path) async {
     final parent = p.posix.dirname(path) == '.' ? '' : p.posix.dirname(path);
-    final entries = await ref.read(treeProvider((key: _key, dir: parent)).future);
+    final entries = await ref.read(contentSourceProvider(_key))?.list(parent) ?? const <TreeEntry>[];
     final entry = entries.where((e) => e.path == path).firstOrNull;
     if (!mounted) return;
     if (path.isEmpty || entry?.isDirectory == true) {
@@ -61,7 +61,10 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
 
   Future<void> _openInExplorer() async {
     final dir = Directory(p.join(widget.repo.path, p.joinAll(p.posix.split(_dir))));
-    if (dir.existsSync()) await Process.run('explorer.exe', [dir.path]);
+    if (!dir.existsSync()) return;
+    // Absolute path: a bare 'explorer.exe' is also searched for in the current directory.
+    final windows = Platform.environment['SystemRoot'] ?? r'C:\Windows';
+    await Process.run(p.join(windows, 'explorer.exe'), [dir.path]);
   }
 
   @override
@@ -83,7 +86,7 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
         Expanded(
           child: file == null
               ? _FolderPage(contentKey: _key, dir: _dir, onOpen: _openEntry, onNavigate: _navigate)
-              : _FilePage(contentKey: _key, path: file, onNavigate: _navigate),
+              : _FilePage(key: ValueKey(file), contentKey: _key, path: file, onNavigate: _navigate),
         ),
       ],
     );
@@ -351,7 +354,7 @@ class _ReadmeCard extends ConsumerWidget {
 }
 
 class _FilePage extends ConsumerStatefulWidget {
-  const _FilePage({required this.contentKey, required this.path, required this.onNavigate});
+  const _FilePage({super.key, required this.contentKey, required this.path, required this.onNavigate});
   final ContentKey contentKey;
   final String path;
   final ValueChanged<String> onNavigate;
