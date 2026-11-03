@@ -108,7 +108,7 @@ function GitUser({ repoId }: { repoId?: string }) {
           {identity && (
             <>
               <p>
-                {identity.name || t('identity.none')} ? {identity.email || t('identity.none')}
+                {identity.name || t('identity.none')} · {identity.email || t('identity.none')}
               </p>
               <p>{t('identity.source', { source: t(`identity.${identity.source}`) })}</p>
               <button type="button" onClick={() => setEditing(true)}>

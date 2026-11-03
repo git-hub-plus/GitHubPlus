@@ -347,7 +347,7 @@ export function useHistoryActions(repoId: string | undefined) {
               {action.kind === 'revert' && <code>{action.sha}</code>}
               {action.kind === 'reorder' && (
                 <code>
-                  {action.shas.join(', ')} ? {action.afterSha ?? t('historyActions.oldest')}
+                  {action.shas.join(', ')} → {action.afterSha ?? t('historyActions.oldest')}
                 </code>
               )}
               {action.kind === 'tag' && (
