@@ -1,3 +1,6 @@
+import { GhpError } from '@shared/errors'
+import { MergeDialog } from '../conflicts/MergeDialog'
+import { performOperation } from '../../state/operation-store'
 import { useEffect, useState } from 'react'
 import type { Branch } from '@shared/models/git'
 import { invoke, subscribe } from '../../ipc'
@@ -19,6 +22,8 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
   const [loaded, setLoaded] = useState(false)
   const [edit, setEdit] = useState<{ branch: Branch; action: 'rename' | 'delete' }>()
   const [name, setName] = useState('')
+  const [mergeBranch, setMergeBranch] = useState<string>()
+  const [stashBranch, setStashBranch] = useState<Branch>()
   const [busy, setBusy] = useState(false)
   const active = useSyncStore((s) => s.active)
   useEffect(() => {
@@ -57,7 +62,9 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
       onClose()
       notifyOperation('repoActions.completed.checkout', { branch: branch.name })
     } catch (error) {
-      showToast(error)
+      if (error instanceof GhpError && error.kind === 'local-changes-overwritten')
+        setStashBranch(branch)
+      else showToast(error)
     } finally {
       setBusy(false)
     }
@@ -140,6 +147,13 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
                     >
                       {branch.name}
                     </button>
+                    <button
+                      disabled={branch.isCurrent || busy || !!active}
+                      aria-label={t('conflicts.mergeBranch', { branch: branch.name })}
+                      onClick={() => setMergeBranch(branch.name)}
+                    >
+                      {t('conflicts.merge')}
+                    </button>
                     {branch.type === 'local' && (
                       <button
                         disabled={busy || !!active}
@@ -168,6 +182,35 @@ export function BranchPopover({ repoId, onClose }: { repoId: string; onClose(): 
           />
         </div>
       </Popover>
+      {mergeBranch && (
+        <MergeDialog
+          repoId={repoId}
+          branch={mergeBranch}
+          onClose={() => setMergeBranch(undefined)}
+        />
+      )}
+      {stashBranch && (
+        <Dialog
+          title={t('conflicts.stash.title')}
+          busy={busy}
+          onClose={() => setStashBranch(undefined)}
+          onSubmit={() => {
+            const branch = stashBranch
+            setBusy(true)
+            void performOperation(repoId, () =>
+              invoke('git:stashCreate', repoId, { includeUntracked: true })
+            ).then(async (ok) => {
+              if (ok) {
+                setStashBranch(undefined)
+                await checkout(branch)
+              }
+              setBusy(false)
+            })
+          }}
+        >
+          <p>{t('conflicts.checkoutStash')}</p>
+        </Dialog>
+      )}
       {edit && (
         <Dialog
           title={t(edit.action === 'rename' ? 'repoActions.rename' : 'repoActions.delete')}

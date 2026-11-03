@@ -1,4 +1,7 @@
-﻿import { useCallback, useEffect, useRef, useState } from 'react'
+import { AppFileStatusKind } from '@shared/models/status'
+import { ConflictFileActions } from '../conflicts/ConflictFileActions'
+import { StashMenu } from '../stash/StashMenu'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '@shared/i18n'
 import { GhpError } from '@shared/errors'
 import type { DiffSelectionData, FileDiff } from '@shared/models/diff'
@@ -99,7 +102,11 @@ function CommitForm({
   const included = files.filter(
     (file) => selections[file.path] && getSelectionType(selections[file.path]) !== 'none'
   )
-  const disabled = busy || !summary.trim() || !included.length
+  const disabled =
+    busy ||
+    !summary.trim() ||
+    !included.length ||
+    files.some((f) => f.status.kind === AppFileStatusKind.Conflicted)
   const commit = async (identitySaved = false) => {
     if (disabled || pending.current) return
     pending.current = true
@@ -304,6 +311,7 @@ function RepositoryChanges() {
     useChangesStore.getState().setSelection(repoId, path, selection)
   const left = (
     <>
+      <StashMenu key={repoId} repoId={repoId} />
       <div className={styles.listHeader}>
         <Checkbox
           type={allType}
@@ -330,12 +338,14 @@ function RepositoryChanges() {
             className={`${styles.file} ${selectedPath === file.path ? styles.active : ''}`}
             onContextMenu={(event) => {
               event.preventDefault()
-              setMenu({ path: file.path, x: event.clientX, y: event.clientY })
+              if (file.status.kind !== AppFileStatusKind.Conflicted)
+                setMenu({ path: file.path, x: event.clientX, y: event.clientY })
             }}
           >
             <Checkbox
               type={getSelectionType(selections[file.path] ?? selectAll())}
               label={t('changesView.include', { path: file.path })}
+              disabled={file.status.kind === AppFileStatusKind.Conflicted}
               onChange={() =>
                 setSelection(
                   file.path,
@@ -361,6 +371,9 @@ function RepositoryChanges() {
               )}
               <FilePath path={file.path} />
             </button>
+            {file.status.kind === AppFileStatusKind.Conflicted && (
+              <ConflictFileActions compact repoId={repoId} path={file.path} status={file.status} />
+            )}
           </div>
         )}
       />
@@ -384,7 +397,12 @@ function RepositoryChanges() {
               repoId={repoId}
               path={selectedPath}
               statusVersion={status}
-              selection={selections[selectedPath]}
+              selection={
+                files.find((f) => f.path === selectedPath)?.status.kind ===
+                AppFileStatusKind.Conflicted
+                  ? undefined
+                  : selections[selectedPath]
+              }
             />
           ) : (
             <p className={styles.message}>{t('changesView.empty')}</p>

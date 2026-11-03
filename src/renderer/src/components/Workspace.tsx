@@ -1,5 +1,6 @@
 import { useAppStore, useSelectedRepository, type WorkspaceTab } from '../state/app-store'
 import { useT } from '../i18n'
+import { InProgressBanner } from './conflicts/InProgressBanner'
 import { ChangesView } from './changes/ChangesView'
 import { HistoryView } from './history/HistoryView'
 import styles from './Workspace.module.css'
@@ -19,6 +20,7 @@ export function Workspace() {
 
   return (
     <main className={styles.workspace}>
+      <InProgressBanner />
       <div className={styles.tabs} role="tablist">
         {tabs.map((id) => (
           <button
