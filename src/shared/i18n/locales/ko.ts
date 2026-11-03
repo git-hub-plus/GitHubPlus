@@ -7,6 +7,12 @@ export const ko = {
   // H1 (hub host: tray, notifications) adds its keys here.
   hubTray: {
     title: '허브 트레이',
+    open: 'GitHub+ 열기',
+    running: '허브: 실행 중 ({address})',
+    stopped: '허브: 꺼짐',
+    enable: '허브 켜기',
+    disable: '허브 끄기',
+    quit: '종료',
   },
   menu: {
     file: '파일(&F)',
