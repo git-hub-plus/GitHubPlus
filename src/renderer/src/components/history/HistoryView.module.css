@@ -188,3 +188,25 @@
   overflow-wrap: anywhere;
   font-family: var(--font-mono);
 }
+
+.commitList {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.multiSelected {
+  background: var(--color-bg-selected);
+}
+.actionBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+.actionBar span {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

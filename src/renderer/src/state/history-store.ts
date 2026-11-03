@@ -17,6 +17,13 @@ interface HistoryState {
   graph: GraphState
   branches: ReadonlyArray<Branch>
   selectedSha?: string
+  selectedShas: ReadonlyArray<string>
+  selectionAnchor?: string
+  choose(
+    sha: string,
+    modifiers?: { toggle?: boolean; range?: boolean },
+    visible?: ReadonlyArray<string>
+  ): void
   files: ReadonlyArray<CommittedFile>
   path?: string
   diff?: FileDiff
@@ -42,6 +49,7 @@ const asError = (error: unknown) =>
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
   commits: [],
+  selectedShas: [],
   rows: [],
   graph: emptyGraphState(),
   branches: [],
@@ -64,6 +72,8 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       branches: [],
       files: [],
       selectedSha: undefined,
+      selectedShas: [],
+      selectionAnchor: undefined,
       path: undefined,
       diff: undefined,
       error: undefined,
@@ -94,6 +104,9 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       const commits = refresh ? page : [...before.commits, ...page]
       set({
         commits,
+        selectedShas: get().selectedShas.filter((sha) =>
+          commits.some((commit) => commit.sha === sha)
+        ),
         rows: refresh ? graph.rows : [...before.rows, ...graph.rows],
         graph: graph.state,
         branches,
@@ -102,8 +115,10 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
       })
       const selected = get().selectedSha
       if (!selected || !commits.some((commit) => commit.sha === selected)) {
-        if (commits[0]) await get().select(commits[0].sha)
-        else
+        if (commits[0]) {
+          set({ selectedShas: [commits[0].sha], selectionAnchor: commits[0].sha })
+          await get().select(commits[0].sha)
+        } else
           set({
             selectedSha: undefined,
             files: [],
@@ -127,6 +142,21 @@ export const useHistoryStore = create<HistoryState>((set, get) => ({
     void get().load()
   },
   setSearch: (search) => set({ search }),
+  choose(sha, modifiers = {}, visible = get().commits.map((commit) => commit.sha)) {
+    const { selectedShas, selectionAnchor } = get()
+    const anchor = visible.indexOf(selectionAnchor ?? sha)
+    const index = visible.indexOf(sha)
+    const next =
+      modifiers.range && anchor >= 0 && index >= 0
+        ? visible.slice(Math.min(anchor, index), Math.max(anchor, index) + 1)
+        : modifiers.toggle
+          ? selectedShas.includes(sha)
+            ? selectedShas.filter((item) => item !== sha)
+            : [...selectedShas, sha]
+          : [sha]
+    set({ selectedShas: next, selectionAnchor: modifiers.range ? selectionAnchor : sha })
+    void get().select(sha)
+  },
   async select(sha) {
     const repoId = get().repoId
     if (!repoId) return

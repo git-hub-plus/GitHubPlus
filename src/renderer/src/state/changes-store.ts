@@ -4,6 +4,9 @@ import { selectAll } from '@shared/models/diff-selection'
 import type { WorkingFile } from '@shared/models/status'
 
 interface ChangesState {
+  messageDrafts: Record<string, { summary: string; description: string }>
+  setMessageDraft(repoId: string, message: { summary: string; description: string }): void
+  clearMessageDraft(repoId: string): void
   repositories: Record<string, { selections: Record<string, DiffSelectionData>; path?: string }>
   sync(repoId: string, files: ReadonlyArray<WorkingFile>): void
   selectPath(repoId: string, path: string): void
@@ -12,6 +15,15 @@ interface ChangesState {
 
 export const useChangesStore = create<ChangesState>((set) => ({
   repositories: {},
+  messageDrafts: {},
+  setMessageDraft: (repoId, message) =>
+    set((state) => ({ messageDrafts: { ...state.messageDrafts, [repoId]: message } })),
+  clearMessageDraft: (repoId) =>
+    set((state) => {
+      const messageDrafts = { ...state.messageDrafts }
+      delete messageDrafts[repoId]
+      return { messageDrafts }
+    }),
   sync: (repoId, files) =>
     set((state) => {
       const previous = state.repositories[repoId]
