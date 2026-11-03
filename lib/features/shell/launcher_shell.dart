@@ -1,0 +1,92 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/storage/repository_store.dart';
+import '../../l10n/app_localizations.dart';
+import '../../state/app_state.dart';
+import '../../ui/theme.dart';
+import '../../ui/widgets/feedback.dart';
+import '../home/repo_home.dart';
+import '../library/library_panel.dart';
+import '../settings/settings_dialog.dart';
+import '../welcome/welcome_view.dart';
+import 'title_bar.dart';
+
+/// Window layout: title bar, library on the left, selected repository on the right.
+class LauncherShell extends ConsumerStatefulWidget {
+  const LauncherShell({super.key});
+
+  @override
+  ConsumerState<LauncherShell> createState() => _LauncherShellState();
+}
+
+class _LauncherShellState extends ConsumerState<LauncherShell> {
+  final _searchFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addRepository() async {
+    final l = L10n.of(context);
+    final path = await FilePicker.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
+    if (path == null || !mounted) return;
+    try {
+      await ref.read(libraryProvider.notifier).add(path);
+    } on NotARepositoryException catch (e) {
+      if (mounted) showGhpToast(context, l.notARepository(e.path), tone: ToastTone.error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L10n.of(context);
+    final library = ref.watch(libraryProvider);
+    final selected = library.selected;
+
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyP, control: true): _searchFocus.requestFocus,
+        const SingleActivator(LogicalKeyboardKey.comma, control: true): () => showSettingsDialog(context),
+      },
+      child: Focus(
+        autofocus: true,
+        child: Scaffold(
+          body: Column(
+            children: [
+              GhpTitleBar(
+                actions: [
+                  IconButton(
+                    tooltip: l.openSettings,
+                    onPressed: () => showSettingsDialog(context),
+                    icon: Icon(Icons.settings_rounded, size: 18, color: context.colors.muted),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LibraryPanel(searchFocus: _searchFocus),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: context.motion(Motion.normal),
+                        child: selected == null
+                            ? WelcomeView(key: const ValueKey('welcome'), onAddRepository: _addRepository)
+                            : RepoHome(key: ValueKey(selected.id), repo: selected),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

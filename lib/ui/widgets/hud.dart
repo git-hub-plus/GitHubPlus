@@ -51,28 +51,32 @@ class GaugeBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(height),
-      child: SizedBox(
-        height: height,
-        child: Stack(
-          children: [
-            Positioned.fill(child: ColoredBox(color: c.track)),
-            TweenAnimationBuilder<double>(
-              tween: Tween(end: fraction.clamp(0, 1)),
-              duration: context.motion(Motion.reward),
-              curve: Motion.curve,
-              builder: (context, v, _) => FractionallySizedBox(
-                widthFactor: v,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [color.withValues(alpha: 0.75), color]),
-                    boxShadow: glow ? [BoxShadow(color: color.withValues(alpha: 0.6), blurRadius: 8)] : null,
-                  ),
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: c.track,
+          borderRadius: BorderRadius.circular(height),
+          boxShadow: glow ? [BoxShadow(color: color.withValues(alpha: 0.45), blurRadius: 10)] : null,
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) => TweenAnimationBuilder<double>(
+            tween: Tween(end: fraction.clamp(0, 1).toDouble()),
+            duration: context.motion(Motion.reward),
+            curve: Motion.curve,
+            builder: (context, v, _) => Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                width: constraints.maxWidth * v,
+                height: height,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(height),
+                  gradient: LinearGradient(colors: [color.withValues(alpha: 0.7), color]),
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

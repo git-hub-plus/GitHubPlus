@@ -32,7 +32,7 @@ class _LibraryPanelState extends ConsumerState<LibraryPanel> {
 
   Future<void> _addExisting() async {
     final l = L10n.of(context);
-    final path = await FilePicker.platform.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
+    final path = await FilePicker.getDirectoryPath(dialogTitle: l.pickRepositoryFolder);
     if (path == null || !mounted) return;
     try {
       await ref.read(libraryProvider.notifier).add(path);
