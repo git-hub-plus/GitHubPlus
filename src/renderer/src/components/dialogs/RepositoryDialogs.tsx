@@ -9,6 +9,8 @@ import { useDialogStore } from '../../state/dialog-store'
 import { runOperation, useSyncStore, refreshHistory, notifyOperation } from '../../state/sync-store'
 import { showToast } from '../../state/toast-store'
 import { Dialog } from './Dialog'
+import { GitHubClonePicker } from '../github/GitHubClonePicker'
+import githubStyles from '../github/GitHub.module.css'
 
 export function normalizeCloneUrl(value: string): string {
   const trimmed = value.trim()
@@ -63,6 +65,7 @@ function RepositoryDialog() {
   )
   const [name, setName] = useState(createHere ? proposedPath.slice(splitAt + 1) : '')
   const [url, setUrl] = useState('')
+  const [cloneTab, setCloneTab] = useState<'url' | 'github'>('url')
   const [readme, setReadme] = useState(true)
   const [busy, setBusy] = useState(false)
   const [notRepository, setNotRepository] = useState(false)
@@ -186,14 +189,45 @@ function RepositoryDialog() {
             </>
           )}
           {kind === 'clone' && (
-            <label>
-              {t('repoActions.url')}
-              <input
-                value={url}
-                onChange={(event) => setUrl(event.target.value)}
-                placeholder={t('repoActions.urlPlaceholder')}
-              />
-            </label>
+            <>
+              <div
+                role="tablist"
+                aria-label={t('github.cloneSource')}
+                className={githubStyles.tabs}
+              >
+                {(['url', 'github'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    aria-selected={cloneTab === tab}
+                    onClick={() => setCloneTab(tab)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                        event.preventDefault()
+                        setCloneTab(tab === 'url' ? 'github' : 'url')
+                        ;(
+                          event.currentTarget.parentElement?.querySelector(
+                            `[aria-selected="false"]`
+                          ) as HTMLButtonElement | null
+                        )?.focus()
+                      }
+                    }}
+                  >
+                    {t(tab === 'url' ? 'github.urlTab' : 'github.title')}
+                  </button>
+                ))}
+              </div>
+              {cloneTab === 'github' && <GitHubClonePicker url={url} onSelect={setUrl} />}
+              <label>
+                {t('repoActions.url')}
+                <input
+                  value={url}
+                  onChange={(event) => setUrl(event.target.value)}
+                  placeholder={t('repoActions.urlPlaceholder')}
+                />
+              </label>
+            </>
           )}
           {kind !== 'branch' && (
             <>
