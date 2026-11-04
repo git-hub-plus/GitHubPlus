@@ -33,3 +33,16 @@ ported.
 | `src/main/git/stash.ts`, `revert.ts`, `reset.ts`, `tag.ts` | `app/src/lib/git/{stash,revert,reset,tag}.ts` | |
 | `src/main/git/cherry-pick.ts`, `rebase.ts`, `squash.ts`, `reorder.ts` | `app/src/lib/git/{cherry-pick,rebase,squash,reorder}.ts` | Non-interactive rebase via generated todo |
 | `src/main/git/lfs.ts`, `submodule.ts` | `app/src/lib/git/{lfs,submodule}.ts` | |
+
+### Flutter version (Dart ports of the files above)
+
+| GitHub+ Flutter file | Ported from (GitHub+ v1 → GitHub Desktop) |
+| --- | --- |
+| `lib/core/git/status.dart`, `in_progress.dart`, `progress.dart`, `sync.dart` | `src/main/git/{status-parser,status,in-progress,fetch,pull,push}.ts`, `progress/*` |
+| `lib/core/git/diff.dart`, `diff_parser.dart` | `src/main/git/{diff,diff-parser}.ts` → `app/src/lib/git/diff.ts`, `app/src/lib/diff-parser.ts` |
+| `lib/core/git/patch_formatter.dart`, `commit.dart`, `stage.dart` | `src/main/git/{patch-formatter,commit,update-index,apply}.ts` → `app/src/lib/{patch-formatter,git/commit,git/update-index,git/apply}.ts` |
+| `lib/core/git/discard.dart` | `src/main/git/discard.ts` → `app/src/lib/git/{checkout,reset}.ts` |
+| `lib/core/git/log.dart`, `delimiter_parser.dart` | `src/main/git/{log,git-delimiter-parser}.ts` → `app/src/lib/git/{log,git-delimiter-parser}.ts` |
+| `lib/core/git/branches.dart` | `src/main/git/{for-each-ref,branch,checkout}.ts` → `app/src/lib/git/{for-each-ref,branch,checkout}.ts` |
+| `lib/core/models/diff.dart`, `status.dart` | `src/shared/models/{diff,diff-selection,status}.ts` → `app/src/models/{diff/*,status}.ts` |
+| `test/core/git/*` | `tests/main/git/*` → `app/test/unit/**` |

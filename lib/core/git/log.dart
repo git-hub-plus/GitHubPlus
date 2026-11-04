@@ -9,7 +9,9 @@ import 'status.dart';
 
 /// Commits reachable from [revision], newest first (`--topo-order` so the
 /// graph lays out cleanly), with parents and ref decorations. Empty list for
-/// an unborn branch. [path] limits to commits touching that path.
+/// an unborn branch. [path] limits to commits touching that path. With
+/// [all], every branch, remote branch and tag is included (`--all`) and
+/// [revision] is ignored.
 Future<List<Commit>> getCommits(
   GitRunner git,
   String repoPath, {
@@ -17,13 +19,14 @@ Future<List<Commit>> getCommits(
   int limit = 200,
   int skip = 0,
   String? path,
+  bool all = false,
 }) async {
   _validateRevision(revision);
   if (limit < 0 || skip < 0) throw ArgumentError('Invalid history pagination');
   final safePath = path == null ? null : normalizeRepoPath(path);
   if (path != null && safePath == null) throw ArgumentError.value(path, 'path');
   if (limit == 0) return [];
-  if (revision == 'HEAD') {
+  if (revision == 'HEAD' && !all) {
     final head = await git.run(
       ['rev-parse', '--verify', '--quiet', '--end-of-options', 'HEAD^{commit}'],
       cwd: repoPath,
@@ -70,8 +73,9 @@ Future<List<Commit>> getCommits(
     '--skip=$skip',
     ...parser.formatArgs,
     if (safePath != null) '--full-history',
+    if (all) '--all',
     '--end-of-options',
-    revision,
+    if (!all) revision,
     '--',
     if (safePath != null) ':(literal)$safePath',
   ], cwd: repoPath);

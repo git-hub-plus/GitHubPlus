@@ -105,4 +105,15 @@ void main() {
     expect(files.single.path, 'topic');
     expect(files.single.status.kind, FileStatusKind.added);
   });
+  test('all: true includes commits that only other branches have', () async {
+    expect(await getCommits(repos.git, repo, all: true), isEmpty);
+    await repos.commit(repo, 'base');
+    await repos.run(repo, ['switch', '-c', 'side']);
+    await repos.commit(repo, 'side only');
+    await repos.run(repo, ['switch', 'main']);
+    final current = (await getCommits(repos.git, repo)).map((c) => c.summary);
+    final everything = (await getCommits(repos.git, repo, all: true)).map((c) => c.summary);
+    expect(current, ['base']);
+    expect(everything, containsAll(['base', 'side only']));
+  });
 }
