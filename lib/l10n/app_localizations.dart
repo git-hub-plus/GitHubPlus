@@ -895,6 +895,12 @@ abstract class L10n {
   /// **'환경설정'**
   String get openSettings;
 
+  /// No description provided for @hubOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬 허브'**
+  String get hubOpen;
+
   /// No description provided for @hudStashesTip.
   ///
   /// In ko, this message translates to:

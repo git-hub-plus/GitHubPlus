@@ -9,6 +9,8 @@ import '../home/repo_home.dart';
 import '../library/library_panel.dart';
 import '../settings/settings_dialog.dart';
 import '../welcome/welcome_view.dart';
+import '../hub/host/hub_host_view.dart';
+import '../../state/hub_host_state.dart';
 import 'title_bar.dart';
 
 /// Window layout: title bar, library on the left, selected repository on the right.
@@ -21,6 +23,12 @@ class LauncherShell extends ConsumerStatefulWidget {
 
 class _LauncherShellState extends ConsumerState<LauncherShell> {
   final _searchFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(hubStartupProvider);
+  }
 
   @override
   void dispose() {
@@ -48,6 +56,11 @@ class _LauncherShellState extends ConsumerState<LauncherShell> {
             children: [
               GhpTitleBar(
                 actions: [
+                  IconButton(
+                    tooltip: l.hubOpen,
+                    onPressed: () => showHubHost(context, ref),
+                    icon: Icon(Icons.hub_rounded, size: 18, color: context.colors.muted),
+                  ),
                   IconButton(
                     tooltip: l.openSettings,
                     onPressed: () => showSettingsDialog(context),

@@ -524,6 +524,9 @@ class L10nEn extends L10n {
   String get openSettings => 'Preferences';
 
   @override
+  String get hubOpen => 'Local hub';
+
+  @override
   String hudStashesTip(String stash) {
     return 'Work set aside ($stash)';
   }

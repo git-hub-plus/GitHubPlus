@@ -611,6 +611,7 @@
   "windowMaximize": "최대화",
   "windowClose": "닫기",
   "openSettings": "환경설정",
+  "hubOpen": "로컬 허브",
   "hudStashesTip": "{stash}로 잠시 치워 둔 작업 수",
   "@hudStashesTip": {
     "placeholders": {
@@ -715,20 +716,50 @@
   "tabOverview": "개요",
   "overviewWorkingTree": "작업 폴더",
   "historyCurrent": "현재 {branch}",
-  "@historyCurrent": {"placeholders": {"branch": {"type": "String"}}},
+  "@historyCurrent": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "historyAll": "모든 {branch}",
-  "@historyAll": {"placeholders": {"branch": {"type": "String"}}},
+  "@historyAll": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "historySearch": "요약·작성자 검색 (불러온 기록)",
   "historyEmpty": "아직 {commitUnit}이 없습니다",
-  "@historyEmpty": {"placeholders": {"commitUnit": {"type": "String"}}},
+  "@historyEmpty": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
   "historyNoResults": "일치하는 기록이 없습니다",
   "historySelect": "목록에서 기록을 선택하세요",
   "historyFiles": "바뀐 파일 {count}개",
-  "@historyFiles": {"placeholders": {"count": {"type": "int"}}},
+  "@historyFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "historyNoFiles": "바뀐 파일이 없습니다",
   "historySelectFile": "파일을 선택해 바뀐 내용을 확인하세요",
   "historyParents": "부모 {commitUnit}",
-  "@historyParents": {"placeholders": {"commitUnit": {"type": "String"}}},
+  "@historyParents": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
   "historyCopySha": "SHA 복사",
   "historyCopied": "SHA를 복사했습니다",
   "historyLoadMore": "다음 200개 불러오기",
@@ -736,16 +767,46 @@
   "historyResize": "목록과 상세 너비 조절",
   "historyClose": "닫기",
   "branchSearch": "{branch} 검색",
-  "@branchSearch": {"placeholders": {"branch": {"type": "String"}}},
+  "@branchSearch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branchCurrent": "현재",
   "branchLocal": "로컬 {branch}",
-  "@branchLocal": {"placeholders": {"branch": {"type": "String"}}},
+  "@branchLocal": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branchRemote": "원격 {branch}",
-  "@branchRemote": {"placeholders": {"branch": {"type": "String"}}},
+  "@branchRemote": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branchCreate": "새 {branch} 만들기",
-  "@branchCreate": {"placeholders": {"branch": {"type": "String"}}},
+  "@branchCreate": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branchName": "{branch} 이름",
-  "@branchName": {"placeholders": {"branch": {"type": "String"}}},
+  "@branchName": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branchNameHint": "공백은 -로 바뀝니다",
   "branchExists": "이미 있는 이름입니다",
   "branchInvalid": "올바른 이름을 입력하세요",
@@ -754,22 +815,61 @@
   "branchCancel": "취소",
   "branchSave": "저장",
   "branchSwitch": "{name}(으)로 전환",
-  "@branchSwitch": {"placeholders": {"name": {"type": "String"}}},
+  "@branchSwitch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "branchSwitchWarning": "바뀐 파일이 있습니다. {name}(으)로 전환할까요? 수정 내용이 겹치면 전환할 수 없습니다.",
-  "@branchSwitchWarning": {"placeholders": {"name": {"type": "String"}}},
+  "@branchSwitchWarning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "branchContinue": "전환",
   "branchDeleteConfirm": "{name}을(를) 삭제할까요?",
-  "@branchDeleteConfirm": {"placeholders": {"name": {"type": "String"}}},
+  "@branchDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "branchForce": "아직 {merge}하지 않은 내용도 삭제",
-  "@branchForce": {"placeholders": {"merge": {"type": "String"}}},
+  "@branchForce": {
+    "placeholders": {
+      "merge": {
+        "type": "String"
+      }
+    }
+  },
   "branchDeleteRemote": "원격에서도 삭제",
   "branchRemoteWarning": "원격 삭제를 선택하지 않으면 이 PC의 추적 항목만 삭제합니다.",
   "branchFailed": "작업을 완료하지 못했습니다",
   "branchEmpty": "일치하는 항목이 없습니다",
   "branchMenu": "{name} 메뉴",
-  "@branchMenu": {"placeholders": {"name": {"type": "String"}}},
+  "@branchMenu": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "branchAheadBehind": "앞섬 {ahead} · 뒤처짐 {behind}",
-  "@branchAheadBehind": {"placeholders": {"ahead": {"type": "int"}, "behind": {"type": "int"}}},
+  "@branchAheadBehind": {
+    "placeholders": {
+      "ahead": {
+        "type": "int"
+      },
+      "behind": {
+        "type": "int"
+      }
+    }
+  },
   "overviewWorkingTreeTip": "지금 폴더에 있는 그대로 보여 줍니다. 아직 {commit}하지 않은 수정도 보이고, .gitignore로 숨긴 파일은 빠집니다.",
   "@overviewWorkingTreeTip": {
     "placeholders": {
@@ -796,81 +896,223 @@
   },
   "overviewRefresh": "새로 고침",
   "stashTitle": "{stash}",
-  "@stashTitle": {"placeholders": {"stash": {"type": "String"}}},
+  "@stashTitle": {
+    "placeholders": {
+      "stash": {
+        "type": "String"
+      }
+    }
+  },
   "stashCreate": "지금 바뀐 파일 {stash}",
-  "@stashCreate": {"placeholders": {"stash": {"type": "String"}}},
+  "@stashCreate": {
+    "placeholders": {
+      "stash": {
+        "type": "String"
+      }
+    }
+  },
   "stashMessage": "메시지 (선택)",
-  "@stashMessage": {"description": "메시지 (선택)"},
+  "@stashMessage": {
+    "description": "메시지 (선택)"
+  },
   "stashUntracked": "새 파일 포함",
-  "@stashUntracked": {"description": "새 파일 포함"},
+  "@stashUntracked": {
+    "description": "새 파일 포함"
+  },
   "stashEmpty": "보관한 항목이 없습니다.",
-  "@stashEmpty": {"description": "보관한 항목이 없습니다."},
+  "@stashEmpty": {
+    "description": "보관한 항목이 없습니다."
+  },
   "stashPop": "꺼내기",
-  "@stashPop": {"description": "꺼내기"},
+  "@stashPop": {
+    "description": "꺼내기"
+  },
   "stashApply": "적용만",
-  "@stashApply": {"description": "적용만"},
+  "@stashApply": {
+    "description": "적용만"
+  },
   "stashDrop": "버리기",
-  "@stashDrop": {"description": "버리기"},
+  "@stashDrop": {
+    "description": "버리기"
+  },
   "stashDropConfirm": "이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다.",
-  "@stashDropConfirm": {"description": "이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다."},
+  "@stashDropConfirm": {
+    "description": "이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다."
+  },
   "stashSelect": "항목을 펼쳐 파일을 선택하세요.",
-  "@stashSelect": {"description": "항목을 펼쳐 파일을 선택하세요."},
+  "@stashSelect": {
+    "description": "항목을 펼쳐 파일을 선택하세요."
+  },
   "historyActionMenu": "작업 메뉴",
-  "@historyActionMenu": {"description": "작업 메뉴"},
+  "@historyActionMenu": {
+    "description": "작업 메뉴"
+  },
   "historyActionCancel": "취소",
-  "@historyActionCancel": {"description": "취소"},
+  "@historyActionCancel": {
+    "description": "취소"
+  },
   "historyActionClose": "닫기",
-  "@historyActionClose": {"description": "닫기"},
+  "@historyActionClose": {
+    "description": "닫기"
+  },
   "historyActionConfirm": "계속",
-  "@historyActionConfirm": {"description": "계속"},
+  "@historyActionConfirm": {
+    "description": "계속"
+  },
   "historyActionDone": "작업을 완료했습니다.",
-  "@historyActionDone": {"description": "작업을 완료했습니다."},
+  "@historyActionDone": {
+    "description": "작업을 완료했습니다."
+  },
   "historyActionNothing": "처리할 내용이 없습니다.",
-  "@historyActionNothing": {"description": "처리할 내용이 없습니다."},
+  "@historyActionNothing": {
+    "description": "처리할 내용이 없습니다."
+  },
   "historyActionConflicts": "충돌이 있습니다. {changes} 탭에서 해결하세요.",
-  "@historyActionConflicts": {"placeholders": {"changes": {"type": "String"}}},
+  "@historyActionConflicts": {
+    "placeholders": {
+      "changes": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionFailed": "작업에 실패했습니다.",
-  "@historyActionFailed": {"description": "작업에 실패했습니다."},
+  "@historyActionFailed": {
+    "description": "작업에 실패했습니다."
+  },
   "historyActionRevert": "이 {commitUnit} {revert}",
-  "@historyActionRevert": {"placeholders": {"commitUnit": {"type": "String"}, "revert": {"type": "String"}}},
+  "@historyActionRevert": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      },
+      "revert": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionRevertConfirm": "선택한 내용을 되돌리는 새 {commitUnit}을 만들까요?",
-  "@historyActionRevertConfirm": {"placeholders": {"commitUnit": {"type": "String"}}},
+  "@historyActionRevertConfirm": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionPick": "현재 {branch}로 {cherryPick}",
-  "@historyActionPick": {"placeholders": {"branch": {"type": "String"}, "cherryPick": {"type": "String"}}},
+  "@historyActionPick": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "cherryPick": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionUndo": "마지막 {commitUnit} 취소",
-  "@historyActionUndo": {"placeholders": {"commitUnit": {"type": "String"}}},
+  "@historyActionUndo": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionUndoConfirm": "마지막 {commitUnit}의 저장을 취소하고 바뀐 파일로 남길까요?",
-  "@historyActionUndoConfirm": {"placeholders": {"commitUnit": {"type": "String"}}},
+  "@historyActionUndoConfirm": {
+    "placeholders": {
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionUndoMessage": "저장을 취소했습니다. 메시지: {message}",
-  "@historyActionUndoMessage": {"placeholders": {"message": {"type": "String"}}},
+  "@historyActionUndoMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionCopyMessage": "메시지 복사",
-  "@historyActionCopyMessage": {"description": "메시지 복사"},
+  "@historyActionCopyMessage": {
+    "description": "메시지 복사"
+  },
   "historyActionSquash": "{squash}…",
-  "@historyActionSquash": {"placeholders": {"squash": {"type": "String"}}},
+  "@historyActionSquash": {
+    "placeholders": {
+      "squash": {
+        "type": "String"
+      }
+    }
+  },
   "historyActionMessage": "메시지",
-  "@historyActionMessage": {"description": "메시지"},
+  "@historyActionMessage": {
+    "description": "메시지"
+  },
   "historyActionUp": "위로 옮기기",
-  "@historyActionUp": {"description": "위로 옮기기"},
+  "@historyActionUp": {
+    "description": "위로 옮기기"
+  },
   "historyActionDown": "아래로 옮기기",
-  "@historyActionDown": {"description": "아래로 옮기기"},
+  "@historyActionDown": {
+    "description": "아래로 옮기기"
+  },
   "historyActionPublished": "이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요.",
-  "@historyActionPublished": {"description": "이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요."},
+  "@historyActionPublished": {
+    "description": "이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요."
+  },
   "historyActionSelection": "{count}개 선택 · Ctrl/Shift+클릭으로 여러 개 선택",
-  "@historyActionSelection": {"placeholders": {"count": {"type": "int"}}},
+  "@historyActionSelection": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tagCreate": "{tag} 만들기…",
-  "@tagCreate": {"placeholders": {"tag": {"type": "String"}}},
+  "@tagCreate": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
   "tagName": "이름",
-  "@tagName": {"description": "이름"},
+  "@tagName": {
+    "description": "이름"
+  },
   "tagDescription": "설명 (선택)",
-  "@tagDescription": {"description": "설명 (선택)"},
+  "@tagDescription": {
+    "description": "설명 (선택)"
+  },
   "tagPush": "{tag} 원격에 올리기",
-  "@tagPush": {"placeholders": {"tag": {"type": "String"}}},
+  "@tagPush": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
   "tagDelete": "{tag} 지우기",
-  "@tagDelete": {"placeholders": {"tag": {"type": "String"}}},
+  "@tagDelete": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
   "tagRemote": "원격에서도 지우기",
-  "@tagRemote": {"description": "원격에서도 지우기"},
+  "@tagRemote": {
+    "description": "원격에서도 지우기"
+  },
   "tagDeleteConfirm": "{name}을 지울까요?",
-  "@tagDeleteConfirm": {"placeholders": {"name": {"type": "String"}}},
+  "@tagDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "overviewOpenFolder": "탐색기에서 열기",
   "overviewEmptyFolder": "빈 폴더입니다.",
   "overviewNoReadme": "README가 없습니다. README.md 파일을 만들면 이 자리에 저장소 소개가 보입니다.",

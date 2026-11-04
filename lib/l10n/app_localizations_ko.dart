@@ -520,6 +520,9 @@ class L10nKo extends L10n {
   String get openSettings => '환경설정';
 
   @override
+  String get hubOpen => '로컬 허브';
+
+  @override
   String hudStashesTip(String stash) {
     return '$stash로 잠시 치워 둔 작업 수';
   }

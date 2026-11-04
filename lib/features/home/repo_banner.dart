@@ -9,6 +9,7 @@ import '../../core/models/app_models.dart';
 import '../../core/models/status.dart';
 import '../../l10n/app_localizations.dart';
 import '../branches/branch_menu.dart';
+import '../hub/client/publish_dialog.dart';
 import '../../l10n/terms.dart';
 import '../../state/repo_state.dart';
 import '../../ui/format.dart';
@@ -199,6 +200,11 @@ class _PrimaryButtonState extends ConsumerState<_PrimaryButton> {
     final t = Terms.of(context);
     if (action == PrimaryAction.commit || action == PrimaryAction.resolve) {
       widget.onCommitRequested();
+      return;
+    }
+    // No remote at all: publishing means choosing a hub first.
+    if (action == PrimaryAction.publish && widget.repo.remoteUrl == null) {
+      await showPublishToHubDialog(context, ref, widget.repo);
       return;
     }
     setState(() => _busy = true);
