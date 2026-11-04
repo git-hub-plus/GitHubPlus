@@ -28,6 +28,12 @@ class _LauncherShellState extends ConsumerState<LauncherShell> {
   void initState() {
     super.initState();
     ref.read(hubStartupProvider);
+    // GHP_OPEN=hub-host (dart-define) opens the hub host screen at start, for click-free screenshots.
+    if (const String.fromEnvironment('GHP_OPEN') == 'hub-host') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) showHubHost(context, ref);
+      });
+    }
   }
 
   @override
