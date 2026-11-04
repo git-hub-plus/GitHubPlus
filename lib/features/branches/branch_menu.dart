@@ -237,6 +237,43 @@ class _BranchMenuState extends ConsumerState<_BranchMenu> {
     );
   }
 
+  /// Row actions. The menu is shown and awaited here (not by a
+  /// PopupMenuButton) so a choice still runs when the branch list rebuilds
+  /// while the menu is open; PopupMenuButton drops it once it is unmounted.
+  Future<void> _openRowMenu(BuildContext buttonContext, Branch b) async {
+    final l = L10n.of(context);
+    final t = Terms.of(context);
+    final box = buttonContext.findRenderObject() as RenderBox?;
+    final overlay = Overlay.of(buttonContext).context.findRenderObject() as RenderBox?;
+    if (box == null || overlay == null) return;
+    final topLeft = box.localToGlobal(Offset.zero, ancestor: overlay);
+    final position = RelativeRect.fromRect(topLeft & box.size, Offset.zero & overlay.size);
+    final idle = ref.read(repoStatusProvider(repo.id)).value?.inProgress == null;
+    final action = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        if (!b.isCurrent) ...[
+          PopupMenuItem(value: 'merge', enabled: idle, child: Text(l.mergeInto(t.branch, t.merge))),
+          PopupMenuItem(value: 'rebase', enabled: idle, child: Text(l.rebaseOnto(t.branch, t.rebase))),
+        ],
+        if (b.type == BranchType.local) PopupMenuItem(value: 'rename', child: Text(l.branchRename)),
+        PopupMenuItem(value: 'delete', enabled: !b.isCurrent, child: Text(l.branchDelete)),
+      ],
+    );
+    if (!mounted || action == null) return;
+    switch (action) {
+      case 'merge':
+        await _integrate(b, false);
+      case 'rebase':
+        await _integrate(b, true);
+      case 'rename':
+        await _name(branch: b);
+      case 'delete':
+        await _delete(b);
+    }
+  }
+
   Future<void> _delete(Branch branch) async {
     if (branch.isCurrent) return;
     final l = L10n.of(context);
@@ -403,37 +440,13 @@ class _BranchMenuState extends ConsumerState<_BranchMenu> {
                                     ],
                                   ),
                                   onTap: b.isCurrent || _busy ? null : () => _checkout(b),
-                                  trailing: PopupMenuButton<String>(
-                                    key: ValueKey('branch-menu-${b.name}'),
-                                    enabled: !_busy,
-                                    tooltip: l.branchMenu(b.name),
-                                    onSelected: (action) => switch (action) {
-                                      'merge' => _integrate(b, false),
-                                      'rebase' => _integrate(b, true),
-                                      'rename' => _name(branch: b),
-                                      _ => _delete(b),
-                                    },
-                                    itemBuilder: (_) => [
-                                      if (!b.isCurrent) ...[
-                                        PopupMenuItem(
-                                          value: 'merge',
-                                          enabled: ref.read(repoStatusProvider(repo.id)).value?.inProgress == null,
-                                          child: Text(l.mergeInto(t.branch, t.merge)),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 'rebase',
-                                          enabled: ref.read(repoStatusProvider(repo.id)).value?.inProgress == null,
-                                          child: Text(l.rebaseOnto(t.branch, t.rebase)),
-                                        ),
-                                      ],
-                                      if (b.type == BranchType.local)
-                                        PopupMenuItem(value: 'rename', child: Text(l.branchRename)),
-                                      PopupMenuItem(
-                                        value: 'delete',
-                                        enabled: !b.isCurrent,
-                                        child: Text(l.branchDelete),
-                                      ),
-                                    ],
+                                  trailing: Builder(
+                                    builder: (buttonContext) => IconButton(
+                                      key: ValueKey('branch-menu-${b.name}'),
+                                      tooltip: l.branchMenu(b.name),
+                                      icon: const Icon(Icons.more_vert_rounded),
+                                      onPressed: _busy ? null : () => _openRowMenu(buttonContext, b),
+                                    ),
                                   ),
                                 ),
                             ],

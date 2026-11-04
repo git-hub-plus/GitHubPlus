@@ -204,8 +204,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  // Retried: when the branch list refreshes right as a row menu is chosen, Flutter drops
-  // the choice of the rebuilt PopupMenuButton, and this test picks two menus back to back.
   testWidgets('unmerged delete requires force; remote tracking deletion is opt-in', (tester) async {
     await tester.runAsync(() async {
       await fixture.repos.run(fixture.repo.path, ['switch', '-c', 'unmerged']);
@@ -251,5 +249,5 @@ void main() {
       () => container.read(branchListProvider(fixture.repo)).value?.any((b) => b.type == BranchType.remote) == false,
     );
     expect(tester.takeException(), isNull);
-  }, retry: 2);
+  });
 }
