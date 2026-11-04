@@ -13,6 +13,7 @@ import '../expeditions/expedition_panel.dart';
 import '../changes/changes_view.dart';
 import '../history/history_view.dart';
 import '../overview/overview_view.dart';
+import '../stash/stash_panel.dart';
 import 'repo_banner.dart';
 
 enum HomeTab { overview, changes, history, expeditions }
@@ -54,7 +55,7 @@ class _RepoHomeState extends ConsumerState<RepoHome> {
                     ? (statusAsync.hasError
                           ? Text('${statusAsync.error}', style: TextStyle(color: c.danger))
                           : const LinearProgressIndicator(minHeight: 2))
-                    : _HudPanel(repoId: widget.repo.id, status: status),
+                    : _HudPanel(repo: widget.repo, status: status),
               ),
             ],
           ),
@@ -83,8 +84,9 @@ class _RepoHomeState extends ConsumerState<RepoHome> {
 
 /// HUD stats plus the donation-goal style bars.
 class _HudPanel extends ConsumerWidget {
-  const _HudPanel({required this.repoId, required this.status});
-  final String repoId;
+  const _HudPanel({required this.repo, required this.status});
+  final RepositoryInfo repo;
+  String get repoId => repo.id;
   final RepoStatus status;
 
   @override
@@ -128,6 +130,7 @@ class _HudPanel extends ConsumerWidget {
         value: status.stashCount,
         tone: HudTone.neutral,
         tooltip: tip(l.hudStashesTip(t.stash), (t) => t.stash),
+        onTap: () => showStashPanel(context, ref, repo),
       ),
       HudStat(
         icon: Icons.bolt_rounded,
