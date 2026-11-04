@@ -14,7 +14,19 @@ class TestRepos {
   static Future<TestRepos> create() async =>
       TestRepos._(await Directory.systemTemp.createTemp('ghp-test-'), GitRunner(executable: GitRunner.locateExecutable()));
 
-  Future<void> dispose() => root.delete(recursive: true);
+  /// Windows can keep a just-exited git's files locked for a moment; retry
+  /// instead of failing the test on cleanup.
+  Future<void> dispose() async {
+    for (var attempt = 0; ; attempt++) {
+      try {
+        if (await root.exists()) await root.delete(recursive: true);
+        return;
+      } on FileSystemException {
+        if (attempt >= 20) rethrow;
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+      }
+    }
+  }
 
   static const identity = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com'];
 

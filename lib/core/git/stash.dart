@@ -6,6 +6,7 @@ import '../models/commit.dart';
 import '../models/diff.dart';
 import '../models/status.dart';
 import 'git_runner.dart';
+import 'operation.dart';
 import 'diff.dart';
 import 'log.dart';
 import 'status.dart';
@@ -37,7 +38,7 @@ Future<OperationOutcome> stashCreate(
   if (!status.files.any((f) => includeUntracked || f.status.kind != FileStatusKind.untracked)) {
     return OperationOutcome.nothingToDo;
   }
-  return _runOperation(git, repoPath, [
+  return runOperation(git, repoPath, [
     'stash',
     'push',
     if (includeUntracked) '--include-untracked',
@@ -49,7 +50,7 @@ Future<OperationOutcome> stashCreate(
 /// Applies (or pops) [name] (`stash@{n}`); conflicts return conflicts.
 Future<OperationOutcome> stashApply(GitRunner git, String repoPath, String name, {bool pop = false}) async {
   final entry = await _entry(git, repoPath, name);
-  return _runOperation(git, repoPath, ['stash', pop ? 'pop' : 'apply', '--', entry.name]);
+  return runOperation(git, repoPath, ['stash', pop ? 'pop' : 'apply', '--', entry.name]);
 }
 
 Future<void> stashDrop(GitRunner git, String repoPath, String name) async {
@@ -93,14 +94,4 @@ Future<({String sha, String? untracked})> _parts(GitRunner git, String repo, Str
     successExitCodes: {0, 1},
   );
   return (sha: entry.sha, untracked: third.exitCode == 0 ? third.stdout.trim() : null);
-}
-
-Future<OperationOutcome> _runOperation(GitRunner git, String repo, List<String> args) async {
-  try {
-    await git.run(args, cwd: repo);
-    return OperationOutcome.completed;
-  } on GitException {
-    if ((await getStatus(git, repo)).files.any((f) => f.status.isConflicted)) return OperationOutcome.conflicts;
-    rethrow;
-  }
 }

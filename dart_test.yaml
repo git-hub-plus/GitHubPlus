@@ -1,0 +1,3 @@
+# Many tests start real git processes; on this 12-core but memory-tight PC the
+# default (one isolate per core) makes Git/UI waits and temp cleanup flaky.
+concurrency: 4

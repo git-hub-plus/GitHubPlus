@@ -7,9 +7,9 @@ import 'package:path/path.dart' as p;
 
 import '../models/advanced.dart';
 import 'git_runner.dart';
+import 'operation.dart';
 import 'in_progress.dart';
 import 'log.dart';
-import 'status.dart';
 
 /// `git reset --soft HEAD^` (root commit: back to unborn keeping changes).
 /// Returns the undone commit's message so the commit box can be refilled.
@@ -87,7 +87,7 @@ Future<OperationOutcome> rebase(GitRunner git, String repoPath, String onto) asy
     successExitCodes: {0, 1},
   );
   if (ancestor.exitCode == 0) return OperationOutcome.nothingToDo;
-  return _runOperation(git, repoPath, ['-c', 'rebase.updateRefs=false', 'rebase', '--', base]);
+  return runOperation(git, repoPath, ['-c', 'rebase.updateRefs=false', 'rebase', '--', base]);
 }
 
 /// Squashes [shas] (any order, all on the current branch's first-parent
@@ -226,7 +226,7 @@ Future<OperationOutcome> _interactive(GitRunner git, String repo, List<String> t
     await script.writeAsString(
       'while IFS= read -r line; do printf \'%s\\n\' "\$line"; done < ${_quote(todoFile.path)}\n',
     );
-    return await _runOperation(
+    return await runOperation(
       git,
       repo,
       [
@@ -244,20 +244,5 @@ Future<OperationOutcome> _interactive(GitRunner git, String repo, List<String> t
     );
   } finally {
     await directory.delete(recursive: true);
-  }
-}
-
-Future<OperationOutcome> _runOperation(
-  GitRunner git,
-  String repo,
-  List<String> args, {
-  Map<String, String> environment = const {},
-}) async {
-  try {
-    await git.run(args, cwd: repo, environment: {'GIT_EDITOR': 'true', ...environment});
-    return OperationOutcome.completed;
-  } on GitException {
-    if ((await getStatus(git, repo)).files.any((f) => f.status.isConflicted)) return OperationOutcome.conflicts;
-    rethrow;
   }
 }

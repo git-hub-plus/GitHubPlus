@@ -11,10 +11,22 @@ final _nothingToDo = RegExp(
 );
 
 /// Runs a conflict-capable operation without opening an editor.
-/// [stdin] supports merge commit messages passed with `-F -`.
-Future<OperationOutcome> runOperation(GitRunner git, String repoPath, List<String> args, {String? stdin}) async {
+/// [stdin] supports merge commit messages passed with `-F -`; [environment]
+/// adds variables such as `GIT_SEQUENCE_EDITOR` for generated rebase todos.
+Future<OperationOutcome> runOperation(
+  GitRunner git,
+  String repoPath,
+  List<String> args, {
+  String? stdin,
+  Map<String, String> environment = const {},
+}) async {
   try {
-    final result = await git.run(args, cwd: repoPath, stdin: stdin, environment: const {'GIT_EDITOR': 'true'});
+    final result = await git.run(
+      args,
+      cwd: repoPath,
+      stdin: stdin,
+      environment: {'GIT_EDITOR': 'true', ...environment},
+    );
     return _nothingToDo.hasMatch('${result.stdout}\n${result.stderr}')
         ? OperationOutcome.nothingToDo
         : OperationOutcome.completed;

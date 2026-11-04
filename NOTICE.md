@@ -46,3 +46,5 @@ ported.
 | `lib/core/git/branches.dart` | `src/main/git/{for-each-ref,branch,checkout}.ts` → `app/src/lib/git/{for-each-ref,branch,checkout}.ts` |
 | `lib/core/models/diff.dart`, `status.dart` | `src/shared/models/{diff,diff-selection,status}.ts` → `app/src/models/{diff/*,status}.ts` |
 | `test/core/git/*` | `tests/main/git/*` → `app/test/unit/**` |
+| `lib/core/git/merge.dart`, `operation.dart`, `conflict_markers.dart` | `src/main/git/{merge,conflicts,cherry-pick,revert}.ts` → `app/src/lib/git/{merge,checkout,cherry-pick,revert}.ts`, `app/src/models/manual-conflict-resolution.ts` (marker parser written for GitHub+) |
+| `lib/core/git/stash.dart`, `rewrite.dart` | `src/main/git/{stash,reset,tag,rebase,squash,reorder}.ts` → `app/src/lib/git/{stash,reset,tag,rebase,squash,reorder}.ts` |
