@@ -62,7 +62,7 @@ class HistoryFixture {
 
 /// Git processes need real event-loop time; pumpAndSettle alone cannot await them.
 Future<void> pumpUntil(WidgetTester tester, bool Function() condition) async {
-  for (var i = 0; i < 300; i++) {
+  for (var i = 0; i < 900; i++) {
     await tester.pump(const Duration(milliseconds: 30));
     if (condition()) return;
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));

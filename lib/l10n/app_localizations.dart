@@ -595,6 +595,138 @@ abstract class L10n {
   /// **'진행 중인 작업이 없습니다. {push}·{pull}·{clone}처럼 시간이 걸리는 작업이 여기에 표시됩니다.'**
   String expeditionsEmpty(String push, String pull, String clone);
 
+  /// No description provided for @conflictQuestTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{operation} 진행 중 · {name}'**
+  String conflictQuestTitle(String operation, String name);
+
+  /// No description provided for @conflictRebaseStep.
+  ///
+  /// In ko, this message translates to:
+  /// **'{operation} {step}/{total} 단계'**
+  String conflictRebaseStep(String operation, int step, int total);
+
+  /// No description provided for @conflictProgress.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 파일 {resolved}/{total}개 해결'**
+  String conflictProgress(int resolved, int total);
+
+  /// No description provided for @conflictSteps.
+  ///
+  /// In ko, this message translates to:
+  /// **'① 충돌 해결 → ② 해결됨 표시 → ③ 이어서 하기'**
+  String get conflictSteps;
+
+  /// No description provided for @conflictContinue.
+  ///
+  /// In ko, this message translates to:
+  /// **'{operation} 이어서 하기'**
+  String conflictContinue(String operation);
+
+  /// No description provided for @conflictAbort.
+  ///
+  /// In ko, this message translates to:
+  /// **'{operation} 그만두기'**
+  String conflictAbort(String operation);
+
+  /// No description provided for @conflictAbortBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'진행 중인 작업과 충돌 해결 내용을 취소하고 시작 전 상태로 돌아갑니다.'**
+  String get conflictAbortBody;
+
+  /// No description provided for @mergeMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'{merge} 메시지 확인'**
+  String mergeMessage(String merge);
+
+  /// No description provided for @conflictOurs.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 쪽(현재)'**
+  String get conflictOurs;
+
+  /// No description provided for @conflictTheirs.
+  ///
+  /// In ko, this message translates to:
+  /// **'들어온 쪽'**
+  String get conflictTheirs;
+
+  /// No description provided for @conflictBoth.
+  ///
+  /// In ko, this message translates to:
+  /// **'둘 다'**
+  String get conflictBoth;
+
+  /// No description provided for @conflictAllOurs.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 내 쪽'**
+  String get conflictAllOurs;
+
+  /// No description provided for @conflictAllTheirs.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 들어온 쪽'**
+  String get conflictAllTheirs;
+
+  /// No description provided for @conflictSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하고 해결됨 표시'**
+  String get conflictSave;
+
+  /// No description provided for @conflictSideOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'바이너리·삭제 충돌 또는 읽을 수 없는 파일입니다. 파일 전체를 한쪽으로 선택하세요.'**
+  String get conflictSideOnly;
+
+  /// No description provided for @conflictStale.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일이 바뀌었습니다. 다시 열어 내용을 확인하세요.'**
+  String get conflictStale;
+
+  /// No description provided for @mergeInto.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 {branch}로 {merge}'**
+  String mergeInto(String branch, String merge);
+
+  /// No description provided for @rebaseOnto.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 {branch} 위로 {rebase}'**
+  String rebaseOnto(String branch, String rebase);
+
+  /// No description provided for @rebaseWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'{rebase}는 이미 올린 버전도 다시 쓸 수 있습니다. 함께 작업하는 사람이 있다면 먼저 확인하세요.'**
+  String rebaseWarning(String rebase);
+
+  /// No description provided for @mergeConflicts.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌이 있습니다. {changes} 탭에서 해결하세요.'**
+  String mergeConflicts(String changes);
+
+  /// No description provided for @mergeCompleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'{operation} 완료'**
+  String mergeCompleted(String operation);
+
+  /// No description provided for @mergeNothing.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 최신입니다'**
+  String get mergeNothing;
+
   /// No description provided for @expeditionRunning.
   ///
   /// In ko, this message translates to:
@@ -1122,6 +1254,234 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'새로 고침'**
   String get overviewRefresh;
+
+  /// No description provided for @stashTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{stash}'**
+  String stashTitle(String stash);
+
+  /// No description provided for @stashCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 바뀐 파일 {stash}'**
+  String stashCreate(String stash);
+
+  /// 메시지 (선택)
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 (선택)'**
+  String get stashMessage;
+
+  /// 새 파일 포함
+  ///
+  /// In ko, this message translates to:
+  /// **'새 파일 포함'**
+  String get stashUntracked;
+
+  /// 보관한 항목이 없습니다.
+  ///
+  /// In ko, this message translates to:
+  /// **'보관한 항목이 없습니다.'**
+  String get stashEmpty;
+
+  /// 꺼내기
+  ///
+  /// In ko, this message translates to:
+  /// **'꺼내기'**
+  String get stashPop;
+
+  /// 적용만
+  ///
+  /// In ko, this message translates to:
+  /// **'적용만'**
+  String get stashApply;
+
+  /// 버리기
+  ///
+  /// In ko, this message translates to:
+  /// **'버리기'**
+  String get stashDrop;
+
+  /// 이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다.'**
+  String get stashDropConfirm;
+
+  /// 항목을 펼쳐 파일을 선택하세요.
+  ///
+  /// In ko, this message translates to:
+  /// **'항목을 펼쳐 파일을 선택하세요.'**
+  String get stashSelect;
+
+  /// 작업 메뉴
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 메뉴'**
+  String get historyActionMenu;
+
+  /// 취소
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get historyActionCancel;
+
+  /// 닫기
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get historyActionClose;
+
+  /// 계속
+  ///
+  /// In ko, this message translates to:
+  /// **'계속'**
+  String get historyActionConfirm;
+
+  /// 작업을 완료했습니다.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 완료했습니다.'**
+  String get historyActionDone;
+
+  /// 처리할 내용이 없습니다.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리할 내용이 없습니다.'**
+  String get historyActionNothing;
+
+  /// No description provided for @historyActionConflicts.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌이 있습니다. {changes} 탭에서 해결하세요.'**
+  String historyActionConflicts(String changes);
+
+  /// 작업에 실패했습니다.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업에 실패했습니다.'**
+  String get historyActionFailed;
+
+  /// No description provided for @historyActionRevert.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 {commitUnit} {revert}'**
+  String historyActionRevert(String commitUnit, String revert);
+
+  /// No description provided for @historyActionRevertConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 내용을 되돌리는 새 {commitUnit}을 만들까요?'**
+  String historyActionRevertConfirm(String commitUnit);
+
+  /// No description provided for @historyActionPick.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 {branch}로 {cherryPick}'**
+  String historyActionPick(String branch, String cherryPick);
+
+  /// No description provided for @historyActionUndo.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {commitUnit} 취소'**
+  String historyActionUndo(String commitUnit);
+
+  /// No description provided for @historyActionUndoConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {commitUnit}의 저장을 취소하고 바뀐 파일로 남길까요?'**
+  String historyActionUndoConfirm(String commitUnit);
+
+  /// No description provided for @historyActionUndoMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장을 취소했습니다. 메시지: {message}'**
+  String historyActionUndoMessage(String message);
+
+  /// 메시지 복사
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 복사'**
+  String get historyActionCopyMessage;
+
+  /// No description provided for @historyActionSquash.
+  ///
+  /// In ko, this message translates to:
+  /// **'{squash}…'**
+  String historyActionSquash(String squash);
+
+  /// 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지'**
+  String get historyActionMessage;
+
+  /// 위로 옮기기
+  ///
+  /// In ko, this message translates to:
+  /// **'위로 옮기기'**
+  String get historyActionUp;
+
+  /// 아래로 옮기기
+  ///
+  /// In ko, this message translates to:
+  /// **'아래로 옮기기'**
+  String get historyActionDown;
+
+  /// 이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요.'**
+  String get historyActionPublished;
+
+  /// No description provided for @historyActionSelection.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 선택 · Ctrl/Shift+클릭으로 여러 개 선택'**
+  String historyActionSelection(int count);
+
+  /// No description provided for @tagCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'{tag} 만들기…'**
+  String tagCreate(String tag);
+
+  /// 이름
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get tagName;
+
+  /// 설명 (선택)
+  ///
+  /// In ko, this message translates to:
+  /// **'설명 (선택)'**
+  String get tagDescription;
+
+  /// No description provided for @tagPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'{tag} 원격에 올리기'**
+  String tagPush(String tag);
+
+  /// No description provided for @tagDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'{tag} 지우기'**
+  String tagDelete(String tag);
+
+  /// 원격에서도 지우기
+  ///
+  /// In ko, this message translates to:
+  /// **'원격에서도 지우기'**
+  String get tagRemote;
+
+  /// No description provided for @tagDeleteConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}을 지울까요?'**
+  String tagDeleteConfirm(String name);
 
   /// No description provided for @overviewOpenFolder.
   ///

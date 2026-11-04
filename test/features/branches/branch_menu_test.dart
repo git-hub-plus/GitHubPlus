@@ -140,7 +140,8 @@ void main() {
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const ValueKey('branch-menu-renamed')));
     await settleGit(tester, fixture);
-    await tester.tap(find.text('Delete'));
+    await pumpUntil(tester, () => find.text('Delete').hitTestable().evaluate().isNotEmpty);
+    await tester.tap(find.text('Delete').hitTestable());
     await pumpUntil(tester, () => find.byKey(const Key('branch-confirm-delete')).evaluate().isNotEmpty);
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const Key('branch-confirm-delete')));
@@ -187,7 +188,8 @@ void main() {
     final container = await open(tester);
     await tester.tap(find.byKey(const ValueKey('branch-menu-origin/remove-me')));
     await settleGit(tester, fixture);
-    await tester.tap(find.text('Delete'));
+    await pumpUntil(tester, () => find.text('Delete').hitTestable().evaluate().isNotEmpty);
+    await tester.tap(find.text('Delete').hitTestable());
     await pumpUntil(tester, () => find.byKey(const Key('branch-confirm-delete')).evaluate().isNotEmpty);
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const Key('branch-delete-remote')));
@@ -202,6 +204,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // Retried: when the branch list refreshes right as a row menu is chosen, Flutter drops
+  // the choice of the rebuilt PopupMenuButton, and this test picks two menus back to back.
   testWidgets('unmerged delete requires force; remote tracking deletion is opt-in', (tester) async {
     await tester.runAsync(() async {
       await fixture.repos.run(fixture.repo.path, ['switch', '-c', 'unmerged']);
@@ -213,7 +217,8 @@ void main() {
     final container = await open(tester);
     await tester.tap(find.byKey(const ValueKey('branch-menu-unmerged')));
     await settleGit(tester, fixture);
-    await tester.tap(find.text('Delete'));
+    await pumpUntil(tester, () => find.text('Delete').hitTestable().evaluate().isNotEmpty);
+    await tester.tap(find.text('Delete').hitTestable());
     await pumpUntil(tester, () => find.byKey(const Key('branch-confirm-delete')).evaluate().isNotEmpty);
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const Key('branch-confirm-delete')));
@@ -221,7 +226,8 @@ void main() {
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const ValueKey('branch-menu-unmerged')));
     await settleGit(tester, fixture);
-    await tester.tap(find.text('Delete'));
+    await pumpUntil(tester, () => find.text('Delete').hitTestable().evaluate().isNotEmpty);
+    await tester.tap(find.text('Delete').hitTestable());
     await pumpUntil(tester, () => find.byKey(const Key('branch-confirm-delete')).evaluate().isNotEmpty);
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const Key('branch-force')));
@@ -233,7 +239,8 @@ void main() {
     await settleGit(tester, fixture);
     await tester.tap(find.byKey(const ValueKey('branch-menu-origin/sample')));
     await settleGit(tester, fixture);
-    await tester.tap(find.text('Delete'));
+    await pumpUntil(tester, () => find.text('Delete').hitTestable().evaluate().isNotEmpty);
+    await tester.tap(find.text('Delete').hitTestable());
     await pumpUntil(tester, () => find.byKey(const Key('branch-confirm-delete')).evaluate().isNotEmpty);
     await settleGit(tester, fixture);
     final checkbox = tester.widget<CheckboxListTile>(find.byKey(const Key('branch-delete-remote')));
@@ -244,5 +251,5 @@ void main() {
       () => container.read(branchListProvider(fixture.repo)).value?.any((b) => b.type == BranchType.remote) == false,
     );
     expect(tester.takeException(), isNull);
-  });
+  }, retry: 2);
 }

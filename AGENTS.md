@@ -19,7 +19,7 @@
 ```shell
 python tool/vendor_git.py        # 포터블 Git 준비 (처음 한 번)
 flutter gen-l10n                 # ARB 수정 후
-flutter test                     # 테스트
+bash tool/test.sh                # 테스트 (core 병렬 → 화면 테스트 동시 2개; 한 번에 다 돌리면 화면 테스트가 부하로 시간 초과)
 flutter build windows --debug    # 빌드 → build/windows/x64/runner/Debug/GitHubPlus.exe
 ```
 

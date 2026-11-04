@@ -338,6 +338,98 @@ class L10nEn extends L10n {
   }
 
   @override
+  String conflictQuestTitle(String operation, String name) {
+    return '$operation in progress · $name';
+  }
+
+  @override
+  String conflictRebaseStep(String operation, int step, int total) {
+    return '$operation step $step/$total';
+  }
+
+  @override
+  String conflictProgress(int resolved, int total) {
+    return 'Resolved $resolved/$total conflict files';
+  }
+
+  @override
+  String get conflictSteps =>
+      '① Resolve conflicts → ② Mark resolved → ③ Continue';
+
+  @override
+  String conflictContinue(String operation) {
+    return 'Continue $operation';
+  }
+
+  @override
+  String conflictAbort(String operation) {
+    return 'Abort $operation';
+  }
+
+  @override
+  String get conflictAbortBody =>
+      'Cancel this operation and its conflict resolutions, returning to the starting state.';
+
+  @override
+  String mergeMessage(String merge) {
+    return 'Review $merge message';
+  }
+
+  @override
+  String get conflictOurs => 'My side (current)';
+
+  @override
+  String get conflictTheirs => 'Incoming side';
+
+  @override
+  String get conflictBoth => 'Both';
+
+  @override
+  String get conflictAllOurs => 'Use my side for entire file';
+
+  @override
+  String get conflictAllTheirs => 'Use incoming side for entire file';
+
+  @override
+  String get conflictSave => 'Save and mark resolved';
+
+  @override
+  String get conflictSideOnly =>
+      'Binary, deleted or unreadable file. Choose one side for the entire file.';
+
+  @override
+  String get conflictStale =>
+      'The file changed. Reopen it to review the current contents.';
+
+  @override
+  String mergeInto(String branch, String merge) {
+    return '$merge into current $branch';
+  }
+
+  @override
+  String rebaseOnto(String branch, String rebase) {
+    return '$rebase onto this $branch';
+  }
+
+  @override
+  String rebaseWarning(String rebase) {
+    return '$rebase can rewrite versions already uploaded. Coordinate with collaborators before continuing.';
+  }
+
+  @override
+  String mergeConflicts(String changes) {
+    return 'Conflicts found. Resolve them in $changes.';
+  }
+
+  @override
+  String mergeCompleted(String operation) {
+    return '$operation completed';
+  }
+
+  @override
+  String get mergeNothing => 'Already up to date';
+
+  @override
   String get expeditionRunning => 'Running';
 
   @override
@@ -668,6 +760,152 @@ class L10nEn extends L10n {
 
   @override
   String get overviewRefresh => 'Refresh';
+
+  @override
+  String stashTitle(String stash) {
+    return '$stash';
+  }
+
+  @override
+  String stashCreate(String stash) {
+    return '$stash current changes';
+  }
+
+  @override
+  String get stashMessage => 'Message (optional)';
+
+  @override
+  String get stashUntracked => 'Include new files';
+
+  @override
+  String get stashEmpty => 'Nothing set aside yet.';
+
+  @override
+  String get stashPop => 'Pop';
+
+  @override
+  String get stashApply => 'Apply only';
+
+  @override
+  String get stashDrop => 'Drop';
+
+  @override
+  String get stashDropConfirm =>
+      'Drop this entry? Its saved changes cannot be recovered.';
+
+  @override
+  String get stashSelect => 'Expand an entry and select a file.';
+
+  @override
+  String get historyActionMenu => 'Actions';
+
+  @override
+  String get historyActionCancel => 'Cancel';
+
+  @override
+  String get historyActionClose => 'Close';
+
+  @override
+  String get historyActionConfirm => 'Continue';
+
+  @override
+  String get historyActionDone => 'Operation completed.';
+
+  @override
+  String get historyActionNothing => 'Nothing to do.';
+
+  @override
+  String historyActionConflicts(String changes) {
+    return 'Conflicts found. Resolve them in the $changes tab.';
+  }
+
+  @override
+  String get historyActionFailed => 'Operation failed.';
+
+  @override
+  String historyActionRevert(String commitUnit, String revert) {
+    return '$revert: $commitUnit';
+  }
+
+  @override
+  String historyActionRevertConfirm(String commitUnit) {
+    return 'Create new $commitUnit that undo the selected changes?';
+  }
+
+  @override
+  String historyActionPick(String branch, String cherryPick) {
+    return '$cherryPick into the current $branch';
+  }
+
+  @override
+  String historyActionUndo(String commitUnit) {
+    return 'Undo last $commitUnit';
+  }
+
+  @override
+  String historyActionUndoConfirm(String commitUnit) {
+    return 'Undo the last $commitUnit and keep its changes?';
+  }
+
+  @override
+  String historyActionUndoMessage(String message) {
+    return 'Undone. Message: $message';
+  }
+
+  @override
+  String get historyActionCopyMessage => 'Copy message';
+
+  @override
+  String historyActionSquash(String squash) {
+    return '$squash…';
+  }
+
+  @override
+  String get historyActionMessage => 'Message';
+
+  @override
+  String get historyActionUp => 'Move up';
+
+  @override
+  String get historyActionDown => 'Move down';
+
+  @override
+  String get historyActionPublished =>
+      'This changes history already uploaded to a remote. Coordinate with collaborators before continuing.';
+
+  @override
+  String historyActionSelection(int count) {
+    return '$count selected · Ctrl/Shift+click to select multiple';
+  }
+
+  @override
+  String tagCreate(String tag) {
+    return 'Create $tag…';
+  }
+
+  @override
+  String get tagName => 'Name';
+
+  @override
+  String get tagDescription => 'Description (optional)';
+
+  @override
+  String tagPush(String tag) {
+    return 'Upload $tag to remote';
+  }
+
+  @override
+  String tagDelete(String tag) {
+    return 'Delete $tag';
+  }
+
+  @override
+  String get tagRemote => 'Delete from remote too';
+
+  @override
+  String tagDeleteConfirm(String name) {
+    return 'Delete $name?';
+  }
 
   @override
   String get overviewOpenFolder => 'Open in Explorer';

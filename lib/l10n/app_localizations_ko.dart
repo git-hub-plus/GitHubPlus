@@ -337,6 +337,95 @@ class L10nKo extends L10n {
   }
 
   @override
+  String conflictQuestTitle(String operation, String name) {
+    return '$operation 진행 중 · $name';
+  }
+
+  @override
+  String conflictRebaseStep(String operation, int step, int total) {
+    return '$operation $step/$total 단계';
+  }
+
+  @override
+  String conflictProgress(int resolved, int total) {
+    return '충돌 파일 $resolved/$total개 해결';
+  }
+
+  @override
+  String get conflictSteps => '① 충돌 해결 → ② 해결됨 표시 → ③ 이어서 하기';
+
+  @override
+  String conflictContinue(String operation) {
+    return '$operation 이어서 하기';
+  }
+
+  @override
+  String conflictAbort(String operation) {
+    return '$operation 그만두기';
+  }
+
+  @override
+  String get conflictAbortBody => '진행 중인 작업과 충돌 해결 내용을 취소하고 시작 전 상태로 돌아갑니다.';
+
+  @override
+  String mergeMessage(String merge) {
+    return '$merge 메시지 확인';
+  }
+
+  @override
+  String get conflictOurs => '내 쪽(현재)';
+
+  @override
+  String get conflictTheirs => '들어온 쪽';
+
+  @override
+  String get conflictBoth => '둘 다';
+
+  @override
+  String get conflictAllOurs => '모두 내 쪽';
+
+  @override
+  String get conflictAllTheirs => '모두 들어온 쪽';
+
+  @override
+  String get conflictSave => '저장하고 해결됨 표시';
+
+  @override
+  String get conflictSideOnly =>
+      '바이너리·삭제 충돌 또는 읽을 수 없는 파일입니다. 파일 전체를 한쪽으로 선택하세요.';
+
+  @override
+  String get conflictStale => '파일이 바뀌었습니다. 다시 열어 내용을 확인하세요.';
+
+  @override
+  String mergeInto(String branch, String merge) {
+    return '현재 $branch로 $merge';
+  }
+
+  @override
+  String rebaseOnto(String branch, String rebase) {
+    return '이 $branch 위로 $rebase';
+  }
+
+  @override
+  String rebaseWarning(String rebase) {
+    return '$rebase는 이미 올린 버전도 다시 쓸 수 있습니다. 함께 작업하는 사람이 있다면 먼저 확인하세요.';
+  }
+
+  @override
+  String mergeConflicts(String changes) {
+    return '충돌이 있습니다. $changes 탭에서 해결하세요.';
+  }
+
+  @override
+  String mergeCompleted(String operation) {
+    return '$operation 완료';
+  }
+
+  @override
+  String get mergeNothing => '이미 최신입니다';
+
+  @override
   String get expeditionRunning => '진행 중';
 
   @override
@@ -665,6 +754,151 @@ class L10nKo extends L10n {
 
   @override
   String get overviewRefresh => '새로 고침';
+
+  @override
+  String stashTitle(String stash) {
+    return '$stash';
+  }
+
+  @override
+  String stashCreate(String stash) {
+    return '지금 바뀐 파일 $stash';
+  }
+
+  @override
+  String get stashMessage => '메시지 (선택)';
+
+  @override
+  String get stashUntracked => '새 파일 포함';
+
+  @override
+  String get stashEmpty => '보관한 항목이 없습니다.';
+
+  @override
+  String get stashPop => '꺼내기';
+
+  @override
+  String get stashApply => '적용만';
+
+  @override
+  String get stashDrop => '버리기';
+
+  @override
+  String get stashDropConfirm => '이 항목을 버릴까요? 보관한 내용은 복구할 수 없습니다.';
+
+  @override
+  String get stashSelect => '항목을 펼쳐 파일을 선택하세요.';
+
+  @override
+  String get historyActionMenu => '작업 메뉴';
+
+  @override
+  String get historyActionCancel => '취소';
+
+  @override
+  String get historyActionClose => '닫기';
+
+  @override
+  String get historyActionConfirm => '계속';
+
+  @override
+  String get historyActionDone => '작업을 완료했습니다.';
+
+  @override
+  String get historyActionNothing => '처리할 내용이 없습니다.';
+
+  @override
+  String historyActionConflicts(String changes) {
+    return '충돌이 있습니다. $changes 탭에서 해결하세요.';
+  }
+
+  @override
+  String get historyActionFailed => '작업에 실패했습니다.';
+
+  @override
+  String historyActionRevert(String commitUnit, String revert) {
+    return '이 $commitUnit $revert';
+  }
+
+  @override
+  String historyActionRevertConfirm(String commitUnit) {
+    return '선택한 내용을 되돌리는 새 $commitUnit을 만들까요?';
+  }
+
+  @override
+  String historyActionPick(String branch, String cherryPick) {
+    return '현재 $branch로 $cherryPick';
+  }
+
+  @override
+  String historyActionUndo(String commitUnit) {
+    return '마지막 $commitUnit 취소';
+  }
+
+  @override
+  String historyActionUndoConfirm(String commitUnit) {
+    return '마지막 $commitUnit의 저장을 취소하고 바뀐 파일로 남길까요?';
+  }
+
+  @override
+  String historyActionUndoMessage(String message) {
+    return '저장을 취소했습니다. 메시지: $message';
+  }
+
+  @override
+  String get historyActionCopyMessage => '메시지 복사';
+
+  @override
+  String historyActionSquash(String squash) {
+    return '$squash…';
+  }
+
+  @override
+  String get historyActionMessage => '메시지';
+
+  @override
+  String get historyActionUp => '위로 옮기기';
+
+  @override
+  String get historyActionDown => '아래로 옮기기';
+
+  @override
+  String get historyActionPublished =>
+      '이미 원격에 올린 기록이 바뀝니다. 함께 작업하는 사람과 확인한 뒤 계속하세요.';
+
+  @override
+  String historyActionSelection(int count) {
+    return '$count개 선택 · Ctrl/Shift+클릭으로 여러 개 선택';
+  }
+
+  @override
+  String tagCreate(String tag) {
+    return '$tag 만들기…';
+  }
+
+  @override
+  String get tagName => '이름';
+
+  @override
+  String get tagDescription => '설명 (선택)';
+
+  @override
+  String tagPush(String tag) {
+    return '$tag 원격에 올리기';
+  }
+
+  @override
+  String tagDelete(String tag) {
+    return '$tag 지우기';
+  }
+
+  @override
+  String get tagRemote => '원격에서도 지우기';
+
+  @override
+  String tagDeleteConfirm(String name) {
+    return '$name을 지울까요?';
+  }
 
   @override
   String get overviewOpenFolder => '탐색기에서 열기';
