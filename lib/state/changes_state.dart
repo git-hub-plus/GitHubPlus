@@ -13,6 +13,7 @@ class ChangesState {
     this.summary = '',
     this.description = '',
     this.amend = false,
+    this.conflictPaths = const {},
   });
 
   final Map<String, DiffSelection> selections;
@@ -20,6 +21,9 @@ class ChangesState {
   final String summary;
   final String description;
   final bool amend;
+
+  /// Conflicts observed during this operation, retained when switching tabs.
+  final Set<String> conflictPaths;
 
   int get includedCount => selections.values.where((s) => s.selectionType != SelectionType.none).length;
 
@@ -30,12 +34,14 @@ class ChangesState {
     String? summary,
     String? description,
     bool? amend,
+    Set<String>? conflictPaths,
   }) => ChangesState(
     selections: selections ?? this.selections,
     selectedPath: clearPath ? null : selectedPath ?? this.selectedPath,
     summary: summary ?? this.summary,
     description: description ?? this.description,
     amend: amend ?? this.amend,
+    conflictPaths: conflictPaths ?? this.conflictPaths,
   );
 }
 
@@ -53,18 +59,45 @@ class ChangesNotifier extends Notifier<ChangesState> {
     return ChangesState(
       selections: {for (final f in files) f.path: DiffSelection.all()},
       selectedPath: files.firstOrNull?.path,
+      conflictPaths: {
+        for (final file in files)
+          if (file.status.isConflicted) file.path,
+      },
     );
   }
 
   void reconcile(List<WorkingFile> files) {
-    final selections = {for (final f in files) f.path: state.selections[f.path] ?? DiffSelection.all()};
+    final inProgress = ref.read(repoStatusProvider(repoId)).value?.inProgress != null;
+    final selections = {
+      for (final f in files)
+        f.path: (inProgress ? DiffSelection.all() : state.selections[f.path] ?? DiffSelection.all()),
+    };
     final path = selections.containsKey(state.selectedPath) ? state.selectedPath : files.firstOrNull?.path;
-    state = state.copyWith(selections: selections, selectedPath: path, clearPath: path == null);
+    state = state.copyWith(
+      selections: selections,
+      selectedPath: path,
+      clearPath: path == null,
+      conflictPaths: inProgress
+          ? {
+              ...state.conflictPaths,
+              for (final file in files)
+                if (file.status.isConflicted) file.path,
+            }
+          : {},
+    );
+  }
+
+  /// Kept on the repository notifier so operations can refresh the HUD even
+  /// when their initiating widget was removed while Git was running.
+  void refreshStatus() {
+    if (!ref.mounted) return;
+    ref.invalidate(repoStatusProvider(repoId));
+    ref.invalidate(todayCommitsProvider(repoId));
   }
 
   void selectFile(String path) => state = state.copyWith(selectedPath: path);
   void selectLines(String path, DiffSelection selection) {
-    if (!state.selections.containsKey(path)) return;
+    if (ref.read(repoStatusProvider(repoId)).value?.inProgress != null || !state.selections.containsKey(path)) return;
     state = state.copyWith(selections: {...state.selections, path: selection});
   }
 
@@ -78,11 +111,15 @@ class ChangesNotifier extends Notifier<ChangesState> {
     if (text != null && current != null) selectLines(path, current.withSelectableLines(text.selectableLines));
   }
 
-  void selectAll(bool selected) => state = state.copyWith(
-    selections: {
-      for (final e in state.selections.entries) e.key: selected ? e.value.withSelectAll() : e.value.withSelectNone(),
-    },
-  );
+  void selectAll(bool selected) {
+    if (ref.read(repoStatusProvider(repoId)).value?.inProgress != null) return;
+    state = state.copyWith(
+      selections: {
+        for (final e in state.selections.entries) e.key: selected ? e.value.withSelectAll() : e.value.withSelectNone(),
+      },
+    );
+  }
+
   void draft({String? summary, String? description, bool? amend}) =>
       state = state.copyWith(summary: summary, description: description, amend: amend);
   void clearDraft() => draft(summary: '', description: '', amend: false);

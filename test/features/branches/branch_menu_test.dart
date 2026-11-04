@@ -42,6 +42,60 @@ void main() {
     return container;
   }
 
+  for (final mode in ['clean merge', 'conflicted merge', 'rebase', 'already current']) {
+    testWidgets('menu runs $mode with real providers', (tester) async {
+      await tester.runAsync(() async {
+        await fixture.repos.run(fixture.repo.path, ['switch', '-c', 'feature']);
+        if (mode != 'already current') {
+          await fixture.repos.commit(fixture.repo.path, 'feature version', files: {'file.txt': 'incoming\n'});
+        }
+        await fixture.repos.run(fixture.repo.path, ['switch', 'main']);
+        if (mode == 'conflicted merge') {
+          await fixture.repos.commit(fixture.repo.path, 'main version', files: {'file.txt': 'mine\n'});
+        }
+        if (mode == 'rebase') {
+          await fixture.repos.commit(fixture.repo.path, 'main version', files: {'other.txt': 'mine\n'});
+        }
+      });
+      final container = await open(tester);
+      await tester.tap(find.byKey(const ValueKey('branch-menu-feature')));
+      await settleGit(tester, fixture);
+      await tester.tap(find.text(mode == 'rebase' ? 'Move base onto this Branch' : 'Combine into current Branch'));
+      if (mode == 'rebase') {
+        await pumpUntil(tester, () => find.byKey(const Key('rebase-confirm')).evaluate().isNotEmpty);
+        await settleGit(tester, fixture);
+        expect(find.textContaining('rewrite versions already uploaded'), findsOneWidget);
+        await tester.tap(find.byKey(const Key('rebase-confirm')));
+      }
+      await pumpUntil(
+        tester,
+        () => container.read(expeditionsProvider).firstOrNull?.status == ExpeditionStatus.succeeded,
+      );
+      await settleGit(tester, fixture);
+      await pumpUntil(
+        tester,
+        () =>
+            !container.read(repoStatusProvider(fixture.repo.id)).isLoading &&
+            (mode != 'conflicted merge' ||
+                container.read(repoStatusProvider(fixture.repo.id)).value?.conflictCount == 1),
+      );
+      final status = container.read(repoStatusProvider(fixture.repo.id)).value!;
+      if (mode == 'conflicted merge') {
+        expect(status.conflictCount, 1);
+        expect(find.text('Conflicts found. Resolve them in Changed files.'), findsOneWidget);
+      } else {
+        expect(status.inProgress, isNull);
+        expect(status.currentBranch, 'main');
+        final content = await tester.runAsync(() => fixture.repos.run(fixture.repo.path, ['show', 'HEAD:file.txt']));
+        expect(content!.stdout, mode == 'already current' ? 'base\n' : 'incoming\n');
+      }
+      if (mode == 'already current') expect(find.text('Already up to date'), findsOneWidget);
+      await pumpUntil(tester, () => !container.read(branchListProvider(fixture.repo)).isLoading);
+      await settleGit(tester, fixture);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('create normalizes spaces, duplicate error, rename, switch and delete', (tester) async {
     final container = await open(tester);
     await tester.tap(find.byKey(const Key('branch-create')));

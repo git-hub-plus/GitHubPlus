@@ -6,11 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/expeditions/expedition.dart';
 import '../../core/git/branches.dart';
 import '../../core/git/git_runner.dart';
+import '../../core/git/merge.dart';
+import '../../core/git/rewrite.dart';
+import '../../core/git/stage.dart';
+import '../../core/models/advanced.dart';
 import '../../core/models/app_models.dart';
 import '../../core/models/commit.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
+import '../../state/changes_state.dart';
 import '../../state/repo_state.dart';
 import '../../ui/format.dart';
 import '../../ui/theme.dart';
@@ -41,6 +46,80 @@ class _BranchMenuState extends ConsumerState<_BranchMenu> {
   bool _busy = false;
   bool _checking = false;
   RepositoryInfo get repo => widget.repo;
+
+  Future<void> _integrate(Branch branch, bool movingBase) async {
+    if (_busy || _checking || branch.isCurrent) return;
+    _checking = true;
+    final l = L10n.of(context);
+    final t = Terms.of(context);
+    final term = movingBase ? t.rebase : t.merge;
+    final refresh = ref.read(changesProvider(repo.id).notifier).refreshStatus;
+    try {
+      final status = await ref.refresh(repoStatusProvider(repo.id).future);
+      if (!mounted || status.inProgress != null) return;
+      if (movingBase) {
+        final accepted = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l.rebaseOnto(t.branch, t.rebase)),
+            content: Text(l.rebaseWarning(t.rebase)),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l.branchCancel)),
+              FilledButton(
+                key: const Key('rebase-confirm'),
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(t.rebase),
+              ),
+            ],
+          ),
+        );
+        if (accepted != true || !mounted) return;
+      }
+      setState(() => _busy = true);
+      final git = ref.read(gitProvider);
+      String describe(OperationOutcome result) => switch (result) {
+        OperationOutcome.conflicts => l.mergeConflicts(t.changes),
+        OperationOutcome.completed => l.mergeCompleted(term),
+        OperationOutcome.nothingToDo => l.mergeNothing,
+      };
+      final outcome = await ref
+          .read(expeditionsProvider.notifier)
+          .run<OperationOutcome>(
+            kind: movingBase ? ExpeditionKind.rebase : ExpeditionKind.checkout,
+            title: movingBase ? l.rebaseOnto(t.branch, term) : l.mergeInto(t.branch, term),
+            destination: branch.name,
+            repoId: repo.id,
+            task: (_) => withRepositoryOperation(repo.path, () async {
+              try {
+                return await (movingBase ? rebase(git, repo.path, branch.name) : merge(git, repo.path, branch.name));
+              } catch (error) {
+                throw StateError(redactCredentials(error.toString()));
+              }
+            }),
+            result: describe,
+          );
+      if (mounted) {
+        showGhpToast(
+          context,
+          outcome == null ? l.branchFailed : describe(outcome),
+          tone: outcome == null
+              ? ToastTone.error
+              : outcome == OperationOutcome.conflicts
+              ? ToastTone.info
+              : ToastTone.success,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        showGhpToast(context, l.branchFailed, tone: ToastTone.error, detail: redactCredentials(error.toString()));
+      }
+    } finally {
+      refresh();
+      if (mounted) ref.invalidate(branchListProvider(repo));
+      _checking = false;
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   Future<bool> _run(
     String title,
@@ -328,8 +407,25 @@ class _BranchMenuState extends ConsumerState<_BranchMenu> {
                                     key: ValueKey('branch-menu-${b.name}'),
                                     enabled: !_busy,
                                     tooltip: l.branchMenu(b.name),
-                                    onSelected: (action) => action == 'rename' ? _name(branch: b) : _delete(b),
+                                    onSelected: (action) => switch (action) {
+                                      'merge' => _integrate(b, false),
+                                      'rebase' => _integrate(b, true),
+                                      'rename' => _name(branch: b),
+                                      _ => _delete(b),
+                                    },
                                     itemBuilder: (_) => [
+                                      if (!b.isCurrent) ...[
+                                        PopupMenuItem(
+                                          value: 'merge',
+                                          enabled: ref.read(repoStatusProvider(repo.id)).value?.inProgress == null,
+                                          child: Text(l.mergeInto(t.branch, t.merge)),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'rebase',
+                                          enabled: ref.read(repoStatusProvider(repo.id)).value?.inProgress == null,
+                                          child: Text(l.rebaseOnto(t.branch, t.rebase)),
+                                        ),
+                                      ],
                                       if (b.type == BranchType.local)
                                         PopupMenuItem(value: 'rename', child: Text(l.branchRename)),
                                       PopupMenuItem(

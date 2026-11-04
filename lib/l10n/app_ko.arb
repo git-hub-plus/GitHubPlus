@@ -398,6 +398,156 @@
       }
     }
   },
+  "conflictQuestTitle": "{operation} 진행 중 · {name}",
+  "@conflictQuestTitle": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictRebaseStep": "{operation} {step}/{total} 단계",
+  "@conflictRebaseStep": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      },
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictProgress": "충돌 파일 {resolved}/{total}개 해결",
+  "@conflictProgress": {
+    "placeholders": {
+      "resolved": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictSteps": "① 충돌 해결 → ② 해결됨 표시 → ③ 이어서 하기",
+  "@conflictSteps": {
+    "placeholders": {}
+  },
+  "conflictContinue": "{operation} 이어서 하기",
+  "@conflictContinue": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictAbort": "{operation} 그만두기",
+  "@conflictAbort": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictAbortBody": "진행 중인 작업과 충돌 해결 내용을 취소하고 시작 전 상태로 돌아갑니다.",
+  "@conflictAbortBody": {
+    "placeholders": {}
+  },
+  "mergeMessage": "{merge} 메시지 확인",
+  "@mergeMessage": {
+    "placeholders": {
+      "merge": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictOurs": "내 쪽(현재)",
+  "@conflictOurs": {
+    "placeholders": {}
+  },
+  "conflictTheirs": "들어온 쪽",
+  "@conflictTheirs": {
+    "placeholders": {}
+  },
+  "conflictBoth": "둘 다",
+  "@conflictBoth": {
+    "placeholders": {}
+  },
+  "conflictAllOurs": "모두 내 쪽",
+  "@conflictAllOurs": {
+    "placeholders": {}
+  },
+  "conflictAllTheirs": "모두 들어온 쪽",
+  "@conflictAllTheirs": {
+    "placeholders": {}
+  },
+  "conflictSave": "저장하고 해결됨 표시",
+  "@conflictSave": {
+    "placeholders": {}
+  },
+  "conflictSideOnly": "바이너리·삭제 충돌 또는 읽을 수 없는 파일입니다. 파일 전체를 한쪽으로 선택하세요.",
+  "@conflictSideOnly": {
+    "placeholders": {}
+  },
+  "conflictStale": "파일이 바뀌었습니다. 다시 열어 내용을 확인하세요.",
+  "@conflictStale": {
+    "placeholders": {}
+  },
+  "mergeInto": "현재 {branch}로 {merge}",
+  "@mergeInto": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "merge": {
+        "type": "String"
+      }
+    }
+  },
+  "rebaseOnto": "이 {branch} 위로 {rebase}",
+  "@rebaseOnto": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "rebase": {
+        "type": "String"
+      }
+    }
+  },
+  "rebaseWarning": "{rebase}는 이미 올린 버전도 다시 쓸 수 있습니다. 함께 작업하는 사람이 있다면 먼저 확인하세요.",
+  "@rebaseWarning": {
+    "placeholders": {
+      "rebase": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeConflicts": "충돌이 있습니다. {changes} 탭에서 해결하세요.",
+  "@mergeConflicts": {
+    "placeholders": {
+      "changes": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeCompleted": "{operation} 완료",
+  "@mergeCompleted": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeNothing": "이미 최신입니다",
+  "@mergeNothing": {
+    "placeholders": {}
+  },
   "expeditionRunning": "진행 중",
   "expeditionDone": "완료",
   "expeditionFailed": "실패",

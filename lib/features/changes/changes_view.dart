@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 
+import '../conflicts/conflict_view.dart';
+import '../conflicts/conflict_quest.dart';
 import '../../core/git/commit.dart';
 import '../../core/git/discard.dart';
 import '../../core/git/git_runner.dart';
@@ -84,7 +86,11 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
   }
 
   bool _canCommit(ChangesState draft, RepoStatus status) =>
-      !_busy && draft.summary.trim().isNotEmpty && draft.includedCount > 0 && status.conflictCount == 0;
+      !_busy &&
+      status.inProgress == null &&
+      draft.summary.trim().isNotEmpty &&
+      draft.includedCount > 0 &&
+      status.conflictCount == 0;
 
   Future<void> _commit() async {
     final repo = widget.repo;
@@ -197,12 +203,18 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
       context: context,
       position: RelativeRect.fromRect(position & Size.zero, Offset.zero & overlay.size),
       items: [
-        PopupMenuItem(value: 'discard', enabled: !_busy, child: Text(l.changesDiscard)),
+        PopupMenuItem(
+          value: 'discard',
+          enabled: !_busy && ref.read(repoStatusProvider(widget.repo.id)).value?.inProgress == null,
+          child: Text(l.changesDiscard),
+        ),
         PopupMenuItem(value: 'copy', child: Text(l.changesCopyPath)),
       ],
     );
     if (!mounted) return;
-    if (choice == 'discard') await _discard([file]);
+    if (choice == 'discard' && ref.read(repoStatusProvider(widget.repo.id)).value?.inProgress == null) {
+      await _discard([file]);
+    }
     if (choice == 'copy') await Clipboard.setData(ClipboardData(text: file.path));
   }
 
@@ -231,7 +243,9 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
                       color: context.colors.surface,
                       child: Column(
                         children: [
-                          if (status.conflictCount > 0)
+                          if (status.inProgress != null)
+                            ConflictQuest(key: ValueKey(widget.repo.id), repo: widget.repo, status: status),
+                          if (status.conflictCount > 0 && status.inProgress == null)
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.all(Space.sm),
@@ -247,11 +261,11 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
                                 ? _empty(status)
                                 : ListView.builder(
                                     itemCount: status.files.length,
-                                    itemBuilder: (context, index) => _fileRow(status.files[index], draft),
+                                    itemBuilder: (context, index) => _fileRow(status.files[index], draft, status),
                                   ),
                           ),
                           const Divider(height: 1),
-                          _commitBox(draft, status),
+                          if (status.inProgress == null) _commitBox(draft, status),
                         ],
                       ),
                     ),
@@ -301,9 +315,11 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
           Checkbox(
             key: const Key('changes-all'),
             tristate: true,
-            value: checked,
+            value: status.inProgress != null ? true : checked,
             semanticLabel: l.changesSelectAll,
-            onChanged: _busy || status.files.isEmpty ? null : (_) => _controller.selectAll(checked != true),
+            onChanged: _busy || status.inProgress != null || status.files.isEmpty
+                ? null
+                : (_) => _controller.selectAll(checked != true),
           ),
           Expanded(
             child: Column(
@@ -322,7 +338,7 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
     );
   }
 
-  Widget _fileRow(WorkingFile file, ChangesState draft) {
+  Widget _fileRow(WorkingFile file, ChangesState draft, RepoStatus status) {
     final selection = draft.selections[file.path] ?? DiffSelection.all();
     final checked = switch (selection.selectionType) {
       SelectionType.all => true,
@@ -342,9 +358,9 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
                 Checkbox(
                   key: ValueKey('include-${file.path}'),
                   tristate: true,
-                  value: checked,
+                  value: status.inProgress != null ? true : checked,
                   semanticLabel: file.path,
-                  onChanged: _busy
+                  onChanged: _busy || status.inProgress != null
                       ? null
                       : (_) => _controller.selectLines(
                           file.path,
@@ -516,6 +532,9 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
         child: Text(L10n.of(context).changesPickFile, style: TextStyle(color: context.colors.muted)),
       );
     }
+    if (file.status.isConflicted) {
+      return ConflictView(key: ValueKey('${widget.repo.id}:${file.path}'), repo: widget.repo, file: file);
+    }
     final key = (repoId: widget.repo.id, path: file.path);
     final diff = ref.watch(workingDiffProvider(key));
     return Column(
@@ -527,7 +546,7 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
               Expanded(child: _path(file)),
               const SizedBox(width: Space.sm),
               TextButton.icon(
-                onPressed: _busy ? null : () => _discard([file]),
+                onPressed: _busy || status.inProgress != null ? null : () => _discard([file]),
                 icon: const Icon(Icons.delete_outline_rounded),
                 label: Text(L10n.of(context).changesDiscardFile),
               ),
@@ -542,8 +561,10 @@ class _ChangesViewState extends ConsumerState<ChangesView> {
             data: (value) => FileDiffView(
               key: ValueKey(file.path),
               diff: value,
-              selection: draft.selections[file.path],
-              onSelectionChanged: _busy ? null : (selection) => _controller.selectLines(file.path, selection),
+              selection: status.inProgress != null ? null : draft.selections[file.path],
+              onSelectionChanged: _busy || status.inProgress != null
+                  ? null
+                  : (selection) => _controller.selectLines(file.path, selection),
             ),
           ),
         ),
