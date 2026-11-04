@@ -14,9 +14,8 @@ import '../../ui/format.dart';
 import '../../ui/theme.dart';
 import 'markdown_view.dart';
 
-/// GitHub-style repository page: file list, README and a file viewer.
-/// Reads through [RepoContentSource], so it does not care whether the
-/// content comes from the working folder, a commit or a hub repository.
+/// Overview tab of a local repository: [ContentBrowser] over the working
+/// folder or HEAD.
 class OverviewView extends ConsumerStatefulWidget {
   const OverviewView({super.key, required this.repo});
   final RepositoryInfo repo;
@@ -27,10 +26,75 @@ class OverviewView extends ConsumerStatefulWidget {
 
 class _OverviewViewState extends ConsumerState<OverviewView> {
   var _view = ContentView.workingTree;
-  var _dir = '';
-  String? _file;
 
   ContentKey get _key => (repoId: widget.repo.id, view: _view);
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L10n.of(context);
+    final t = Terms.of(context);
+    return ContentBrowser(
+      source: ref.watch(contentSourceProvider(_key)),
+      rootLabel: widget.repo.name,
+      localRoot: _view == ContentView.workingTree ? widget.repo.path : null,
+      errorHint: _view == ContentView.head ? l.overviewNoCommits(t.commitUnit) : null,
+      onRefresh: () => ref.invalidate(contentSourceProvider(_key)),
+      leading: SegmentedButton<ContentView>(
+        showSelectedIcon: false,
+        segments: [
+          ButtonSegment(
+            value: ContentView.workingTree,
+            tooltip: l.overviewWorkingTreeTip(t.commit),
+            label: Text(l.overviewWorkingTree),
+          ),
+          ButtonSegment(
+            value: ContentView.head,
+            tooltip: l.overviewHeadTip(t.branch),
+            label: Text(l.overviewHead(t.commitUnit)),
+          ),
+        ],
+        selected: {_view},
+        onSelectionChanged: (v) => setState(() => _view = v.first),
+      ),
+    );
+  }
+}
+
+/// GitHub-style repository page: breadcrumbs, file list, README and a file
+/// viewer over any [RepoContentSource] (working folder, a commit, or a hub
+/// repository through its HTTP API).
+class ContentBrowser extends ConsumerStatefulWidget {
+  const ContentBrowser({
+    super.key,
+    required this.source,
+    required this.rootLabel,
+    this.leading,
+    this.onRefresh,
+    this.localRoot,
+    this.errorHint,
+  });
+
+  /// Null while the source is unavailable (nothing is shown).
+  final RepoContentSource? source;
+  final String rootLabel;
+
+  /// Shown before the breadcrumbs (e.g. a view switch).
+  final Widget? leading;
+  final VoidCallback? onRefresh;
+
+  /// Folder on disk for "Open in Explorer"; null hides the button.
+  final String? localRoot;
+
+  /// Replaces the raw error when listing fails (e.g. "no commits yet").
+  final String? errorHint;
+
+  @override
+  ConsumerState<ContentBrowser> createState() => _ContentBrowserState();
+}
+
+class _ContentBrowserState extends ConsumerState<ContentBrowser> {
+  var _dir = '';
+  String? _file;
 
   void _openDir(String dir) => setState(() {
     _dir = dir;
@@ -45,7 +109,7 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
   /// Follows a repository link from a README: folder or file.
   Future<void> _navigate(String path) async {
     final parent = p.posix.dirname(path) == '.' ? '' : p.posix.dirname(path);
-    final entries = await ref.read(contentSourceProvider(_key))?.list(parent) ?? const <TreeEntry>[];
+    final entries = await widget.source?.list(parent) ?? const <TreeEntry>[];
     final entry = entries.where((e) => e.path == path).firstOrNull;
     if (!mounted) return;
     if (path.isEmpty || entry?.isDirectory == true) {
@@ -55,41 +119,14 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
     }
   }
 
-  void _refresh() {
-    ref.invalidate(contentSourceProvider(_key));
-  }
-
   Future<void> _openInExplorer() async {
-    final dir = Directory(p.join(widget.repo.path, p.joinAll(p.posix.split(_dir))));
+    final root = widget.localRoot;
+    if (root == null) return;
+    final dir = Directory(p.join(root, p.joinAll(p.posix.split(_dir))));
     if (!dir.existsSync()) return;
     // Absolute path: a bare 'explorer.exe' is also searched for in the current directory.
     final windows = Platform.environment['SystemRoot'] ?? r'C:\Windows';
     await Process.run(p.join(windows, 'explorer.exe'), [dir.path]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final file = _file;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _Toolbar(
-          repoName: widget.repo.name,
-          view: _view,
-          dir: _dir,
-          file: file,
-          onViewChanged: (view) => setState(() => _view = view),
-          onDir: _openDir,
-          onRefresh: _refresh,
-          onOpenFolder: _view == ContentView.workingTree ? _openInExplorer : null,
-        ),
-        Expanded(
-          child: file == null
-              ? _FolderPage(contentKey: _key, dir: _dir, onOpen: _openEntry, onNavigate: _navigate)
-              : _FilePage(key: ValueKey(file), contentKey: _key, path: file, onNavigate: _navigate),
-        ),
-      ],
-    );
   }
 
   void _openEntry(TreeEntry entry) {
@@ -99,80 +136,104 @@ class _OverviewViewState extends ConsumerState<OverviewView> {
       _openFile(entry.path);
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final file = _file;
+    final source = widget.source;
+    final Widget body;
+    if (source == null) {
+      body = const SizedBox.shrink();
+    } else if (file == null) {
+      body = _FolderPage(
+        source: source,
+        dir: _dir,
+        errorHint: widget.errorHint,
+        onOpen: _openEntry,
+        onNavigate: _navigate,
+      );
+    } else {
+      body = _FilePage(key: ValueKey(file), source: source, path: file, onNavigate: _navigate);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _Toolbar(
+          rootLabel: widget.rootLabel,
+          leading: widget.leading,
+          dir: _dir,
+          file: file,
+          onDir: _openDir,
+          onRefresh: widget.onRefresh,
+          onOpenFolder: widget.localRoot == null ? null : _openInExplorer,
+        ),
+        Expanded(child: body),
+      ],
+    );
+  }
 }
 
 class _Toolbar extends StatelessWidget {
   const _Toolbar({
-    required this.repoName,
-    required this.view,
+    required this.rootLabel,
+    required this.leading,
     required this.dir,
     required this.file,
-    required this.onViewChanged,
     required this.onDir,
     required this.onRefresh,
     required this.onOpenFolder,
   });
 
-  final String repoName;
-  final ContentView view;
+  final String rootLabel;
+  final Widget? leading;
   final String dir;
   final String? file;
-  final ValueChanged<ContentView> onViewChanged;
   final ValueChanged<String> onDir;
-  final VoidCallback onRefresh;
+  final VoidCallback? onRefresh;
   final VoidCallback? onOpenFolder;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = L10n.of(context);
-    final t = Terms.of(context);
     final segments = dir.isEmpty ? const <String>[] : dir.split('/');
     final crumbs = <Widget>[
-      _Crumb(label: repoName, onTap: () => onDir(''), strong: true),
+      _Crumb(label: rootLabel, onTap: () => onDir(''), strong: true),
       for (var i = 0; i < segments.length; i++) ...[
         Text(' / ', style: TextStyle(color: c.muted)),
         _Crumb(label: segments[i], onTap: () => onDir(segments.take(i + 1).join('/'))),
       ],
       if (file != null) ...[
         Text(' / ', style: TextStyle(color: c.muted)),
-        Text(p.posix.basename(file!), style: TextStyle(fontWeight: FontWeight.w700, color: c.text)),
+        Text(
+          p.posix.basename(file!),
+          style: TextStyle(fontWeight: FontWeight.w700, color: c.text),
+        ),
       ],
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(Space.xl, Space.md, Space.xl, Space.sm),
       child: Row(
         children: [
-          SegmentedButton<ContentView>(
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(
-                value: ContentView.workingTree,
-                tooltip: l.overviewWorkingTreeTip(t.commit),
-                label: Text(l.overviewWorkingTree),
-              ),
-              ButtonSegment(
-                value: ContentView.head,
-                tooltip: l.overviewHeadTip(t.branch),
-                label: Text(l.overviewHead(t.commitUnit)),
-              ),
-            ],
-            selected: {view},
-            onSelectionChanged: (v) => onViewChanged(v.first),
+          if (leading != null) ...[leading!, const SizedBox(width: Space.lg)],
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: crumbs),
+            ),
           ),
-          const SizedBox(width: Space.lg),
-          Expanded(child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: crumbs))),
           if (onOpenFolder != null)
             IconButton(
               tooltip: l.overviewOpenFolder,
               onPressed: onOpenFolder,
               icon: Icon(Icons.folder_open_rounded, size: 18, color: c.muted),
             ),
-          IconButton(
-            tooltip: l.overviewRefresh,
-            onPressed: onRefresh,
-            icon: Icon(Icons.refresh_rounded, size: 18, color: c.muted),
-          ),
+          if (onRefresh != null)
+            IconButton(
+              tooltip: l.overviewRefresh,
+              onPressed: onRefresh,
+              icon: Icon(Icons.refresh_rounded, size: 18, color: c.muted),
+            ),
         ],
       ),
     );
@@ -224,7 +285,9 @@ class _Card extends StatelessWidget {
           if (header != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.sm + 2),
-              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: c.border)),
+              ),
               child: header,
             ),
           if (expand) Expanded(child: child) else child,
@@ -248,7 +311,9 @@ class _Message extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: c.muted),
           const SizedBox(width: Space.sm),
-          Expanded(child: Text(text, style: TextStyle(color: c.muted))),
+          Expanded(
+            child: Text(text, style: TextStyle(color: c.muted)),
+          ),
         ],
       ),
     );
@@ -256,8 +321,15 @@ class _Message extends StatelessWidget {
 }
 
 class _FolderPage extends ConsumerWidget {
-  const _FolderPage({required this.contentKey, required this.dir, required this.onOpen, required this.onNavigate});
-  final ContentKey contentKey;
+  const _FolderPage({
+    required this.source,
+    required this.dir,
+    required this.errorHint,
+    required this.onOpen,
+    required this.onNavigate,
+  });
+  final RepoContentSource source;
+  final String? errorHint;
   final String dir;
   final ValueChanged<TreeEntry> onOpen;
   final ValueChanged<String> onNavigate;
@@ -265,12 +337,13 @@ class _FolderPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L10n.of(context);
-    final tree = ref.watch(treeProvider((key: contentKey, dir: dir)));
+    final tree = ref.watch(treeProvider((source: source, dir: dir)));
     final Widget listing = switch (tree) {
       AsyncData(:final value) when value.isEmpty => _Message(l.overviewEmptyFolder),
-      AsyncData(:final value) => Column(children: [for (final e in value) _EntryRow(entry: e, onTap: () => onOpen(e))]),
-      AsyncError() when contentKey.view == ContentView.head =>
-        _Message(l.overviewNoCommits(Terms.of(context).commitUnit)),
+      AsyncData(:final value) => Column(
+        children: [for (final e in value) _EntryRow(entry: e, onTap: () => onOpen(e))],
+      ),
+      AsyncError() when errorHint != null => _Message(errorHint!),
       AsyncError(:final error) => _Message(l.overviewLoadError('$error'), icon: Icons.error_outline_rounded),
       _ => const Padding(padding: EdgeInsets.all(Space.xl), child: LinearProgressIndicator(minHeight: 2)),
     };
@@ -281,7 +354,7 @@ class _FolderPage extends ConsumerWidget {
         _Card(child: listing),
         const SizedBox(height: Space.lg),
         if (readme != null)
-          _ReadmeCard(contentKey: contentKey, entry: readme, onNavigate: onNavigate)
+          _ReadmeCard(source: source, entry: readme, onNavigate: onNavigate)
         else if (tree.hasValue)
           _Card(child: _Message(l.overviewNoReadme, icon: Icons.menu_book_rounded)),
       ],
@@ -313,12 +386,20 @@ class _EntryRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.sm),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border.withValues(alpha: 0.5)))),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: c.border.withValues(alpha: 0.5))),
+        ),
         child: Row(
           children: [
             Icon(icon, size: 18, color: color),
             const SizedBox(width: Space.md),
-            Expanded(child: Text(entry.name, overflow: TextOverflow.ellipsis, style: TextStyle(color: c.text))),
+            Expanded(
+              child: Text(
+                entry.name,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: c.text),
+              ),
+            ),
             Text(note, style: TextStyle(fontSize: 12, color: c.muted)),
           ],
         ),
@@ -328,34 +409,37 @@ class _EntryRow extends StatelessWidget {
 }
 
 class _ReadmeCard extends ConsumerWidget {
-  const _ReadmeCard({required this.contentKey, required this.entry, required this.onNavigate});
-  final ContentKey contentKey;
+  const _ReadmeCard({required this.source, required this.entry, required this.onNavigate});
+  final RepoContentSource source;
   final TreeEntry entry;
   final ValueChanged<String> onNavigate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.colors;
-    final blob = ref.watch(blobProvider((key: contentKey, path: entry.path)));
+    final blob = ref.watch(blobProvider((source: source, path: entry.path)));
     return _Card(
       header: Row(
         children: [
           Icon(Icons.menu_book_rounded, size: 16, color: c.muted),
           const SizedBox(width: Space.sm),
-          Text(entry.name, style: TextStyle(fontWeight: FontWeight.w700, color: c.text)),
+          Text(
+            entry.name,
+            style: TextStyle(fontWeight: FontWeight.w700, color: c.text),
+          ),
         ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(Space.xl),
-        child: _BlobBody(blob: blob, contentKey: contentKey, path: entry.path, onNavigate: onNavigate, rendered: true),
+        child: _BlobBody(blob: blob, source: source, path: entry.path, onNavigate: onNavigate, rendered: true),
       ),
     );
   }
 }
 
 class _FilePage extends ConsumerStatefulWidget {
-  const _FilePage({super.key, required this.contentKey, required this.path, required this.onNavigate});
-  final ContentKey contentKey;
+  const _FilePage({super.key, required this.source, required this.path, required this.onNavigate});
+  final RepoContentSource source;
   final String path;
   final ValueChanged<String> onNavigate;
 
@@ -370,7 +454,7 @@ class _FilePageState extends ConsumerState<_FilePage> {
   Widget build(BuildContext context) {
     final c = context.colors;
     final l = L10n.of(context);
-    final blob = ref.watch(blobProvider((key: widget.contentKey, path: widget.path)));
+    final blob = ref.watch(blobProvider((source: widget.source, path: widget.path)));
     final size = switch (blob.value) {
       TextBlob(:final size) || BinaryBlob(:final size) || TooLargeBlob(:final size) => formatBytes(size),
       ImageBlob(:final bytes) => formatBytes(bytes.length),
@@ -404,7 +488,7 @@ class _FilePageState extends ConsumerState<_FilePage> {
             padding: const EdgeInsets.all(Space.lg),
             child: _BlobBody(
               blob: blob,
-              contentKey: widget.contentKey,
+              source: widget.source,
               path: widget.path,
               onNavigate: widget.onNavigate,
               rendered: _rendered,
@@ -420,14 +504,14 @@ class _FilePageState extends ConsumerState<_FilePage> {
 class _BlobBody extends StatelessWidget {
   const _BlobBody({
     required this.blob,
-    required this.contentKey,
+    required this.source,
     required this.path,
     required this.onNavigate,
     required this.rendered,
   });
 
   final AsyncValue<BlobContent> blob;
-  final ContentKey contentKey;
+  final RepoContentSource source;
   final String path;
   final ValueChanged<String> onNavigate;
   final bool rendered;
@@ -437,8 +521,12 @@ class _BlobBody extends StatelessWidget {
     final l = L10n.of(context);
     final dir = p.posix.dirname(path) == '.' ? '' : p.posix.dirname(path);
     return switch (blob) {
-      AsyncData(value: TextBlob(:final text)) when rendered && isMarkdownPath(path) =>
-        RepoMarkdown(text: text, contentKey: contentKey, baseDir: dir, onNavigate: onNavigate),
+      AsyncData(value: TextBlob(:final text)) when rendered && isMarkdownPath(path) => RepoMarkdown(
+        text: text,
+        source: source,
+        baseDir: dir,
+        onNavigate: onNavigate,
+      ),
       AsyncData(value: TextBlob(:final text)) => SelectableText(
         text,
         style: TextStyle(fontFamily: 'Consolas', fontSize: 13, height: 1.5, color: context.colors.text),

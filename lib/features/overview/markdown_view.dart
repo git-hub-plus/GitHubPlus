@@ -22,13 +22,13 @@ class RepoMarkdown extends StatelessWidget {
   const RepoMarkdown({
     super.key,
     required this.text,
-    required this.contentKey,
+    required this.source,
     required this.baseDir,
     required this.onNavigate,
   });
 
   final String text;
-  final ContentKey contentKey;
+  final RepoContentSource source;
 
   /// Folder of the markdown file, for relative links.
   final String baseDir;
@@ -56,7 +56,7 @@ class RepoMarkdown extends StatelessWidget {
     if (uri.hasScheme) return _ImagePlaceholder(alt: alt, remote: true);
     final target = resolveRepoLink(baseDir, uri.toString());
     if (target == null) return _ImagePlaceholder(alt: alt);
-    return _RepoImage(contentKey: contentKey, path: target, alt: alt);
+    return _RepoImage(source: source, path: target, alt: alt);
   }
 
   @override
@@ -70,9 +70,13 @@ class RepoMarkdown extends StatelessWidget {
       code: mono,
       codeblockDecoration: BoxDecoration(color: c.raised, borderRadius: BorderRadius.circular(Radii.sm)),
       codeblockPadding: const EdgeInsets.all(Space.md),
-      blockquoteDecoration: BoxDecoration(border: Border(left: BorderSide(color: c.border, width: 3))),
+      blockquoteDecoration: BoxDecoration(
+        border: Border(left: BorderSide(color: c.border, width: 3)),
+      ),
       blockquotePadding: const EdgeInsets.only(left: Space.md),
-      horizontalRuleDecoration: BoxDecoration(border: Border(top: BorderSide(color: c.border))),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: c.border)),
+      ),
       h1: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: c.text),
       h2: TextStyle(fontSize: 21, fontWeight: FontWeight.w700, color: c.text),
       h3: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: c.text),
@@ -91,14 +95,14 @@ class RepoMarkdown extends StatelessWidget {
 }
 
 class _RepoImage extends ConsumerWidget {
-  const _RepoImage({required this.contentKey, required this.path, this.alt});
-  final ContentKey contentKey;
+  const _RepoImage({required this.source, required this.path, this.alt});
+  final RepoContentSource source;
   final String path;
   final String? alt;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final blob = ref.watch(blobProvider((key: contentKey, path: path))).value;
+    final blob = ref.watch(blobProvider((source: source, path: path))).value;
     if (blob is! ImageBlob) return _ImagePlaceholder(alt: alt);
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 480),
@@ -124,7 +128,10 @@ class _ImagePlaceholder extends StatelessWidget {
     final label = alt == null || alt!.isEmpty ? '' : alt!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Space.sm, vertical: 2),
-      decoration: BoxDecoration(border: Border.all(color: c.border), borderRadius: BorderRadius.circular(Radii.sm)),
+      decoration: BoxDecoration(
+        border: Border.all(color: c.border),
+        borderRadius: BorderRadius.circular(Radii.sm),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

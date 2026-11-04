@@ -23,12 +23,12 @@ final contentSourceProvider = Provider.autoDispose.family<RepoContentSource?, Co
   };
 });
 
-final treeProvider = FutureProvider.autoDispose.family<List<TreeEntry>, ({ContentKey key, String dir})>((ref, args) async {
-  final source = ref.watch(contentSourceProvider(args.key));
-  return source == null ? const [] : source.list(args.dir);
-});
+/// Keyed by the source instance: a refreshed source is a new key, so
+/// listings reload; hub sources work the same way as local ones.
+final treeProvider = FutureProvider.autoDispose.family<List<TreeEntry>, ({RepoContentSource source, String dir})>(
+  (ref, args) => args.source.list(args.dir),
+);
 
-final blobProvider = FutureProvider.autoDispose.family<BlobContent, ({ContentKey key, String path})>((ref, args) async {
-  final source = ref.watch(contentSourceProvider(args.key));
-  return source == null ? const MissingBlob() : source.read(args.path);
-});
+final blobProvider = FutureProvider.autoDispose.family<BlobContent, ({RepoContentSource source, String path})>(
+  (ref, args) => args.source.read(args.path),
+);
