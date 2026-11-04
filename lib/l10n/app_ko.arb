@@ -270,6 +270,110 @@
       }
     }
   },
+  "changesSelectAll": "전체 선택",
+  "changesIncluded": "{total}개 중 {included}개 포함",
+  "@changesIncluded": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "included": {
+        "type": "int"
+      }
+    }
+  },
+  "changesConflicts": "충돌 {count}개를 먼저 해결하세요",
+  "@changesConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesAdded": "추가",
+  "changesModified": "수정",
+  "changesDeleted": "삭제",
+  "changesRenamed": "이름 변경",
+  "changesConflict": "충돌 · {count}",
+  "@changesConflict": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "changesSummary": "요약 (필수)",
+  "changesDescription": "설명",
+  "changesRemaining": "권장 길이까지 {count}자",
+  "@changesRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesAmend": "마지막 {commit} 고치기(amend)",
+  "@changesAmend": {
+    "placeholders": {
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "changesCommit": "{branch}에 {commit}",
+  "@changesCommit": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "changesCommitted": "{commit} 완료 · {sha}",
+  "@changesCommitted": {
+    "placeholders": {
+      "commit": {
+        "type": "String"
+      },
+      "sha": {
+        "type": "String"
+      }
+    }
+  },
+  "changesDiscard": "버리기",
+  "changesDiscardFile": "이 파일 버리기",
+  "changesCopyPath": "경로 복사",
+  "changesDiscardTitle": "파일 {count}개의 변경을 버릴까요?",
+  "@changesDiscardTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesDiscardBody": "백업 폴더에 사본을 남긴 뒤 되돌립니다.",
+  "changesCancel": "취소",
+  "changesDiscarded": "변경을 버렸습니다 · 백업 폴더 열기",
+  "changesSaved": "모두 저장됨",
+  "changesEmptyHint": "작업 현황을 확인하거나 {push} 대기 {count}개를 확인하세요.",
+  "@changesEmptyHint": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesPickFile": "파일을 골라 바뀐 내용을 확인하세요.",
+  "changesFailed": "작업을 마치지 못했습니다.",
+  "changesRetry": "다시 시도",
+  "changesDetached": "현재 위치",
+  "changesResize": "파일 목록 너비 조절",
+  "changesBusy": "처리 중…",
   "tabHistory": "{history}",
   "@tabHistory": {
     "placeholders": {

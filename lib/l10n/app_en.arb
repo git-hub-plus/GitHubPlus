@@ -50,6 +50,110 @@
   "goalReached": "Goal reached!",
   "goalRemaining": "{count} to go",
   "tabChanges": "{changes}",
+  "changesSelectAll": "Select all",
+  "changesIncluded": "{included} of {total} included",
+  "@changesIncluded": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "included": {
+        "type": "int"
+      }
+    }
+  },
+  "changesConflicts": "Resolve {count} conflicts first",
+  "@changesConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesAdded": "Added",
+  "changesModified": "Modified",
+  "changesDeleted": "Deleted",
+  "changesRenamed": "Renamed",
+  "changesConflict": "Conflict ? {count}",
+  "@changesConflict": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "changesSummary": "Summary (required)",
+  "changesDescription": "Description",
+  "changesRemaining": "{count} characters to recommended limit",
+  "@changesRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesAmend": "Amend last {commit}",
+  "@changesAmend": {
+    "placeholders": {
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "changesCommit": "{commit} to {branch}",
+  "@changesCommit": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "changesCommitted": "{commit} complete ? {sha}",
+  "@changesCommitted": {
+    "placeholders": {
+      "commit": {
+        "type": "String"
+      },
+      "sha": {
+        "type": "String"
+      }
+    }
+  },
+  "changesDiscard": "Discard",
+  "changesDiscardFile": "Discard this file",
+  "changesCopyPath": "Copy path",
+  "changesDiscardTitle": "Discard changes in {count} files?",
+  "@changesDiscardTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesDiscardBody": "A copy is saved in the backup folder before restoring.",
+  "changesCancel": "Cancel",
+  "changesDiscarded": "Changes discarded ? Open backup folder",
+  "changesSaved": "Everything saved",
+  "changesEmptyHint": "Check task activity or {count} waiting to {push}.",
+  "@changesEmptyHint": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesPickFile": "Select a file to view its changes.",
+  "changesFailed": "Could not complete the operation.",
+  "changesRetry": "Retry",
+  "changesDetached": "Current location",
+  "changesResize": "Resize file list",
+  "changesBusy": "Working?",
   "tabHistory": "{history}",
   "tabExpeditions": "Activity",
   "expeditionsTitle": "Activity",
