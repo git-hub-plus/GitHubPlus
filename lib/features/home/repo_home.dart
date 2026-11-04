@@ -27,7 +27,8 @@ class RepoHome extends ConsumerStatefulWidget {
 }
 
 class _RepoHomeState extends ConsumerState<RepoHome> {
-  var _tab = HomeTab.overview;
+  // GHP_START_TAB (dart-define) opens another tab first, for screenshots without clicking.
+  var _tab = HomeTab.values.asNameMap()[const String.fromEnvironment('GHP_START_TAB')] ?? HomeTab.overview;
 
   @override
   Widget build(BuildContext context) {

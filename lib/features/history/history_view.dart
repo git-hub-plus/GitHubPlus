@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/git/git_runner.dart';
 import '../../core/history/graph.dart';
 import '../../core/models/app_models.dart';
+import '../../core/models/commit.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/terms.dart';
 import '../../state/history_state.dart';
@@ -33,7 +34,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
   final _scroll = ScrollController();
   final _search = TextEditingController();
   final _listFocus = FocusNode();
-  double _fraction = .55;
+  double _fraction = .42;
 
   @override
   void initState() {
@@ -382,12 +383,13 @@ class _CommitDetails extends ConsumerWidget {
       );
     }
     final files = ref.watch(historyFilesProvider((path: repo.path, sha: commit.sha)));
-    final file = state.file;
+    // Without a pick, show the first file so the diff is never empty.
+    final file = state.file ?? files.value?.firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Flexible(
-          flex: 2,
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 190),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(Space.lg),
             child: Column(
@@ -445,15 +447,25 @@ class _CommitDetails extends ConsumerWidget {
                         ),
                     ],
                   ),
-                const Divider(),
-                files.when(
-                  loading: () => const LinearProgressIndicator(),
+              ],
+            ),
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: 190,
+                child: files.when(
+                  loading: () => const Align(alignment: Alignment.topCenter, child: LinearProgressIndicator()),
                   error: (error, _) => _HistoryError(
                     error: error,
                     retry: () => ref.invalidate(historyFilesProvider((path: repo.path, sha: commit.sha))),
                   ),
-                  data: (files) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  data: (files) => ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: Space.md, vertical: Space.sm),
                     children: [
                       Text(l.historyFiles(files.length), style: const TextStyle(fontWeight: FontWeight.w600)),
                       if (files.isEmpty) Text(l.historyNoFiles, style: TextStyle(color: c.muted)),
@@ -470,34 +482,36 @@ class _CommitDetails extends ConsumerWidget {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(child: _diffPane(context, ref, commit, file)),
+            ],
           ),
-        ),
-        const Divider(),
-        Expanded(
-          flex: 3,
-          child: file == null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(Space.md),
-                    child: Text(l.historySelectFile, style: TextStyle(color: c.muted)),
-                  ),
-                )
-              : ref
-                    .watch(historyDiffProvider((path: repo.path, sha: commit.sha, file: file)))
-                    .when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, _) => _HistoryError(
-                        error: error,
-                        retry: () =>
-                            ref.invalidate(historyDiffProvider((path: repo.path, sha: commit.sha, file: file))),
-                      ),
-                      data: (diff) => FileDiffView(key: ValueKey('${commit.sha}:${file.path}'), diff: diff),
-                    ),
         ),
       ],
     );
+  }
+
+  Widget _diffPane(BuildContext context, WidgetRef ref, Commit commit, CommittedFile? file) {
+    final c = context.colors;
+    final l = L10n.of(context);
+    return file == null
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.all(Space.md),
+              child: Text(l.historySelectFile, style: TextStyle(color: c.muted)),
+            ),
+          )
+        : ref
+              .watch(historyDiffProvider((path: repo.path, sha: commit.sha, file: file)))
+              .when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => _HistoryError(
+                  error: error,
+                  retry: () => ref.invalidate(historyDiffProvider((path: repo.path, sha: commit.sha, file: file))),
+                ),
+                data: (diff) => FileDiffView(key: ValueKey('${commit.sha}:${file.path}'), diff: diff),
+              );
   }
 }
 
