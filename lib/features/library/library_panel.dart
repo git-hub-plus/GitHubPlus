@@ -7,6 +7,9 @@ import '../../core/storage/repository_store.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/terms.dart';
 import '../../state/app_state.dart';
+import '../../state/hub_client_state.dart';
+import '../hub/client/hub_library_section.dart';
+export '../hub/client/hub_client_view.dart' show hubClientScreen;
 import '../../ui/theme.dart';
 import '../../ui/widgets/feedback.dart';
 
@@ -17,6 +20,7 @@ Future<void> addExistingRepository(BuildContext context, WidgetRef ref) async {
   if (path == null || !context.mounted) return;
   try {
     await ref.read(libraryProvider.notifier).add(path);
+    if (context.mounted) ref.read(selectedHubProvider.notifier).select(null);
   } on NotARepositoryException catch (e) {
     if (context.mounted) showGhpToast(context, l.notARepository(e.path), tone: ToastTone.error);
   } catch (e) {
@@ -59,22 +63,30 @@ class _LibraryPanelState extends ConsumerState<LibraryPanel> {
             if (a.pinned != b.pinned) return a.pinned ? -1 : 1;
             return a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase());
           });
-    final groups = {
-      for (final group in RepositoryGroup.values) group: visible.where((r) => r.group == group).toList(),
-    }..removeWhere((_, items) => items.isEmpty);
+    final groups = {for (final group in RepositoryGroup.values) group: visible.where((r) => r.group == group).toList()}
+      ..removeWhere((_, items) => items.isEmpty);
 
     return Container(
       width: LibraryPanel.width,
-      decoration: BoxDecoration(color: c.surface, border: Border(right: BorderSide(color: c.border))),
+      decoration: BoxDecoration(
+        color: c.surface,
+        border: Border(right: BorderSide(color: c.border)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 260),
+            child: const SingleChildScrollView(child: HubLibrarySection()),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.lg, Space.lg, Space.md, Space.sm),
             child: Row(
               children: [
-                Text(l.libraryTitle.toUpperCase(),
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2, color: c.muted)),
+                Text(
+                  l.libraryTitle.toUpperCase(),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2, color: c.muted),
+                ),
                 const SizedBox(width: Space.sm),
                 _CountPill(count: library.repositories.length),
                 const Spacer(),
@@ -133,8 +145,11 @@ class _LibraryPanelState extends ConsumerState<LibraryPanel> {
                         for (final repo in entry.value)
                           _RepositoryCard(
                             repo: repo,
-                            selected: repo.id == library.selectedId,
-                            onTap: () => ref.read(libraryProvider.notifier).select(repo.id),
+                            selected: repo.id == library.selectedId && ref.watch(selectedHubProvider) == null,
+                            onTap: () {
+                              ref.read(selectedHubProvider.notifier).select(null);
+                              ref.read(libraryProvider.notifier).select(repo.id);
+                            },
                           ),
                       ],
                     ],
@@ -156,7 +171,10 @@ class _CountPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
       decoration: BoxDecoration(color: c.raised, borderRadius: BorderRadius.circular(20)),
-      child: Text('$count', style: TextStyle(fontSize: 11, color: c.muted, fontWeight: FontWeight.w600)),
+      child: Text(
+        '$count',
+        style: TextStyle(fontSize: 11, color: c.muted, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
@@ -181,7 +199,10 @@ class _GroupHeader extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: c.muted),
           const SizedBox(width: Space.xs + 2),
-          Text('$label · $count', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: c.muted)),
+          Text(
+            '$label · $count',
+            style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: c.muted),
+          ),
         ],
       ),
     );

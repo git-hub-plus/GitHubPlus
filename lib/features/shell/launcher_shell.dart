@@ -76,9 +76,11 @@ class _LauncherShellState extends ConsumerState<LauncherShell> {
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: context.motion(Motion.normal),
-                        child: selected == null
-                            ? WelcomeView(key: const ValueKey('welcome'), onAddRepository: _addRepository)
-                            : RepoHome(key: ValueKey(selected.id), repo: selected),
+                        child:
+                            hubClientScreen(ref) ??
+                            (selected == null
+                                ? WelcomeView(key: const ValueKey('welcome'), onAddRepository: _addRepository)
+                                : RepoHome(key: ValueKey(selected.id), repo: selected)),
                       ),
                     ),
                   ],
