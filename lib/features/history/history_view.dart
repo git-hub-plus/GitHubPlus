@@ -18,6 +18,7 @@ import '../../ui/format.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/diff_view.dart';
 import '../../ui/widgets/feedback.dart';
+import 'history_actions.dart';
 
 const _rowHeight = 44.0;
 const _laneWidth = 16.0;
@@ -35,6 +36,48 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
   final _search = TextEditingController();
   final _listFocus = FocusNode();
   double _fraction = .42;
+  final _selection = <String>{};
+  String? _anchor;
+
+  void _selectCommit(Commit commit, HistoryState state) {
+    final keys = HardwareKeyboard.instance;
+    setState(() {
+      if (keys.isShiftPressed && _anchor != null) {
+        final visible = state.visibleIndices.map((i) => state.commits[i]).toList();
+        final a = visible.indexWhere((c) => c.sha == _anchor);
+        final b = visible.indexWhere((c) => c.sha == commit.sha);
+        if (a >= 0 && b >= 0) {
+          if (!keys.isControlPressed) _selection.clear();
+          _selection.addAll(visible.sublist(math.min(a, b), math.max(a, b) + 1).map((c) => c.sha));
+        }
+      } else if (keys.isControlPressed || keys.isMetaPressed) {
+        if (!_selection.remove(commit.sha)) _selection.add(commit.sha);
+        _anchor = commit.sha;
+      } else {
+        _selection
+          ..clear()
+          ..add(commit.sha);
+        _anchor = commit.sha;
+      }
+    });
+    ref.read(historyProvider(widget.repo).notifier).select(commit);
+    _listFocus.requestFocus();
+  }
+
+  void _actions(Commit commit, Offset position) {
+    final state = ref.read(historyProvider(widget.repo));
+    if (!_selection.contains(commit.sha)) _selectCommit(commit, state);
+    unawaited(
+      showHistoryActions(
+        context,
+        ref,
+        widget.repo,
+        commit,
+        state.commits.where((c) => _selection.contains(c.sha)).toList(),
+        position,
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -92,6 +135,10 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     final c = context.colors;
     final branch = ref.watch(repoStatusProvider(widget.repo.id)).value?.currentBranch;
     ref.listen(provider, (old, next) {
+      if (next.loading && next.commits.isEmpty) {
+        _selection.clear();
+        _anchor = null;
+      }
       if (_search.text != next.query) {
         _search.value = TextEditingValue(
           text: next.query,
@@ -137,7 +184,11 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
             ],
           ),
         ),
-        if (state.loading) const LinearProgressIndicator(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.md),
+          child: Text(l.historyActionSelection(_selection.length), style: TextStyle(color: c.muted, fontSize: 11)),
+        ),
+        if (state.loading || ref.watch(repositoryActionProvider(widget.repo))) const LinearProgressIndicator(),
         if (state.error != null)
           Padding(
             padding: const EdgeInsets.all(Space.sm),
@@ -192,14 +243,16 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                           final i = indices[index];
                           final commit = state.commits[i];
                           return Semantics(
-                            selected: state.selected?.sha == commit.sha,
+                            selected: _selection.contains(commit.sha) || state.selected?.sha == commit.sha,
                             child: Material(
-                              color: state.selected?.sha == commit.sha ? c.accentSoft : c.surface,
+                              color: (_selection.contains(commit.sha) || state.selected?.sha == commit.sha)
+                                  ? c.accentSoft
+                                  : c.surface,
                               child: InkWell(
                                 key: ValueKey('commit-${commit.sha}'),
+                                onSecondaryTapUp: (event) => _actions(commit, event.globalPosition),
                                 onTap: () {
-                                  controller.select(commit);
-                                  _listFocus.requestFocus();
+                                  _selectCommit(commit, state);
                                 },
                                 child: Row(
                                   children: [
@@ -212,7 +265,10 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                                             row: state.graph[i],
                                             previous: i > 0 ? state.graph[i - 1] : null,
                                             palette: palette,
-                                            background: state.selected?.sha == commit.sha ? c.accentSoft : c.surface,
+                                            background:
+                                                (_selection.contains(commit.sha) || state.selected?.sha == commit.sha)
+                                                ? c.accentSoft
+                                                : c.surface,
                                           ),
                                         ),
                                       ),
@@ -238,7 +294,18 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                                               for (final name in commit.refs.where((r) => r != 'HEAD'))
                                                 Padding(
                                                   padding: const EdgeInsets.only(left: Space.xs),
-                                                  child: _RefBadge(name: name, current: name == branch),
+                                                  child: GestureDetector(
+                                                    onSecondaryTapUp: name.startsWith('tag: ')
+                                                        ? (event) => showTagActions(
+                                                            context,
+                                                            ref,
+                                                            widget.repo,
+                                                            name.substring(5),
+                                                            event.globalPosition,
+                                                          )
+                                                        : null,
+                                                    child: _RefBadge(name: name, current: name == branch),
+                                                  ),
                                                 ),
                                             ],
                                           ),
@@ -261,6 +328,19 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                                       child: Text(
                                         formatAgo(context, commit.author.date),
                                         style: TextStyle(color: c.muted, fontSize: 11),
+                                      ),
+                                    ),
+                                    Builder(
+                                      builder: (buttonContext) => IconButton(
+                                        key: ValueKey('history-actions-${commit.sha}'),
+                                        tooltip: l.historyActionMenu,
+                                        onPressed: ref.watch(repositoryActionProvider(widget.repo))
+                                            ? null
+                                            : () {
+                                                final box = buttonContext.findRenderObject()! as RenderBox;
+                                                _actions(commit, box.localToGlobal(Offset(0, box.size.height)));
+                                              },
+                                        icon: const Icon(Icons.more_horiz, size: 18),
                                       ),
                                     ),
                                   ],

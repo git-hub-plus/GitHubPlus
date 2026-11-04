@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/git/diff.dart';
 import '../core/git/git_runner.dart';
 import '../core/git/log.dart';
+import '../core/expeditions/expedition.dart';
 import '../core/history/graph.dart';
 import '../core/models/app_models.dart';
 import '../core/models/commit.dart';
@@ -163,4 +164,92 @@ final historyFilesProvider = FutureProvider.autoDispose.family<List<CommittedFil
 typedef HistoryDiffLocation = ({String path, String sha, CommittedFile file});
 final historyDiffProvider = FutureProvider.autoDispose.family<FileDiff, HistoryDiffLocation>(
   (ref, key) => getCommitDiff(ref.watch(gitProvider), key.path, key.sha, key.file),
+);
+
+/// Complete first-parent order, independent of history paging and filtering.
+final historyOrderProvider = FutureProvider.family<List<String>, RepositoryInfo>((ref, repo) async {
+  ref.watch(repoStatusProvider(repo.id));
+  final result = await ref.watch(gitProvider).run(['rev-list', '--first-parent', 'HEAD', '--'], cwd: repo.path);
+  return result.stdout.trim().split('\n').where((s) => s.isNotEmpty).toList();
+});
+
+typedef HistoryMembership = ({RepositoryInfo repo, String sha});
+final historyMembershipProvider = FutureProvider.family<({bool current, bool published}), HistoryMembership>((
+  ref,
+  key,
+) async {
+  ref.watch(repoStatusProvider(key.repo.id));
+  if (!RegExp(r'^[0-9a-fA-F]{40,64}$').hasMatch(key.sha)) throw ArgumentError('Invalid SHA');
+  final git = ref.watch(gitProvider);
+  final current = await git.run(
+    ['merge-base', '--is-ancestor', key.sha, 'HEAD'],
+    cwd: key.repo.path,
+    successExitCodes: {0, 1},
+  );
+  final published = await git.run([
+    'for-each-ref',
+    '--contains=${key.sha}',
+    '--format=%(refname)',
+    '--',
+    'refs/remotes/',
+  ], cwd: key.repo.path);
+  return (current: current.exitCode == 0, published: published.stdout.trim().isNotEmpty);
+});
+
+/// Serializes mutations from both panels and keeps the expedition alive when a panel closes.
+class RepositoryActionNotifier extends Notifier<bool> {
+  RepositoryActionNotifier(this.repo);
+  final RepositoryInfo repo;
+  @override
+  bool build() => false;
+
+  Future<T> run<T>({
+    required String title,
+    required Future<T> Function() task,
+    ExpeditionKind kind = ExpeditionKind.rebase,
+    String Function(T)? describe,
+  }) async {
+    if (state) throw StateError('An operation is already running');
+    state = true;
+    Object? failure;
+    try {
+      final result = await ref
+          .read(expeditionsProvider.notifier)
+          .run<T>(
+            kind: kind,
+            title: title,
+            destination: repo.name,
+            repoId: repo.id,
+            task: (_) async {
+              try {
+                return await task();
+              } catch (error) {
+                failure = StateError(redactCredentials(error.toString()));
+                throw failure!;
+              }
+            },
+            result: describe,
+          );
+      if (failure != null) throw failure!;
+      return result as T;
+    } finally {
+      if (ref.mounted) {
+        try {
+          ref.invalidate(repoStatusProvider(repo.id));
+          await ref.read(repoStatusProvider(repo.id).future);
+          if (ref.mounted) {
+            ref.invalidate(historyOrderProvider(repo));
+            ref.invalidate(historyMembershipProvider);
+            await ref.read(historyProvider(repo).notifier).refresh();
+          }
+        } finally {
+          if (ref.mounted) state = false;
+        }
+      }
+    }
+  }
+}
+
+final repositoryActionProvider = NotifierProvider.family<RepositoryActionNotifier, bool, RepositoryInfo>(
+  RepositoryActionNotifier.new,
 );
