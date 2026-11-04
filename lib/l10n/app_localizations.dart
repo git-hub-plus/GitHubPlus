@@ -961,6 +961,342 @@ abstract class L10n {
   /// **'용어 표시'**
   String get settingsTerms;
 
+  /// No description provided for @hubHostTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'내부망 허브 관리'**
+  String get hubHostTitle;
+
+  /// No description provided for @hubHostSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 PC에서 팀의 저장소와 버전 기록을 보관합니다.'**
+  String get hubHostSubtitle;
+
+  /// No description provided for @hubHostRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중'**
+  String get hubHostRunning;
+
+  /// No description provided for @hubHostStopped.
+  ///
+  /// In ko, this message translates to:
+  /// **'꺼짐'**
+  String get hubHostStopped;
+
+  /// No description provided for @hubHostError.
+  ///
+  /// In ko, this message translates to:
+  /// **'서버 오류'**
+  String get hubHostError;
+
+  /// No description provided for @hubHostPower.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브 켜기 / 끄기'**
+  String get hubHostPower;
+
+  /// No description provided for @hubHostName.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브 이름'**
+  String get hubHostName;
+
+  /// No description provided for @hubHostPort.
+  ///
+  /// In ko, this message translates to:
+  /// **'포트'**
+  String get hubHostPort;
+
+  /// No description provided for @hubHostAddresses.
+  ///
+  /// In ko, this message translates to:
+  /// **'접속 주소'**
+  String get hubHostAddresses;
+
+  /// No description provided for @hubHostConnectHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 PC에서 이 주소로 접속'**
+  String get hubHostConnectHint;
+
+  /// No description provided for @hubHostStartHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브를 켜면 접속 주소와 저장소를 확인할 수 있습니다.'**
+  String get hubHostStartHint;
+
+  /// No description provided for @hubHostRepositories.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소'**
+  String get hubHostRepositories;
+
+  /// No description provided for @hubHostToday.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 {push}'**
+  String hubHostToday(String push);
+
+  /// No description provided for @hubHostSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'서버 설정'**
+  String get hubHostSettings;
+
+  /// No description provided for @hubHostRoot.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 폴더'**
+  String get hubHostRoot;
+
+  /// No description provided for @hubHostBackupFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'백업 폴더 (선택)'**
+  String get hubHostBackupFolder;
+
+  /// No description provided for @hubHostChoose.
+  ///
+  /// In ko, this message translates to:
+  /// **'폴더 선택'**
+  String get hubHostChoose;
+
+  /// No description provided for @hubHostClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'백업 폴더 해제'**
+  String get hubHostClear;
+
+  /// No description provided for @hubHostKeepRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'창을 닫아도 계속 실행'**
+  String get hubHostKeepRunning;
+
+  /// No description provided for @hubHostTrayHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정만 저장됩니다. 트레이 실행은 다음 단계에서 지원합니다.'**
+  String get hubHostTrayHint;
+
+  /// No description provided for @hubHostSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 및 적용'**
+  String get hubHostSave;
+
+  /// No description provided for @hubHostSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정을 저장했습니다.'**
+  String get hubHostSaved;
+
+  /// No description provided for @hubHostRestartHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중 설정을 바꾸면 허브가 재시작됩니다.'**
+  String get hubHostRestartHint;
+
+  /// No description provided for @hubHostInvalidPort.
+  ///
+  /// In ko, this message translates to:
+  /// **'1024~65535 사이의 포트를 입력하세요.'**
+  String get hubHostInvalidPort;
+
+  /// No description provided for @hubHostRequired.
+  ///
+  /// In ko, this message translates to:
+  /// **'값을 입력하세요.'**
+  String get hubHostRequired;
+
+  /// No description provided for @hubHostNewRepository.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 저장소'**
+  String get hubHostNewRepository;
+
+  /// No description provided for @hubHostRepositoryName.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 이름'**
+  String get hubHostRepositoryName;
+
+  /// No description provided for @hubHostDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'설명'**
+  String get hubHostDescription;
+
+  /// No description provided for @hubHostInvalidName.
+  ///
+  /// In ko, this message translates to:
+  /// **'영문·숫자·_·-·.으로 1~100자. .., 끝의 점, 맨 앞 -, Windows 예약 이름은 사용할 수 없습니다.'**
+  String get hubHostInvalidName;
+
+  /// No description provided for @hubHostCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'만들기'**
+  String get hubHostCreate;
+
+  /// No description provided for @hubHostCreated.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소를 만들었습니다.'**
+  String get hubHostCreated;
+
+  /// No description provided for @hubHostDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get hubHostDelete;
+
+  /// No description provided for @hubHostDeleteTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 저장소를 삭제할까요?'**
+  String hubHostDeleteTitle(String name);
+
+  /// No description provided for @hubHostTrashHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소는 휴지통 폴더로 옮겨집니다. 이 허브에서는 더 이상 접속할 수 없습니다.'**
+  String get hubHostTrashHint;
+
+  /// No description provided for @hubHostDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소를 휴지통 폴더로 옮겼습니다.'**
+  String get hubHostDeleted;
+
+  /// No description provided for @hubHostClone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{clone} 주소 복사'**
+  String hubHostClone(String clone);
+
+  /// No description provided for @hubHostCopy.
+  ///
+  /// In ko, this message translates to:
+  /// **'주소 복사'**
+  String get hubHostCopy;
+
+  /// No description provided for @hubHostCopied.
+  ///
+  /// In ko, this message translates to:
+  /// **'주소를 복사했습니다.'**
+  String get hubHostCopied;
+
+  /// No description provided for @hubHostDefaultBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본 {branch}: {name}'**
+  String hubHostDefaultBranch(String branch, String name);
+
+  /// No description provided for @hubHostLastPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {push}: {time}'**
+  String hubHostLastPush(String push, String time);
+
+  /// No description provided for @hubHostNever.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 없음'**
+  String get hubHostNever;
+
+  /// No description provided for @hubHostNoRepositories.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 저장소가 없습니다. 새 저장소를 만들어 팀과 공유하세요.'**
+  String get hubHostNoRepositories;
+
+  /// No description provided for @hubHostPushLog.
+  ///
+  /// In ko, this message translates to:
+  /// **'{push} 기록 · 최근 100개'**
+  String hubHostPushLog(String push);
+
+  /// No description provided for @hubHostAllRepositories.
+  ///
+  /// In ko, this message translates to:
+  /// **'모든 저장소'**
+  String get hubHostAllRepositories;
+
+  /// No description provided for @hubHostNoPushes.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 받은 기록이 없습니다.'**
+  String get hubHostNoPushes;
+
+  /// No description provided for @hubHostSender.
+  ///
+  /// In ko, this message translates to:
+  /// **'보낸 PC: {address} · {host}'**
+  String hubHostSender(String address, String host);
+
+  /// No description provided for @hubHostUnknownHost.
+  ///
+  /// In ko, this message translates to:
+  /// **'호스트 이름 없음'**
+  String get hubHostUnknownHost;
+
+  /// No description provided for @hubHostProtection.
+  ///
+  /// In ko, this message translates to:
+  /// **'강제 {push}와 {branch} 삭제는 허브가 거부합니다 — 모든 {commitUnit} 기록이 남습니다.'**
+  String hubHostProtection(String push, String branch, String commitUnit);
+
+  /// No description provided for @hubHostBackup.
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 백업'**
+  String get hubHostBackup;
+
+  /// No description provided for @hubHostBackupHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'백업하려면 백업 폴더를 지정하고 허브를 켜세요.'**
+  String get hubHostBackupHint;
+
+  /// No description provided for @hubHostBackupDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 {count}개를 백업했습니다.'**
+  String hubHostBackupDone(int count);
+
+  /// No description provided for @hubHostFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 완료하지 못했습니다.'**
+  String get hubHostFailed;
+
+  /// No description provided for @hubHostRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get hubHostRetry;
+
+  /// No description provided for @hubHostRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'새로 고침'**
+  String get hubHostRefresh;
+
+  /// No description provided for @hubHostClose.
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get hubHostClose;
+
+  /// No description provided for @hubHostCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get hubHostCancel;
+
   /// No description provided for @termPlain.
   ///
   /// In ko, this message translates to:
@@ -1044,6 +1380,186 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'바뀐 파일이 없습니다'**
   String get historyNoFiles;
+
+  /// No description provided for @hubClientTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브'**
+  String get hubClientTitle;
+
+  /// No description provided for @hubClientAdd.
+  ///
+  /// In ko, this message translates to:
+  /// **'주소로 허브 추가'**
+  String get hubClientAdd;
+
+  /// No description provided for @hubClientAddress.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브 주소'**
+  String get hubClientAddress;
+
+  /// No description provided for @hubClientAddressHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: 192.168.0.10:8765'**
+  String get hubClientAddressHint;
+
+  /// No description provided for @hubClientConnect.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결'**
+  String get hubClientConnect;
+
+  /// No description provided for @hubClientCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get hubClientCancel;
+
+  /// No description provided for @hubClientOffline.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결 끊김'**
+  String get hubClientOffline;
+
+  /// No description provided for @hubClientOnline.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결됨'**
+  String get hubClientOnline;
+
+  /// No description provided for @hubClientEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 저장소가 없습니다. 내 저장소에서 처음 올리기를 해 보세요.'**
+  String get hubClientEmpty;
+
+  /// No description provided for @hubClientNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'내부망 허브를 찾고 있습니다. 주소로 직접 추가할 수도 있습니다.'**
+  String get hubClientNone;
+
+  /// No description provided for @hubClientOverview.
+  ///
+  /// In ko, this message translates to:
+  /// **'개요'**
+  String get hubClientOverview;
+
+  /// No description provided for @hubClientHistory.
+  ///
+  /// In ko, this message translates to:
+  /// **'{history}'**
+  String hubClientHistory(String history);
+
+  /// No description provided for @hubClientPushes.
+  ///
+  /// In ko, this message translates to:
+  /// **'{push} 기록'**
+  String hubClientPushes(String push);
+
+  /// No description provided for @hubClientClone.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 PC로 {clone}'**
+  String hubClientClone(String clone);
+
+  /// No description provided for @hubClientPublish.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브에 처음 올리기'**
+  String get hubClientPublish;
+
+  /// No description provided for @hubClientName.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 이름'**
+  String get hubClientName;
+
+  /// No description provided for @hubClientDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'설명 (선택)'**
+  String get hubClientDescription;
+
+  /// No description provided for @hubClientInvalidName.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름은 1~100자로 영문·숫자·점·밑줄·하이픈만 사용해 주세요. 연속된 점, 끝의 점, 앞의 하이픈과 Windows 예약 이름은 사용할 수 없습니다.'**
+  String get hubClientInvalidName;
+
+  /// No description provided for @hubClientFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 마치지 못했습니다. 연결과 저장소 폴더를 확인하고 다시 시도해 주세요.'**
+  String get hubClientFailed;
+
+  /// No description provided for @hubClientUnavailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브에 연결할 수 없습니다. 허브가 켜져 있는지, 같은 내부망인지 확인해 주세요.'**
+  String get hubClientUnavailable;
+
+  /// No description provided for @hubClientTimeout.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브의 응답이 늦습니다. 잠시 뒤 다시 시도해 주세요.'**
+  String get hubClientTimeout;
+
+  /// No description provided for @hubClientConflict.
+  ///
+  /// In ko, this message translates to:
+  /// **'같은 이름의 저장소가 있습니다. 다른 이름을 입력해 주세요.'**
+  String get hubClientConflict;
+
+  /// No description provided for @hubClientInvalidAddress.
+  ///
+  /// In ko, this message translates to:
+  /// **'내부망의 허브 주소를 확인해 주세요. 예: 192.168.0.10:8765'**
+  String get hubClientInvalidAddress;
+
+  /// No description provided for @hubClientNoPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 {push} 기록이 없습니다.'**
+  String hubClientNoPush(String push);
+
+  /// No description provided for @hubClientLastPush.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {push}: {time}'**
+  String hubClientLastPush(String push, String time);
+
+  /// No description provided for @hubClientBack.
+  ///
+  /// In ko, this message translates to:
+  /// **'허브 저장소 목록'**
+  String get hubClientBack;
+
+  /// No description provided for @hubClientFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장할 상위 폴더 선택'**
+  String get hubClientFolder;
+
+  /// No description provided for @hubClientBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'{branch} 선택 또는 이름 입력'**
+  String hubClientBranch(String branch);
+
+  /// No description provided for @hubClientMore.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 기록 더 보기'**
+  String get hubClientMore;
+
+  /// No description provided for @hubClientDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료했습니다.'**
+  String get hubClientDone;
 
   /// No description provided for @historySelectFile.
   ///

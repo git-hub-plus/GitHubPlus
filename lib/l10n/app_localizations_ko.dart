@@ -567,6 +567,193 @@ class L10nKo extends L10n {
   String get settingsTerms => '용어 표시';
 
   @override
+  String get hubHostTitle => '내부망 허브 관리';
+
+  @override
+  String get hubHostSubtitle => '이 PC에서 팀의 저장소와 버전 기록을 보관합니다.';
+
+  @override
+  String get hubHostRunning => '실행 중';
+
+  @override
+  String get hubHostStopped => '꺼짐';
+
+  @override
+  String get hubHostError => '서버 오류';
+
+  @override
+  String get hubHostPower => '허브 켜기 / 끄기';
+
+  @override
+  String get hubHostName => '허브 이름';
+
+  @override
+  String get hubHostPort => '포트';
+
+  @override
+  String get hubHostAddresses => '접속 주소';
+
+  @override
+  String get hubHostConnectHint => '다른 PC에서 이 주소로 접속';
+
+  @override
+  String get hubHostStartHint => '허브를 켜면 접속 주소와 저장소를 확인할 수 있습니다.';
+
+  @override
+  String get hubHostRepositories => '저장소';
+
+  @override
+  String hubHostToday(String push) {
+    return '오늘 $push';
+  }
+
+  @override
+  String get hubHostSettings => '서버 설정';
+
+  @override
+  String get hubHostRoot => '저장소 폴더';
+
+  @override
+  String get hubHostBackupFolder => '백업 폴더 (선택)';
+
+  @override
+  String get hubHostChoose => '폴더 선택';
+
+  @override
+  String get hubHostClear => '백업 폴더 해제';
+
+  @override
+  String get hubHostKeepRunning => '창을 닫아도 계속 실행';
+
+  @override
+  String get hubHostTrayHint => '설정만 저장됩니다. 트레이 실행은 다음 단계에서 지원합니다.';
+
+  @override
+  String get hubHostSave => '저장 및 적용';
+
+  @override
+  String get hubHostSaved => '설정을 저장했습니다.';
+
+  @override
+  String get hubHostRestartHint => '실행 중 설정을 바꾸면 허브가 재시작됩니다.';
+
+  @override
+  String get hubHostInvalidPort => '1024~65535 사이의 포트를 입력하세요.';
+
+  @override
+  String get hubHostRequired => '값을 입력하세요.';
+
+  @override
+  String get hubHostNewRepository => '새 저장소';
+
+  @override
+  String get hubHostRepositoryName => '저장소 이름';
+
+  @override
+  String get hubHostDescription => '설명';
+
+  @override
+  String get hubHostInvalidName =>
+      '영문·숫자·_·-·.으로 1~100자. .., 끝의 점, 맨 앞 -, Windows 예약 이름은 사용할 수 없습니다.';
+
+  @override
+  String get hubHostCreate => '만들기';
+
+  @override
+  String get hubHostCreated => '저장소를 만들었습니다.';
+
+  @override
+  String get hubHostDelete => '삭제';
+
+  @override
+  String hubHostDeleteTitle(String name) {
+    return '$name 저장소를 삭제할까요?';
+  }
+
+  @override
+  String get hubHostTrashHint => '저장소는 휴지통 폴더로 옮겨집니다. 이 허브에서는 더 이상 접속할 수 없습니다.';
+
+  @override
+  String get hubHostDeleted => '저장소를 휴지통 폴더로 옮겼습니다.';
+
+  @override
+  String hubHostClone(String clone) {
+    return '$clone 주소 복사';
+  }
+
+  @override
+  String get hubHostCopy => '주소 복사';
+
+  @override
+  String get hubHostCopied => '주소를 복사했습니다.';
+
+  @override
+  String hubHostDefaultBranch(String branch, String name) {
+    return '기본 $branch: $name';
+  }
+
+  @override
+  String hubHostLastPush(String push, String time) {
+    return '마지막 $push: $time';
+  }
+
+  @override
+  String get hubHostNever => '아직 없음';
+
+  @override
+  String get hubHostNoRepositories => '아직 저장소가 없습니다. 새 저장소를 만들어 팀과 공유하세요.';
+
+  @override
+  String hubHostPushLog(String push) {
+    return '$push 기록 · 최근 100개';
+  }
+
+  @override
+  String get hubHostAllRepositories => '모든 저장소';
+
+  @override
+  String get hubHostNoPushes => '아직 받은 기록이 없습니다.';
+
+  @override
+  String hubHostSender(String address, String host) {
+    return '보낸 PC: $address · $host';
+  }
+
+  @override
+  String get hubHostUnknownHost => '호스트 이름 없음';
+
+  @override
+  String hubHostProtection(String push, String branch, String commitUnit) {
+    return '강제 $push와 $branch 삭제는 허브가 거부합니다 — 모든 $commitUnit 기록이 남습니다.';
+  }
+
+  @override
+  String get hubHostBackup => '지금 백업';
+
+  @override
+  String get hubHostBackupHint => '백업하려면 백업 폴더를 지정하고 허브를 켜세요.';
+
+  @override
+  String hubHostBackupDone(int count) {
+    return '저장소 $count개를 백업했습니다.';
+  }
+
+  @override
+  String get hubHostFailed => '작업을 완료하지 못했습니다.';
+
+  @override
+  String get hubHostRetry => '다시 시도';
+
+  @override
+  String get hubHostRefresh => '새로 고침';
+
+  @override
+  String get hubHostClose => '닫기';
+
+  @override
+  String get hubHostCancel => '취소';
+
+  @override
   String get termPlain => '쉬운 말 (Git이 처음인 분)';
 
   @override
@@ -619,6 +806,111 @@ class L10nKo extends L10n {
 
   @override
   String get historyNoFiles => '바뀐 파일이 없습니다';
+
+  @override
+  String get hubClientTitle => '허브';
+
+  @override
+  String get hubClientAdd => '주소로 허브 추가';
+
+  @override
+  String get hubClientAddress => '허브 주소';
+
+  @override
+  String get hubClientAddressHint => '예: 192.168.0.10:8765';
+
+  @override
+  String get hubClientConnect => '연결';
+
+  @override
+  String get hubClientCancel => '취소';
+
+  @override
+  String get hubClientOffline => '연결 끊김';
+
+  @override
+  String get hubClientOnline => '연결됨';
+
+  @override
+  String get hubClientEmpty => '아직 저장소가 없습니다. 내 저장소에서 처음 올리기를 해 보세요.';
+
+  @override
+  String get hubClientNone => '내부망 허브를 찾고 있습니다. 주소로 직접 추가할 수도 있습니다.';
+
+  @override
+  String get hubClientOverview => '개요';
+
+  @override
+  String hubClientHistory(String history) {
+    return '$history';
+  }
+
+  @override
+  String hubClientPushes(String push) {
+    return '$push 기록';
+  }
+
+  @override
+  String hubClientClone(String clone) {
+    return '내 PC로 $clone';
+  }
+
+  @override
+  String get hubClientPublish => '허브에 처음 올리기';
+
+  @override
+  String get hubClientName => '저장소 이름';
+
+  @override
+  String get hubClientDescription => '설명 (선택)';
+
+  @override
+  String get hubClientInvalidName =>
+      '이름은 1~100자로 영문·숫자·점·밑줄·하이픈만 사용해 주세요. 연속된 점, 끝의 점, 앞의 하이픈과 Windows 예약 이름은 사용할 수 없습니다.';
+
+  @override
+  String get hubClientFailed => '작업을 마치지 못했습니다. 연결과 저장소 폴더를 확인하고 다시 시도해 주세요.';
+
+  @override
+  String get hubClientUnavailable =>
+      '허브에 연결할 수 없습니다. 허브가 켜져 있는지, 같은 내부망인지 확인해 주세요.';
+
+  @override
+  String get hubClientTimeout => '허브의 응답이 늦습니다. 잠시 뒤 다시 시도해 주세요.';
+
+  @override
+  String get hubClientConflict => '같은 이름의 저장소가 있습니다. 다른 이름을 입력해 주세요.';
+
+  @override
+  String get hubClientInvalidAddress =>
+      '내부망의 허브 주소를 확인해 주세요. 예: 192.168.0.10:8765';
+
+  @override
+  String hubClientNoPush(String push) {
+    return '아직 $push 기록이 없습니다.';
+  }
+
+  @override
+  String hubClientLastPush(String push, String time) {
+    return '마지막 $push: $time';
+  }
+
+  @override
+  String get hubClientBack => '허브 저장소 목록';
+
+  @override
+  String get hubClientFolder => '저장할 상위 폴더 선택';
+
+  @override
+  String hubClientBranch(String branch) {
+    return '$branch 선택 또는 이름 입력';
+  }
+
+  @override
+  String get hubClientMore => '이전 기록 더 보기';
+
+  @override
+  String get hubClientDone => '완료했습니다.';
 
   @override
   String get historySelectFile => '파일을 선택해 바뀐 내용을 확인하세요';

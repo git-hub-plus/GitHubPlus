@@ -572,6 +572,205 @@ class L10nEn extends L10n {
   String get settingsTerms => 'Terminology';
 
   @override
+  String get hubHostTitle => 'LAN hub management';
+
+  @override
+  String get hubHostSubtitle =>
+      'Keep your team’s repositories and version history on this PC.';
+
+  @override
+  String get hubHostRunning => 'Running';
+
+  @override
+  String get hubHostStopped => 'Stopped';
+
+  @override
+  String get hubHostError => 'Server error';
+
+  @override
+  String get hubHostPower => 'Turn hub on / off';
+
+  @override
+  String get hubHostName => 'Hub name';
+
+  @override
+  String get hubHostPort => 'Port';
+
+  @override
+  String get hubHostAddresses => 'Connection addresses';
+
+  @override
+  String get hubHostConnectHint => 'Connect from another PC using this address';
+
+  @override
+  String get hubHostStartHint =>
+      'Turn on the hub to see connection addresses and repositories.';
+
+  @override
+  String get hubHostRepositories => 'Repositories';
+
+  @override
+  String hubHostToday(String push) {
+    return 'Today’s $push';
+  }
+
+  @override
+  String get hubHostSettings => 'Server settings';
+
+  @override
+  String get hubHostRoot => 'Repository folder';
+
+  @override
+  String get hubHostBackupFolder => 'Backup folder (optional)';
+
+  @override
+  String get hubHostChoose => 'Choose folder';
+
+  @override
+  String get hubHostClear => 'Clear backup folder';
+
+  @override
+  String get hubHostKeepRunning => 'Keep running when the window closes';
+
+  @override
+  String get hubHostTrayHint =>
+      'This preference is saved. Tray support is coming in a later step.';
+
+  @override
+  String get hubHostSave => 'Save and apply';
+
+  @override
+  String get hubHostSaved => 'Settings saved.';
+
+  @override
+  String get hubHostRestartHint => 'Applying settings restarts a running hub.';
+
+  @override
+  String get hubHostInvalidPort => 'Enter a port between 1024 and 65535.';
+
+  @override
+  String get hubHostRequired => 'Enter a value.';
+
+  @override
+  String get hubHostNewRepository => 'New repository';
+
+  @override
+  String get hubHostRepositoryName => 'Repository name';
+
+  @override
+  String get hubHostDescription => 'Description';
+
+  @override
+  String get hubHostInvalidName =>
+      'Use 1–100 letters, digits, _, - or .; no .., trailing dot, leading -, or Windows reserved names.';
+
+  @override
+  String get hubHostCreate => 'Create';
+
+  @override
+  String get hubHostCreated => 'Repository created.';
+
+  @override
+  String get hubHostDelete => 'Delete';
+
+  @override
+  String hubHostDeleteTitle(String name) {
+    return 'Delete repository $name?';
+  }
+
+  @override
+  String get hubHostTrashHint =>
+      'The repository moves to the trash folder and is no longer accessible from this hub.';
+
+  @override
+  String get hubHostDeleted => 'Repository moved to the trash folder.';
+
+  @override
+  String hubHostClone(String clone) {
+    return 'Copy $clone address';
+  }
+
+  @override
+  String get hubHostCopy => 'Copy address';
+
+  @override
+  String get hubHostCopied => 'Address copied.';
+
+  @override
+  String hubHostDefaultBranch(String branch, String name) {
+    return 'Default $branch: $name';
+  }
+
+  @override
+  String hubHostLastPush(String push, String time) {
+    return 'Last $push: $time';
+  }
+
+  @override
+  String get hubHostNever => 'None yet';
+
+  @override
+  String get hubHostNoRepositories =>
+      'No repositories yet. Create one to share with your team.';
+
+  @override
+  String hubHostPushLog(String push) {
+    return '$push log · latest 100';
+  }
+
+  @override
+  String get hubHostAllRepositories => 'All repositories';
+
+  @override
+  String get hubHostNoPushes => 'No updates received yet.';
+
+  @override
+  String hubHostSender(String address, String host) {
+    return 'Sender: $address · $host';
+  }
+
+  @override
+  String get hubHostUnknownHost => 'No hostname';
+
+  @override
+  String hubHostProtection(String push, String branch, String commitUnit) {
+    return 'The hub rejects forced $push and $branch deletion — all $commitUnit remain in history.';
+  }
+
+  @override
+  String get hubHostBackup => 'Back up now';
+
+  @override
+  String get hubHostBackupHint =>
+      'Choose a backup folder and turn on the hub to back up.';
+
+  @override
+  String hubHostBackupDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Backed up $count repositories.',
+      one: 'Backed up 1 repository.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubHostFailed => 'Could not complete the operation.';
+
+  @override
+  String get hubHostRetry => 'Retry';
+
+  @override
+  String get hubHostRefresh => 'Refresh';
+
+  @override
+  String get hubHostClose => 'Close';
+
+  @override
+  String get hubHostCancel => 'Cancel';
+
+  @override
   String get termPlain => 'Plain words (new to Git)';
 
   @override
@@ -624,6 +823,116 @@ class L10nEn extends L10n {
 
   @override
   String get historyNoFiles => 'No changed files';
+
+  @override
+  String get hubClientTitle => 'Hubs';
+
+  @override
+  String get hubClientAdd => 'Add hub by address';
+
+  @override
+  String get hubClientAddress => 'Hub address';
+
+  @override
+  String get hubClientAddressHint => 'e.g. 192.168.0.10:8765';
+
+  @override
+  String get hubClientConnect => 'Connect';
+
+  @override
+  String get hubClientCancel => 'Cancel';
+
+  @override
+  String get hubClientOffline => 'Offline';
+
+  @override
+  String get hubClientOnline => 'Online';
+
+  @override
+  String get hubClientEmpty =>
+      'No repositories yet. Publish one from your library.';
+
+  @override
+  String get hubClientNone =>
+      'Looking for hubs on your network. You can also add an address.';
+
+  @override
+  String get hubClientOverview => 'Overview';
+
+  @override
+  String hubClientHistory(String history) {
+    return '$history';
+  }
+
+  @override
+  String hubClientPushes(String push) {
+    return '$push activity';
+  }
+
+  @override
+  String hubClientClone(String clone) {
+    return '$clone to my PC';
+  }
+
+  @override
+  String get hubClientPublish => 'Publish to hub';
+
+  @override
+  String get hubClientName => 'Repository name';
+
+  @override
+  String get hubClientDescription => 'Description (optional)';
+
+  @override
+  String get hubClientInvalidName =>
+      'Use 1-100 letters, numbers, dots, underscores or hyphens. Avoid consecutive dots, a trailing dot, a leading hyphen and Windows reserved names.';
+
+  @override
+  String get hubClientFailed =>
+      'Could not finish. Check the connection and repository folder, then try again.';
+
+  @override
+  String get hubClientUnavailable =>
+      'Cannot reach the hub. Check that it is on and on the same network.';
+
+  @override
+  String get hubClientTimeout =>
+      'The hub is taking too long. Try again shortly.';
+
+  @override
+  String get hubClientConflict =>
+      'That repository name is taken. Choose another name.';
+
+  @override
+  String get hubClientInvalidAddress =>
+      'Check the LAN hub address, e.g. 192.168.0.10:8765.';
+
+  @override
+  String hubClientNoPush(String push) {
+    return 'No $push activity yet.';
+  }
+
+  @override
+  String hubClientLastPush(String push, String time) {
+    return 'Last $push: $time';
+  }
+
+  @override
+  String get hubClientBack => 'Hub repositories';
+
+  @override
+  String get hubClientFolder => 'Choose a parent folder';
+
+  @override
+  String hubClientBranch(String branch) {
+    return 'Choose or enter a $branch';
+  }
+
+  @override
+  String get hubClientMore => 'Load older history';
+
+  @override
+  String get hubClientDone => 'Completed.';
 
   @override
   String get historySelectFile => 'Select a file to inspect changes';
