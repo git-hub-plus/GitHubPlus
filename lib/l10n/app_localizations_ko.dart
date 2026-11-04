@@ -216,6 +216,111 @@ class L10nKo extends L10n {
   }
 
   @override
+  String get changesSelectAll => '전체 선택';
+
+  @override
+  String changesIncluded(int total, int included) {
+    return '$total개 중 $included개 포함';
+  }
+
+  @override
+  String changesConflicts(int count) {
+    return '충돌 $count개를 먼저 해결하세요';
+  }
+
+  @override
+  String get changesAdded => '추가';
+
+  @override
+  String get changesModified => '수정';
+
+  @override
+  String get changesDeleted => '삭제';
+
+  @override
+  String get changesRenamed => '이름 변경';
+
+  @override
+  String changesConflict(String count) {
+    return '충돌 · $count';
+  }
+
+  @override
+  String get changesSummary => '요약 (필수)';
+
+  @override
+  String get changesDescription => '설명';
+
+  @override
+  String changesRemaining(int count) {
+    return '권장 길이까지 $count자';
+  }
+
+  @override
+  String changesAmend(String commit) {
+    return '마지막 $commit 고치기(amend)';
+  }
+
+  @override
+  String changesCommit(String branch, String commit) {
+    return '$branch에 $commit';
+  }
+
+  @override
+  String changesCommitted(String commit, String sha) {
+    return '$commit 완료 · $sha';
+  }
+
+  @override
+  String get changesDiscard => '버리기';
+
+  @override
+  String get changesDiscardFile => '이 파일 버리기';
+
+  @override
+  String get changesCopyPath => '경로 복사';
+
+  @override
+  String changesDiscardTitle(int count) {
+    return '파일 $count개의 변경을 버릴까요?';
+  }
+
+  @override
+  String get changesDiscardBody => '백업 폴더에 사본을 남긴 뒤 되돌립니다.';
+
+  @override
+  String get changesCancel => '취소';
+
+  @override
+  String get changesDiscarded => '변경을 버렸습니다 · 백업 폴더 열기';
+
+  @override
+  String get changesSaved => '모두 저장됨';
+
+  @override
+  String changesEmptyHint(String push, int count) {
+    return '작업 현황을 확인하거나 $push 대기 $count개를 확인하세요.';
+  }
+
+  @override
+  String get changesPickFile => '파일을 골라 바뀐 내용을 확인하세요.';
+
+  @override
+  String get changesFailed => '작업을 마치지 못했습니다.';
+
+  @override
+  String get changesRetry => '다시 시도';
+
+  @override
+  String get changesDetached => '현재 위치';
+
+  @override
+  String get changesResize => '파일 목록 너비 조절';
+
+  @override
+  String get changesBusy => '처리 중…';
+
+  @override
   String tabHistory(String history) {
     return '$history';
   }
@@ -390,6 +495,158 @@ class L10nKo extends L10n {
 
   @override
   String get overviewWorkingTree => '작업 폴더';
+
+  @override
+  String historyCurrent(String branch) {
+    return '현재 $branch';
+  }
+
+  @override
+  String historyAll(String branch) {
+    return '모든 $branch';
+  }
+
+  @override
+  String get historySearch => '요약·작성자 검색 (불러온 기록)';
+
+  @override
+  String historyEmpty(String commitUnit) {
+    return '아직 $commitUnit이 없습니다';
+  }
+
+  @override
+  String get historyNoResults => '일치하는 기록이 없습니다';
+
+  @override
+  String get historySelect => '목록에서 기록을 선택하세요';
+
+  @override
+  String historyFiles(int count) {
+    return '바뀐 파일 $count개';
+  }
+
+  @override
+  String get historyNoFiles => '바뀐 파일이 없습니다';
+
+  @override
+  String get historySelectFile => '파일을 선택해 바뀐 내용을 확인하세요';
+
+  @override
+  String historyParents(String commitUnit) {
+    return '부모 $commitUnit';
+  }
+
+  @override
+  String get historyCopySha => 'SHA 복사';
+
+  @override
+  String get historyCopied => 'SHA를 복사했습니다';
+
+  @override
+  String get historyLoadMore => '다음 200개 불러오기';
+
+  @override
+  String get historyRetry => '다시 시도';
+
+  @override
+  String get historyResize => '목록과 상세 너비 조절';
+
+  @override
+  String get historyClose => '닫기';
+
+  @override
+  String branchSearch(String branch) {
+    return '$branch 검색';
+  }
+
+  @override
+  String get branchCurrent => '현재';
+
+  @override
+  String branchLocal(String branch) {
+    return '로컬 $branch';
+  }
+
+  @override
+  String branchRemote(String branch) {
+    return '원격 $branch';
+  }
+
+  @override
+  String branchCreate(String branch) {
+    return '새 $branch 만들기';
+  }
+
+  @override
+  String branchName(String branch) {
+    return '$branch 이름';
+  }
+
+  @override
+  String get branchNameHint => '공백은 -로 바뀝니다';
+
+  @override
+  String get branchExists => '이미 있는 이름입니다';
+
+  @override
+  String get branchInvalid => '올바른 이름을 입력하세요';
+
+  @override
+  String get branchRename => '이름 바꾸기';
+
+  @override
+  String get branchDelete => '삭제';
+
+  @override
+  String get branchCancel => '취소';
+
+  @override
+  String get branchSave => '저장';
+
+  @override
+  String branchSwitch(String name) {
+    return '$name(으)로 전환';
+  }
+
+  @override
+  String branchSwitchWarning(String name) {
+    return '바뀐 파일이 있습니다. $name(으)로 전환할까요? 수정 내용이 겹치면 전환할 수 없습니다.';
+  }
+
+  @override
+  String get branchContinue => '전환';
+
+  @override
+  String branchDeleteConfirm(String name) {
+    return '$name을(를) 삭제할까요?';
+  }
+
+  @override
+  String branchForce(String merge) {
+    return '아직 $merge하지 않은 내용도 삭제';
+  }
+
+  @override
+  String get branchDeleteRemote => '원격에서도 삭제';
+
+  @override
+  String get branchRemoteWarning => '원격 삭제를 선택하지 않으면 이 PC의 추적 항목만 삭제합니다.';
+
+  @override
+  String get branchFailed => '작업을 완료하지 못했습니다';
+
+  @override
+  String get branchEmpty => '일치하는 항목이 없습니다';
+
+  @override
+  String branchMenu(String name) {
+    return '$name 메뉴';
+  }
+
+  @override
+  String branchAheadBehind(int ahead, int behind) {
+    return '앞섬 $ahead · 뒤처짐 $behind';
+  }
 
   @override
   String overviewWorkingTreeTip(String commit) {

@@ -397,6 +397,180 @@ abstract class L10n {
   /// **'{changes}'**
   String tabChanges(String changes);
 
+  /// No description provided for @changesSelectAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 선택'**
+  String get changesSelectAll;
+
+  /// No description provided for @changesIncluded.
+  ///
+  /// In ko, this message translates to:
+  /// **'{total}개 중 {included}개 포함'**
+  String changesIncluded(int total, int included);
+
+  /// No description provided for @changesConflicts.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 {count}개를 먼저 해결하세요'**
+  String changesConflicts(int count);
+
+  /// No description provided for @changesAdded.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가'**
+  String get changesAdded;
+
+  /// No description provided for @changesModified.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정'**
+  String get changesModified;
+
+  /// No description provided for @changesDeleted.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get changesDeleted;
+
+  /// No description provided for @changesRenamed.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름 변경'**
+  String get changesRenamed;
+
+  /// No description provided for @changesConflict.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 · {count}'**
+  String changesConflict(String count);
+
+  /// No description provided for @changesSummary.
+  ///
+  /// In ko, this message translates to:
+  /// **'요약 (필수)'**
+  String get changesSummary;
+
+  /// No description provided for @changesDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'설명'**
+  String get changesDescription;
+
+  /// No description provided for @changesRemaining.
+  ///
+  /// In ko, this message translates to:
+  /// **'권장 길이까지 {count}자'**
+  String changesRemaining(int count);
+
+  /// No description provided for @changesAmend.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 {commit} 고치기(amend)'**
+  String changesAmend(String commit);
+
+  /// No description provided for @changesCommit.
+  ///
+  /// In ko, this message translates to:
+  /// **'{branch}에 {commit}'**
+  String changesCommit(String branch, String commit);
+
+  /// No description provided for @changesCommitted.
+  ///
+  /// In ko, this message translates to:
+  /// **'{commit} 완료 · {sha}'**
+  String changesCommitted(String commit, String sha);
+
+  /// No description provided for @changesDiscard.
+  ///
+  /// In ko, this message translates to:
+  /// **'버리기'**
+  String get changesDiscard;
+
+  /// No description provided for @changesDiscardFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 파일 버리기'**
+  String get changesDiscardFile;
+
+  /// No description provided for @changesCopyPath.
+  ///
+  /// In ko, this message translates to:
+  /// **'경로 복사'**
+  String get changesCopyPath;
+
+  /// No description provided for @changesDiscardTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 {count}개의 변경을 버릴까요?'**
+  String changesDiscardTitle(int count);
+
+  /// No description provided for @changesDiscardBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'백업 폴더에 사본을 남긴 뒤 되돌립니다.'**
+  String get changesDiscardBody;
+
+  /// No description provided for @changesCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get changesCancel;
+
+  /// No description provided for @changesDiscarded.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경을 버렸습니다 · 백업 폴더 열기'**
+  String get changesDiscarded;
+
+  /// No description provided for @changesSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 저장됨'**
+  String get changesSaved;
+
+  /// No description provided for @changesEmptyHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 현황을 확인하거나 {push} 대기 {count}개를 확인하세요.'**
+  String changesEmptyHint(String push, int count);
+
+  /// No description provided for @changesPickFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 골라 바뀐 내용을 확인하세요.'**
+  String get changesPickFile;
+
+  /// No description provided for @changesFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 마치지 못했습니다.'**
+  String get changesFailed;
+
+  /// No description provided for @changesRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get changesRetry;
+
+  /// No description provided for @changesDetached.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 위치'**
+  String get changesDetached;
+
+  /// No description provided for @changesResize.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 목록 너비 조절'**
+  String get changesResize;
+
+  /// No description provided for @changesBusy.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리 중…'**
+  String get changesBusy;
+
   /// No description provided for @tabHistory.
   ///
   /// In ko, this message translates to:
@@ -684,6 +858,246 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'작업 폴더'**
   String get overviewWorkingTree;
+
+  /// No description provided for @historyCurrent.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 {branch}'**
+  String historyCurrent(String branch);
+
+  /// No description provided for @historyAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모든 {branch}'**
+  String historyAll(String branch);
+
+  /// No description provided for @historySearch.
+  ///
+  /// In ko, this message translates to:
+  /// **'요약·작성자 검색 (불러온 기록)'**
+  String get historySearch;
+
+  /// No description provided for @historyEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 {commitUnit}이 없습니다'**
+  String historyEmpty(String commitUnit);
+
+  /// No description provided for @historyNoResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'일치하는 기록이 없습니다'**
+  String get historyNoResults;
+
+  /// No description provided for @historySelect.
+  ///
+  /// In ko, this message translates to:
+  /// **'목록에서 기록을 선택하세요'**
+  String get historySelect;
+
+  /// No description provided for @historyFiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 파일 {count}개'**
+  String historyFiles(int count);
+
+  /// No description provided for @historyNoFiles.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 파일이 없습니다'**
+  String get historyNoFiles;
+
+  /// No description provided for @historySelectFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 선택해 바뀐 내용을 확인하세요'**
+  String get historySelectFile;
+
+  /// No description provided for @historyParents.
+  ///
+  /// In ko, this message translates to:
+  /// **'부모 {commitUnit}'**
+  String historyParents(String commitUnit);
+
+  /// No description provided for @historyCopySha.
+  ///
+  /// In ko, this message translates to:
+  /// **'SHA 복사'**
+  String get historyCopySha;
+
+  /// No description provided for @historyCopied.
+  ///
+  /// In ko, this message translates to:
+  /// **'SHA를 복사했습니다'**
+  String get historyCopied;
+
+  /// No description provided for @historyLoadMore.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음 200개 불러오기'**
+  String get historyLoadMore;
+
+  /// No description provided for @historyRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get historyRetry;
+
+  /// No description provided for @historyResize.
+  ///
+  /// In ko, this message translates to:
+  /// **'목록과 상세 너비 조절'**
+  String get historyResize;
+
+  /// No description provided for @historyClose.
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get historyClose;
+
+  /// No description provided for @branchSearch.
+  ///
+  /// In ko, this message translates to:
+  /// **'{branch} 검색'**
+  String branchSearch(String branch);
+
+  /// No description provided for @branchCurrent.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재'**
+  String get branchCurrent;
+
+  /// No description provided for @branchLocal.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬 {branch}'**
+  String branchLocal(String branch);
+
+  /// No description provided for @branchRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 {branch}'**
+  String branchRemote(String branch);
+
+  /// No description provided for @branchCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 {branch} 만들기'**
+  String branchCreate(String branch);
+
+  /// No description provided for @branchName.
+  ///
+  /// In ko, this message translates to:
+  /// **'{branch} 이름'**
+  String branchName(String branch);
+
+  /// No description provided for @branchNameHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'공백은 -로 바뀝니다'**
+  String get branchNameHint;
+
+  /// No description provided for @branchExists.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 있는 이름입니다'**
+  String get branchExists;
+
+  /// No description provided for @branchInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'올바른 이름을 입력하세요'**
+  String get branchInvalid;
+
+  /// No description provided for @branchRename.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름 바꾸기'**
+  String get branchRename;
+
+  /// No description provided for @branchDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get branchDelete;
+
+  /// No description provided for @branchCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get branchCancel;
+
+  /// No description provided for @branchSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장'**
+  String get branchSave;
+
+  /// No description provided for @branchSwitch.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}(으)로 전환'**
+  String branchSwitch(String name);
+
+  /// No description provided for @branchSwitchWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 파일이 있습니다. {name}(으)로 전환할까요? 수정 내용이 겹치면 전환할 수 없습니다.'**
+  String branchSwitchWarning(String name);
+
+  /// No description provided for @branchContinue.
+  ///
+  /// In ko, this message translates to:
+  /// **'전환'**
+  String get branchContinue;
+
+  /// No description provided for @branchDeleteConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}을(를) 삭제할까요?'**
+  String branchDeleteConfirm(String name);
+
+  /// No description provided for @branchForce.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 {merge}하지 않은 내용도 삭제'**
+  String branchForce(String merge);
+
+  /// No description provided for @branchDeleteRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격에서도 삭제'**
+  String get branchDeleteRemote;
+
+  /// No description provided for @branchRemoteWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 삭제를 선택하지 않으면 이 PC의 추적 항목만 삭제합니다.'**
+  String get branchRemoteWarning;
+
+  /// No description provided for @branchFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업을 완료하지 못했습니다'**
+  String get branchFailed;
+
+  /// No description provided for @branchEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'일치하는 항목이 없습니다'**
+  String get branchEmpty;
+
+  /// No description provided for @branchMenu.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 메뉴'**
+  String branchMenu(String name);
+
+  /// No description provided for @branchAheadBehind.
+  ///
+  /// In ko, this message translates to:
+  /// **'앞섬 {ahead} · 뒤처짐 {behind}'**
+  String branchAheadBehind(int ahead, int behind);
 
   /// No description provided for @overviewWorkingTreeTip.
   ///

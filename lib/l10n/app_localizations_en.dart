@@ -216,6 +216,112 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get changesSelectAll => 'Select all';
+
+  @override
+  String changesIncluded(int total, int included) {
+    return '$included of $total included';
+  }
+
+  @override
+  String changesConflicts(int count) {
+    return 'Resolve $count conflicts first';
+  }
+
+  @override
+  String get changesAdded => 'Added';
+
+  @override
+  String get changesModified => 'Modified';
+
+  @override
+  String get changesDeleted => 'Deleted';
+
+  @override
+  String get changesRenamed => 'Renamed';
+
+  @override
+  String changesConflict(String count) {
+    return 'Conflict ? $count';
+  }
+
+  @override
+  String get changesSummary => 'Summary (required)';
+
+  @override
+  String get changesDescription => 'Description';
+
+  @override
+  String changesRemaining(int count) {
+    return '$count characters to recommended limit';
+  }
+
+  @override
+  String changesAmend(String commit) {
+    return 'Amend last $commit';
+  }
+
+  @override
+  String changesCommit(String branch, String commit) {
+    return '$commit to $branch';
+  }
+
+  @override
+  String changesCommitted(String commit, String sha) {
+    return '$commit complete ? $sha';
+  }
+
+  @override
+  String get changesDiscard => 'Discard';
+
+  @override
+  String get changesDiscardFile => 'Discard this file';
+
+  @override
+  String get changesCopyPath => 'Copy path';
+
+  @override
+  String changesDiscardTitle(int count) {
+    return 'Discard changes in $count files?';
+  }
+
+  @override
+  String get changesDiscardBody =>
+      'A copy is saved in the backup folder before restoring.';
+
+  @override
+  String get changesCancel => 'Cancel';
+
+  @override
+  String get changesDiscarded => 'Changes discarded ? Open backup folder';
+
+  @override
+  String get changesSaved => 'Everything saved';
+
+  @override
+  String changesEmptyHint(String push, int count) {
+    return 'Check task activity or $count waiting to $push.';
+  }
+
+  @override
+  String get changesPickFile => 'Select a file to view its changes.';
+
+  @override
+  String get changesFailed => 'Could not complete the operation.';
+
+  @override
+  String get changesRetry => 'Retry';
+
+  @override
+  String get changesDetached => 'Current location';
+
+  @override
+  String get changesResize => 'Resize file list';
+
+  @override
+  String get changesBusy => 'Working?';
+
+  @override
   String tabHistory(String history) {
     return '$history';
   }
@@ -391,6 +497,159 @@ class L10nEn extends L10n {
 
   @override
   String get overviewWorkingTree => 'Working folder';
+
+  @override
+  String historyCurrent(String branch) {
+    return 'Current $branch';
+  }
+
+  @override
+  String historyAll(String branch) {
+    return 'All ${branch}es';
+  }
+
+  @override
+  String get historySearch => 'Search summary or author (loaded history)';
+
+  @override
+  String historyEmpty(String commitUnit) {
+    return 'No $commitUnit yet';
+  }
+
+  @override
+  String get historyNoResults => 'No matching history';
+
+  @override
+  String get historySelect => 'Select an entry from the list';
+
+  @override
+  String historyFiles(int count) {
+    return 'Changed files ($count)';
+  }
+
+  @override
+  String get historyNoFiles => 'No changed files';
+
+  @override
+  String get historySelectFile => 'Select a file to inspect changes';
+
+  @override
+  String historyParents(String commitUnit) {
+    return 'Parent $commitUnit';
+  }
+
+  @override
+  String get historyCopySha => 'Copy SHA';
+
+  @override
+  String get historyCopied => 'SHA copied';
+
+  @override
+  String get historyLoadMore => 'Load next 200';
+
+  @override
+  String get historyRetry => 'Retry';
+
+  @override
+  String get historyResize => 'Resize list and details';
+
+  @override
+  String get historyClose => 'Close';
+
+  @override
+  String branchSearch(String branch) {
+    return 'Search $branch';
+  }
+
+  @override
+  String get branchCurrent => 'Current';
+
+  @override
+  String branchLocal(String branch) {
+    return 'Local ${branch}es';
+  }
+
+  @override
+  String branchRemote(String branch) {
+    return 'Remote ${branch}es';
+  }
+
+  @override
+  String branchCreate(String branch) {
+    return 'Create $branch';
+  }
+
+  @override
+  String branchName(String branch) {
+    return '$branch name';
+  }
+
+  @override
+  String get branchNameHint => 'Spaces become hyphens';
+
+  @override
+  String get branchExists => 'This name already exists';
+
+  @override
+  String get branchInvalid => 'Enter a valid name';
+
+  @override
+  String get branchRename => 'Rename';
+
+  @override
+  String get branchDelete => 'Delete';
+
+  @override
+  String get branchCancel => 'Cancel';
+
+  @override
+  String get branchSave => 'Save';
+
+  @override
+  String branchSwitch(String name) {
+    return 'Switch to $name';
+  }
+
+  @override
+  String branchSwitchWarning(String name) {
+    return 'There are changed files. Switch to $name? Git will refuse if changes overlap.';
+  }
+
+  @override
+  String get branchContinue => 'Switch';
+
+  @override
+  String branchDeleteConfirm(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String branchForce(String merge) {
+    return 'Delete even if not yet ${merge}d';
+  }
+
+  @override
+  String get branchDeleteRemote => 'Also delete on the remote';
+
+  @override
+  String get branchRemoteWarning =>
+      'Without remote deletion, only this PC\'s tracking reference is removed.';
+
+  @override
+  String get branchFailed => 'Could not complete the operation';
+
+  @override
+  String get branchEmpty => 'No matching entries';
+
+  @override
+  String branchMenu(String name) {
+    return 'Menu for $name';
+  }
+
+  @override
+  String branchAheadBehind(int ahead, int behind) {
+    return 'Ahead $ahead / behind $behind';
+  }
 
   @override
   String overviewWorkingTreeTip(String commit) {
