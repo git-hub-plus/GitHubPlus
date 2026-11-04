@@ -48,3 +48,6 @@ ported.
 | `test/core/git/*` | `tests/main/git/*` → `app/test/unit/**` |
 | `lib/core/git/merge.dart`, `operation.dart`, `conflict_markers.dart` | `src/main/git/{merge,conflicts,cherry-pick,revert}.ts` → `app/src/lib/git/{merge,checkout,cherry-pick,revert}.ts`, `app/src/models/manual-conflict-resolution.ts` (marker parser written for GitHub+) |
 | `lib/core/git/stash.dart`, `rewrite.dart` | `src/main/git/{stash,reset,tag,rebase,squash,reorder}.ts` → `app/src/lib/git/{stash,reset,tag,rebase,squash,reorder}.ts` |
+| `lib/core/hub/server.dart`, `server_git_http.dart`, `server_api.dart`, `announcer.dart`, `validation.dart` | GitHub+ v1 `src/main/hub/server/{server,announcer,lifecycle}.ts`, `src/main/hub/shared/validation.ts` (written for GitHub+) |
+| `lib/core/hub/client.dart` | GitHub+ v1 `src/main/hub/client/{api,discovery,publish,groups}.ts` (written for GitHub+) |
+| `lib/core/git/clone.dart` | `src/main/git/clone.ts` → `app/src/lib/git/clone.ts` |
