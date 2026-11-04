@@ -692,6 +692,140 @@
   },
   "resultUpToDate": "이미 최신 상태입니다",
   "settingsTerms": "용어 표시",
+  "hubHostTitle": "내부망 허브 관리",
+  "hubHostSubtitle": "이 PC에서 팀의 저장소와 버전 기록을 보관합니다.",
+  "hubHostRunning": "실행 중",
+  "hubHostStopped": "꺼짐",
+  "hubHostError": "서버 오류",
+  "hubHostPower": "허브 켜기 / 끄기",
+  "hubHostName": "허브 이름",
+  "hubHostPort": "포트",
+  "hubHostAddresses": "접속 주소",
+  "hubHostConnectHint": "다른 PC에서 이 주소로 접속",
+  "hubHostStartHint": "허브를 켜면 접속 주소와 저장소를 확인할 수 있습니다.",
+  "hubHostRepositories": "저장소",
+  "hubHostToday": "오늘 {push}",
+  "@hubHostToday": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostSettings": "서버 설정",
+  "hubHostRoot": "저장소 폴더",
+  "hubHostBackupFolder": "백업 폴더 (선택)",
+  "hubHostChoose": "폴더 선택",
+  "hubHostClear": "백업 폴더 해제",
+  "hubHostKeepRunning": "창을 닫아도 계속 실행",
+  "hubHostTrayHint": "설정만 저장됩니다. 트레이 실행은 다음 단계에서 지원합니다.",
+  "hubHostSave": "저장 및 적용",
+  "hubHostSaved": "설정을 저장했습니다.",
+  "hubHostRestartHint": "실행 중 설정을 바꾸면 허브가 재시작됩니다.",
+  "hubHostInvalidPort": "1024~65535 사이의 포트를 입력하세요.",
+  "hubHostRequired": "값을 입력하세요.",
+  "hubHostNewRepository": "새 저장소",
+  "hubHostRepositoryName": "저장소 이름",
+  "hubHostDescription": "설명",
+  "hubHostInvalidName": "영문·숫자·_·-·.으로 1~100자. .., 끝의 점, 맨 앞 -, Windows 예약 이름은 사용할 수 없습니다.",
+  "hubHostCreate": "만들기",
+  "hubHostCreated": "저장소를 만들었습니다.",
+  "hubHostDelete": "삭제",
+  "hubHostDeleteTitle": "{name} 저장소를 삭제할까요?",
+  "@hubHostDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostTrashHint": "저장소는 휴지통 폴더로 옮겨집니다. 이 허브에서는 더 이상 접속할 수 없습니다.",
+  "hubHostDeleted": "저장소를 휴지통 폴더로 옮겼습니다.",
+  "hubHostClone": "{clone} 주소 복사",
+  "@hubHostClone": {
+    "placeholders": {
+      "clone": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostCopy": "주소 복사",
+  "hubHostCopied": "주소를 복사했습니다.",
+  "hubHostDefaultBranch": "기본 {branch}: {name}",
+  "@hubHostDefaultBranch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostLastPush": "마지막 {push}: {time}",
+  "@hubHostLastPush": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostNever": "아직 없음",
+  "hubHostNoRepositories": "아직 저장소가 없습니다. 새 저장소를 만들어 팀과 공유하세요.",
+  "hubHostPushLog": "{push} 기록 · 최근 100개",
+  "@hubHostPushLog": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostAllRepositories": "모든 저장소",
+  "hubHostNoPushes": "아직 받은 기록이 없습니다.",
+  "hubHostSender": "보낸 PC: {address} · {host}",
+  "@hubHostSender": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostUnknownHost": "호스트 이름 없음",
+  "hubHostProtection": "강제 {push}와 {branch} 삭제는 허브가 거부합니다 — 모든 {commitUnit} 기록이 남습니다.",
+  "@hubHostProtection": {
+    "placeholders": {
+      "push": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      },
+      "commitUnit": {
+        "type": "String"
+      }
+    }
+  },
+  "hubHostBackup": "지금 백업",
+  "hubHostBackupHint": "백업하려면 백업 폴더를 지정하고 허브를 켜세요.",
+  "hubHostBackupDone": "저장소 {count}개를 백업했습니다.",
+  "@hubHostBackupDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubHostFailed": "작업을 완료하지 못했습니다.",
+  "hubHostRetry": "다시 시도",
+  "hubHostRefresh": "새로 고침",
+  "hubHostClose": "닫기",
+  "hubHostCancel": "취소",
   "termPlain": "쉬운 말 (Git이 처음인 분)",
   "termGit": "Git 용어 (GitHub 사용자)",
   "termExample": "예: {plain}  ↔  {git}",
