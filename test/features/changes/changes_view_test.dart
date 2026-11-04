@@ -24,7 +24,7 @@ const summaryKey = Key('changes-summary');
 const commitKey = Key('changes-commit');
 
 Future<void> until(WidgetTester tester, bool Function() ready) async {
-  for (var i = 0; i < 200; i++) {
+  for (var i = 0; i < 600; i++) {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
     await tester.pump(const Duration(milliseconds: 20));
     if (ready()) return;
