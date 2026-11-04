@@ -10,6 +10,8 @@ import '../../state/repo_state.dart';
 import '../../ui/theme.dart';
 import '../../ui/widgets/hud.dart';
 import '../expeditions/expedition_panel.dart';
+import '../changes/changes_view.dart';
+import '../history/history_view.dart';
 import '../overview/overview_view.dart';
 import 'repo_banner.dart';
 
@@ -66,14 +68,8 @@ class _RepoHomeState extends ConsumerState<RepoHome> {
               duration: context.motion(Motion.fast),
               child: switch (_tab) {
                 HomeTab.overview => OverviewView(key: ValueKey('overview-${widget.repo.id}'), repo: widget.repo),
-                HomeTab.changes => _Placeholder(
-                  key: const ValueKey('changes'),
-                  text: L10n.of(context).tabChanges(Terms.of(context).changes),
-                ),
-                HomeTab.history => _Placeholder(
-                  key: const ValueKey('history'),
-                  text: L10n.of(context).tabHistory(Terms.of(context).history),
-                ),
+                HomeTab.changes => ChangesView(key: ValueKey('changes-${widget.repo.id}'), repo: widget.repo),
+                HomeTab.history => HistoryView(key: ValueKey('history-${widget.repo.id}'), repo: widget.repo),
                 HomeTab.expeditions => ExpeditionPanel(key: const ValueKey('exp'), repoId: widget.repo.id),
               },
             ),
@@ -250,14 +246,4 @@ class _TabBar extends ConsumerWidget {
       ),
     );
   }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({super.key, required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Text(text, style: TextStyle(color: context.colors.muted)),
-  );
 }

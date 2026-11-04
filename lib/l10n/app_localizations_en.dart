@@ -463,4 +463,41 @@ class L10nEn extends L10n {
   String overviewLoadError(String error) {
     return 'Could not load: $error';
   }
+
+  @override
+  String get diffNoChanges => 'No changes.';
+
+  @override
+  String diffLarge(String size) {
+    return 'This diff is large ($size), so it is collapsed.';
+  }
+
+  @override
+  String get diffShowAnyway => 'Show anyway';
+
+  @override
+  String get diffBinary => 'Binary file, no diff to show.';
+
+  @override
+  String get diffUnrenderable => 'This diff cannot be displayed.';
+
+  @override
+  String diffSubmodule(String from, String to) {
+    return 'Submodule changed from $from to $to.';
+  }
+
+  @override
+  String get diffBidiWarning =>
+      'Hidden bidirectional Unicode characters: the code may not be what it looks like.';
+
+  @override
+  String diffLineEndings(String from, String to) {
+    return 'Line endings change from $from to $to.';
+  }
+
+  @override
+  String get diffImageBefore => 'Before';
+
+  @override
+  String get diffImageAfter => 'After';
 }

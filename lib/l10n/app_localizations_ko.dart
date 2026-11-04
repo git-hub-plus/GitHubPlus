@@ -461,4 +461,41 @@ class L10nKo extends L10n {
   String overviewLoadError(String error) {
     return '불러오지 못했습니다: $error';
   }
+
+  @override
+  String get diffNoChanges => '바뀐 내용이 없습니다.';
+
+  @override
+  String diffLarge(String size) {
+    return '바뀐 내용이 커서($size) 접어 두었습니다.';
+  }
+
+  @override
+  String get diffShowAnyway => '그래도 보기';
+
+  @override
+  String get diffBinary => '텍스트가 아닌 파일이라 바뀐 내용을 보여 줄 수 없습니다.';
+
+  @override
+  String get diffUnrenderable => '이 파일의 바뀐 내용은 표시할 수 없습니다.';
+
+  @override
+  String diffSubmodule(String from, String to) {
+    return '하위 저장소가 $from → $to로 바뀌었습니다.';
+  }
+
+  @override
+  String get diffBidiWarning =>
+      '보이지 않는 방향 제어 문자가 있습니다. 화면에 보이는 코드와 실제 코드가 다를 수 있으니 확인하세요.';
+
+  @override
+  String diffLineEndings(String from, String to) {
+    return '줄바꿈이 $from에서 $to로 바뀝니다.';
+  }
+
+  @override
+  String get diffImageBefore => '이전';
+
+  @override
+  String get diffImageAfter => '이후';
 }

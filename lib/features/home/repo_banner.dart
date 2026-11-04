@@ -8,6 +8,7 @@ import '../../core/git/sync.dart';
 import '../../core/models/app_models.dart';
 import '../../core/models/status.dart';
 import '../../l10n/app_localizations.dart';
+import '../branches/branch_menu.dart';
 import '../../l10n/terms.dart';
 import '../../state/repo_state.dart';
 import '../../ui/format.dart';
@@ -110,7 +111,12 @@ class RepoBanner extends ConsumerWidget {
                         runSpacing: Space.xs,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          _Chip(icon: Icons.account_tree_rounded, label: branch, emphasized: true),
+                          _Chip(
+                            icon: Icons.account_tree_rounded,
+                            label: branch,
+                            emphasized: true,
+                            onTap: () => showBranchMenu(context, ref, repo),
+                          ),
                           if (status?.upstream != null) _Chip(icon: Icons.cloud_rounded, label: status!.upstream!),
                           _Chip(
                             icon: Icons.schedule_rounded,
@@ -140,15 +146,16 @@ class RepoBanner extends ConsumerWidget {
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip({required this.icon, required this.label, this.emphasized = false});
+  const _Chip({required this.icon, required this.label, this.emphasized = false, this.onTap});
   final IconData icon;
   final String label;
   final bool emphasized;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    return Container(
+    final chip = Container(
       padding: const EdgeInsets.symmetric(horizontal: Space.sm + 2, vertical: 5),
       decoration: BoxDecoration(
         color: (emphasized ? c.accentSoft : c.surface).withValues(alpha: 0.9),
@@ -161,9 +168,15 @@ class _Chip extends StatelessWidget {
           Icon(icon, size: 13, color: emphasized ? c.accent : c.muted),
           const SizedBox(width: Space.xs + 2),
           Text(label, style: TextStyle(fontSize: 12, color: c.text, fontWeight: emphasized ? FontWeight.w600 : FontWeight.w400)),
+          if (onTap != null) ...[
+            const SizedBox(width: 2),
+            Icon(Icons.expand_more_rounded, size: 14, color: c.muted),
+          ],
         ],
       ),
     );
+    if (onTap == null) return chip;
+    return InkWell(onTap: onTap, borderRadius: BorderRadius.circular(20), child: chip);
   }
 }
 

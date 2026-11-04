@@ -792,6 +792,66 @@ abstract class L10n {
   /// In ko, this message translates to:
   /// **'불러오지 못했습니다: {error}'**
   String overviewLoadError(String error);
+
+  /// No description provided for @diffNoChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 내용이 없습니다.'**
+  String get diffNoChanges;
+
+  /// No description provided for @diffLarge.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 내용이 커서({size}) 접어 두었습니다.'**
+  String diffLarge(String size);
+
+  /// No description provided for @diffShowAnyway.
+  ///
+  /// In ko, this message translates to:
+  /// **'그래도 보기'**
+  String get diffShowAnyway;
+
+  /// No description provided for @diffBinary.
+  ///
+  /// In ko, this message translates to:
+  /// **'텍스트가 아닌 파일이라 바뀐 내용을 보여 줄 수 없습니다.'**
+  String get diffBinary;
+
+  /// No description provided for @diffUnrenderable.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 파일의 바뀐 내용은 표시할 수 없습니다.'**
+  String get diffUnrenderable;
+
+  /// No description provided for @diffSubmodule.
+  ///
+  /// In ko, this message translates to:
+  /// **'하위 저장소가 {from} → {to}로 바뀌었습니다.'**
+  String diffSubmodule(String from, String to);
+
+  /// No description provided for @diffBidiWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'보이지 않는 방향 제어 문자가 있습니다. 화면에 보이는 코드와 실제 코드가 다를 수 있으니 확인하세요.'**
+  String get diffBidiWarning;
+
+  /// No description provided for @diffLineEndings.
+  ///
+  /// In ko, this message translates to:
+  /// **'줄바꿈이 {from}에서 {to}로 바뀝니다.'**
+  String diffLineEndings(String from, String to);
+
+  /// No description provided for @diffImageBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전'**
+  String get diffImageBefore;
+
+  /// No description provided for @diffImageAfter.
+  ///
+  /// In ko, this message translates to:
+  /// **'이후'**
+  String get diffImageAfter;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

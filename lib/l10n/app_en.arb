@@ -115,5 +115,15 @@
   "overviewRemoteImage": "External image: {alt}",
   "overviewRaw": "Source",
   "overviewRendered": "Preview",
-  "overviewLoadError": "Could not load: {error}"
+  "overviewLoadError": "Could not load: {error}",
+  "diffNoChanges": "No changes.",
+  "diffLarge": "This diff is large ({size}), so it is collapsed.",
+  "diffShowAnyway": "Show anyway",
+  "diffBinary": "Binary file, no diff to show.",
+  "diffUnrenderable": "This diff cannot be displayed.",
+  "diffSubmodule": "Submodule changed from {from} to {to}.",
+  "diffBidiWarning": "Hidden bidirectional Unicode characters: the code may not be what it looks like.",
+  "diffLineEndings": "Line endings change from {from} to {to}.",
+  "diffImageBefore": "Before",
+  "diffImageAfter": "After"
 }
